@@ -1,0 +1,13 @@
+{
+  "watch": [
+    "src"
+  ],
+  "ext": "ts",
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ignore": [
+    "src/**/*.spec.ts"
+  ],
+  "exec": "node --inspect-brk -r ts-node/register src/main.ts"
+}

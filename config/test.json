@@ -1,0 +1,23 @@
+{
+  "DB_SETTINGS": {
+    "host": "localhost",
+    "port": 5432,
+    "username": "postgres",
+    "password": "postgres",
+    "database": "nestjs_auth"
+  },
+  "LOGGER_SETTINGS": {
+    "level": "debug",
+    "timestamps": true,
+    "silence": [
+      "/healthz"
+    ]
+  },
+  "APP_SETTINGS": {
+    "secretKey": "key"
+  },
+  "JWT_SETTINGS": {
+    "secretKey": "key",
+    "expiresIn": 3600
+  }
+}
