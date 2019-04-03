@@ -4,8 +4,8 @@ import { Repository } from 'typeorm';
 
 import { User } from './user.entity';
 
-import { CreateUserDTO } from './dto/create.dto';
 import { LoginUserDTO } from './dto/login.dto';
+import { PossUserDTO } from './dto/update.dto';
 
 import { passwordToHash } from '../common/helpers/pswd.helper';
 
@@ -38,18 +38,19 @@ export class UserService {
     return await this.userRepositoty.findOne(id);
   }
 
-  public async create(user: CreateUserDTO) {
+  public async create(user: LoginUserDTO) {
     const model = await this.userRepositoty.create(user);
     return await this.userRepositoty.save(model);
   }
 
-  // public async update() {
-
-  // }
+  public async update(id: string, user: PossUserDTO) {
+    const model = await this.userRepositoty.findOne(id);
+    return await this.userRepositoty.save(Object.assign(model, user));
+  }
 
   public async delete(id: string) {
     const model = await this.userRepositoty.findOne(id);
-    await this.userRepositoty.delete(model);
+    await this.userRepositoty.delete(model.id);
     return model;
   }
 }

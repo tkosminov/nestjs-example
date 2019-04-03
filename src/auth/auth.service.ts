@@ -30,6 +30,11 @@ export class AuthService {
     };
   }
 
+  public async rigistration(credentials: LoginUserDTO) {
+    const user = await this.userService.create(credentials);
+    return { email: user.email, createdAt: user.createdAt };
+  }
+
   public async verifyToken(token: string) {
     return (await jwt.verify(token, jwtSettings.secretKey)) as IJwtPayload;
   }

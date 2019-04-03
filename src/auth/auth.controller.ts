@@ -12,4 +12,9 @@ export class AuthController {
   public async signIn(@Body() credentials: LoginUserDTO) {
     return await this.authService.createToken(credentials);
   }
+
+  @Post('rigistration')
+  public async rigistration(@Body() credentials: LoginUserDTO) {
+    return await this.authService.rigistration(credentials);
+  }
 }

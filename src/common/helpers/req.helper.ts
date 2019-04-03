@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
+// tslint:disable: no-feature-envy
 export class ReqHelper {
-  // tslint:disable: no-feature-envy
   public getIp(req: Request): string {
     return req.ip || (req.connection && req.connection.remoteAddress) || '-';
   }
@@ -31,5 +31,4 @@ export class ReqHelper {
   public getUserAgent(req: Request) {
     return req.headers['user-agent'] || '-';
   }
-  // tslint:enable: no-feature-envy
 }

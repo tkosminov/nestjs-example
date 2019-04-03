@@ -1,4 +1,12 @@
-import { BeforeInsert, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 import { IsEmail, MinLength } from 'class-validator';
 
@@ -18,17 +26,17 @@ export class User {
   @MinLength(7)
   public password: string;
 
-  @Column({
+  @CreateDateColumn({
     type: 'timestamp without time zone',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  public createdAt: string;
+  public createdAt: Date;
 
-  @Column({
+  @UpdateDateColumn({
     type: 'timestamp without time zone',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  public updatedAt: string;
+  public updatedAt: Date;
 
   @BeforeInsert()
   protected hashPassword() {

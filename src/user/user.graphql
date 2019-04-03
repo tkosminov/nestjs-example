@@ -1,6 +1,8 @@
 type User {
   id: ID
   email: String
+  createdAt: String
+  updatedAt: String
 }
 
 input CreateUserInput {
@@ -8,10 +10,17 @@ input CreateUserInput {
   password: String!
 }
 
+input UpdateUserInput {
+  email: String!
+}
+
 type Query {
+  findUser(id: String): User
   findUsers: [User]
 }
 
 type Mutation {
   createUser(createUserInput: CreateUserInput): User
+  updateUser(id: String, updateUserInput: UpdateUserInput): User
+  deleteUser(id: String): User
 }

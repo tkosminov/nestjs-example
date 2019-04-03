@@ -1,6 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-// import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import helmet from 'helmet';
 
@@ -21,13 +21,13 @@ async function bootstrap() {
     })
   );
 
-  // const options = new DocumentBuilder()
-  //   .setTitle('Cats example')
-  //   .setDescription('The cats API description')
-  //   .setVersion('1.0')
-  //   .build();
-  // const document = SwaggerModule.createDocument(app, options);
-  // SwaggerModule.setup('swagger', app, document);
+  const options = new DocumentBuilder()
+    .setTitle('Auth example')
+    .setDescription('The auth API description')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('swagger', app, document);
 
   await app.listen(8080);
 }

@@ -12,15 +12,19 @@ import { IJwtPayload } from '../../auth/interfaces/jwt-payload.iterface';
 
 const secretJWTKey = config.get<IJwtSettings>('JWT_SETTINGS').secretKey;
 
+// tslint:disable: no-feature-envy
 @Injectable()
 export class AuthMiddleware extends ReqHelper implements NestMiddleware {
   constructor(private readonly userService: UserService) {
     super();
   }
 
-  // tslint:disable-next-line: no-feature-envy
   public resolve(): MiddlewareFunction {
     return async (req: Request, _res: Response, next: NextFunction) => {
+      if (process.env.NODE_ENV === 'development') {
+        return next();
+      }
+
       if (this.getUrl(req).split('/')[1] === 'auth') {
         return next();
       }
