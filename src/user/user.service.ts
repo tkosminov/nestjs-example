@@ -4,8 +4,9 @@ import { Repository } from 'typeorm';
 
 import { User } from './user.entity';
 
+import { CreateUserDTO } from './dto/create.dto';
 import { LoginUserDTO } from './dto/login.dto';
-import { PossUserDTO } from './dto/update.dto';
+import { UpdateUserDTO } from './dto/update.dto';
 
 import { passwordToHash } from '../common/helpers/pswd.helper';
 
@@ -13,12 +14,12 @@ import { passwordToHash } from '../common/helpers/pswd.helper';
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepositoty: Repository<User>
+    private readonly userRepository: Repository<User>
   ) {}
 
   public async login(user: LoginUserDTO) {
     //tslint:disable-next-line:no-feature-envy
-    const model = await this.userRepositoty.findOne({
+    const model = await this.userRepository.findOne({
       email: user.email,
       password: passwordToHash(user.password),
     });
@@ -31,26 +32,34 @@ export class UserService {
   }
 
   public async findAll() {
-    return await this.userRepositoty.find();
+    return await this.userRepository.find();
   }
 
   public async findOne(id: string) {
-    return await this.userRepositoty.findOne(id);
+    return await this.userRepository.findOne(id);
   }
 
-  public async create(user: LoginUserDTO) {
-    const model = await this.userRepositoty.create(user);
-    return await this.userRepositoty.save(model);
+  public async findByIds(ids: string[]) {
+    return await this.userRepository.findByIds(ids);
   }
 
-  public async update(id: string, user: PossUserDTO) {
-    const model = await this.userRepositoty.findOne(id);
-    return await this.userRepositoty.save(Object.assign(model, user));
+  public async create(user: CreateUserDTO) {
+    const model = await this.userRepository.create(user);
+    return await this.userRepository.save(model);
+  }
+
+  public async update(id: string, user: UpdateUserDTO) {
+    const model = await this.userRepository.findOne(id);
+    return await this.userRepository.save(Object.assign(model, user));
   }
 
   public async delete(id: string) {
-    const model = await this.userRepositoty.findOne(id);
-    await this.userRepositoty.delete(model.id);
+    const model = await this.userRepository.findOne(id);
+    await this.userRepository.delete(model.id);
     return model;
+  }
+
+  public async save(user: User) {
+    return await this.userRepository.save(user);
   }
 }

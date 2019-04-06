@@ -5,7 +5,9 @@ import jwt from 'jsonwebtoken';
 
 import { UserService } from '../user/user.service';
 
+import { CreateUserDTO } from '../user/dto/create.dto';
 import { LoginUserDTO } from '../user/dto/login.dto';
+
 import { IJwtPayload } from './interfaces/jwt-payload.iterface';
 
 const jwtSettings = config.get<IJwtSettings>('JWT_SETTINGS');
@@ -30,7 +32,7 @@ export class AuthService {
     };
   }
 
-  public async rigistration(credentials: LoginUserDTO) {
+  public async rigistration(credentials: CreateUserDTO) {
     const user = await this.userService.create(credentials);
     return { email: user.email, createdAt: user.createdAt };
   }

@@ -4,6 +4,8 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -11,6 +13,8 @@ import {
 import { IsEmail, MinLength } from 'class-validator';
 
 import { passwordToHash } from '../common/helpers/pswd.helper';
+
+import { Permission } from '../permission/permission.entity';
 
 @Entity()
 export class User {
@@ -37,6 +41,10 @@ export class User {
     default: () => 'CURRENT_TIMESTAMP',
   })
   public updatedAt: Date;
+
+  @ManyToMany(() => Permission, permission => permission.users)
+  @JoinTable()
+  public permissions: Permission[];
 
   @BeforeInsert()
   protected hashPassword() {

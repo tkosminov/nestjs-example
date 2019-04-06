@@ -1,8 +1,9 @@
 type User {
-  id: ID
-  email: String
-  createdAt: String
-  updatedAt: String
+  id: ID!
+  email: String!
+  createdAt: String!
+  updatedAt: String!
+  permissions: [Permission]
 }
 
 input CreateUserInput {
@@ -15,12 +16,13 @@ input UpdateUserInput {
 }
 
 type Query {
-  findUser(id: String): User
+  findUser(id: ID!): User
   findUsers: [User]
 }
 
 type Mutation {
-  createUser(createUserInput: CreateUserInput): User
-  updateUser(id: String, updateUserInput: UpdateUserInput): User
-  deleteUser(id: String): User
+  createUser(data: CreateUserInput): User
+  updateUser(id: ID!, data: UpdateUserInput): User
+  addUserPermission(userId: ID!, permissionId: ID!): User
+  deleteUser(id: ID!): User
 }
