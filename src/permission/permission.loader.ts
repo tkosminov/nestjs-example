@@ -10,18 +10,13 @@ import { Permission } from './permission.entity';
 
 @Injectable()
 export class PermissionLoader implements ILoader {
-  // tslint:disable-next-line: no-any
-  public generateDataLoader(): DataLoader<any, any> {
+  public generateDataLoader(): DataLoader<string, Permission[]> {
     return new DataLoader<string, Permission[]>(this.findByUserIds);
   }
 
   private async findByUserIds(ids: string[]) {
-    const users = await getRepository(User)
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.permissions', 'permission')
-      .where('user.id IN (:...ids)', { ids })
-      .getMany();
+    const users = await getRepository(User).findByIds(ids, { relations: ['permissions'] });
 
-    return users.map(user => user.permissions);
+    return ids.map(id => users.find(u => u.id === id).permissions);
   }
 }

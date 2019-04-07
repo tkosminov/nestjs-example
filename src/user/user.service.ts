@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 
 import { User } from './user.entity';
 
@@ -31,16 +31,16 @@ export class UserService {
     return model;
   }
 
-  public async findAll() {
-    return await this.userRepository.find();
+  public async findAll(options: FindManyOptions<User> = {}) {
+    return await this.userRepository.find(options);
   }
 
-  public async findOne(id: string) {
-    return await this.userRepository.findOne(id);
+  public async findOne(id: string, options: FindOneOptions<User> = {}) {
+    return await this.userRepository.findOne(id, options);
   }
 
-  public async findByIds(ids: string[]) {
-    return await this.userRepository.findByIds(ids);
+  public async findByIds(ids: string[], options: FindManyOptions<User> = {}) {
+    return await this.userRepository.findByIds(ids, options);
   }
 
   public async create(user: CreateUserDTO) {

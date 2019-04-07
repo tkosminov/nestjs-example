@@ -47,7 +47,7 @@ export class UserResolver {
 
   @Mutation('addUserPermission')
   public async addUserPermission(@Args('userId') userId: string, @Args('permissionId') permissionId: number) {
-    const user = await this.userService.findOne(userId);
+    const user = await this.userService.findOne(userId, { relations: ['permissions'] });
     const permission = await this.permissionService.findOne(permissionId);
 
     user.permissions.push(permission);

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 
 import { Permission } from './permission.entity';
 
@@ -14,16 +14,16 @@ export class PermissionService {
     private readonly permissionRepository: Repository<Permission>
   ) {}
 
-  public async findAll() {
-    return await this.permissionRepository.find();
+  public async findAll(options: FindManyOptions<Permission> = {}) {
+    return await this.permissionRepository.find(options);
   }
 
-  public async findOne(id: number) {
-    return await this.permissionRepository.findOne(id);
+  public async findOne(id: number, options: FindOneOptions<Permission> = {}) {
+    return await this.permissionRepository.findOne(id, options);
   }
 
-  public async findByIds(ids: number[]) {
-    return await this.permissionRepository.findByIds(ids);
+  public async findByIds(ids: number[], options: FindManyOptions<Permission> = {}) {
+    return await this.permissionRepository.findByIds(ids, options);
   }
 
   public async create(permission: CreatePermissionDTO) {
