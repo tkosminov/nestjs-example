@@ -1,6 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { GraphQLModule } from '@nestjs/graphql';
 
 import { LoggerModule } from './common/logger/logger.module';
 import { AuthMiddleware } from './common/middlewares/auth.middleware';
@@ -15,18 +14,10 @@ import { WssModule } from './wss/wss.module';
 import { PermissionModule } from './permission/permission.module';
 import { UserModule } from './user/user.module';
 
+import GraphQLModule from './gql/gql.module';
+
 @Module({
-  imports: [
-    DatabaseModule,
-    LoggerModule,
-    WssModule,
-    AuthModule,
-    GraphQLModule.forRoot({
-      typePaths: ['./**/*.graphql'],
-    }),
-    UserModule,
-    PermissionModule,
-  ],
+  imports: [GraphQLModule, DatabaseModule, LoggerModule, WssModule, AuthModule, UserModule, PermissionModule],
   providers: [
     {
       provide: APP_INTERCEPTOR,
@@ -35,7 +26,6 @@ import { UserModule } from './user/user.module';
   ],
 })
 export class AppModule implements NestModule {
-  // tslint:disable-next-line: no-feature-envy
   public configure(consumer: MiddlewareConsumer): void | MiddlewareConsumer {
     consumer.apply(LoggerMiddleware, AuthMiddleware).forRoutes('*');
   }

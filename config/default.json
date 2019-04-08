@@ -19,5 +19,8 @@
   "JWT_SETTINGS": {
     "secretKey": "key",
     "expiresIn": 3600
+  },
+  "API_URLS": {
+    "CORE_SERVICE": "http://localhost:5010/graphql"
   }
 }

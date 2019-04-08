@@ -24,3 +24,7 @@ interface IJwtSettings {
   readonly secretKey: string;
   readonly expiresIn: number;
 }
+
+interface IApiUrls {
+  readonly CORE_SERVICE: string;
+}
