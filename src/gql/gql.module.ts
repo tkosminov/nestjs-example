@@ -6,12 +6,12 @@ import { join } from 'path';
 import { GraphQLSchema } from 'graphql';
 import { mergeSchemas } from 'graphql-tools';
 
-import { CoreModule } from './core/core.module';
-import { CoreService } from './core/core.service';
+import { SchemasModule } from './schemas/schemas.module';
+import { SchemasService } from './schemas/schemas.service';
 
 export default GraphQLModule.forRootAsync({
-  imports: [CoreModule],
-  useFactory: (coreService: CoreService) => {
+  imports: [SchemasModule],
+  useFactory: (schemasService: SchemasService) => {
     return {
       typePaths: ['./src/**/*.graphql'],
       debug: true,
@@ -24,9 +24,7 @@ export default GraphQLModule.forRootAsync({
       },
 
       transformSchema: async (schema: GraphQLSchema) => {
-        const schemas: GraphQLSchema[] = [schema];
-
-        schemas.push(await coreService.getSchema());
+        const schemas: GraphQLSchema[] = [schema, ...(await schemasService.getSchemas())];
 
         return mergeSchemas({
           schemas: schemas.filter(s => s),
@@ -34,5 +32,5 @@ export default GraphQLModule.forRootAsync({
       },
     } as GqlModuleOptions;
   },
-  inject: [CoreService],
+  inject: [SchemasService],
 });

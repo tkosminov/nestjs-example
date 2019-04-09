@@ -10,8 +10,12 @@ import { introspectSchema, makeRemoteExecutableSchema } from 'graphql-tools';
 const apiUrls: IApiUrls = config.get('API_URLS');
 
 @Injectable()
-export class CoreService {
-  public async getSchema(): Promise<GraphQLSchema | null> {
+export class SchemasService {
+  public async getSchemas(): Promise<GraphQLSchema[] | null[]> {
+    return Promise.all([this.getCoreSchema(), this.getOtherSchema()]);
+  }
+
+  private async getCoreSchema(): Promise<GraphQLSchema | null> {
     try {
       const coreLink = new HttpLink({
         uri: apiUrls.CORE_SERVICE,
@@ -27,5 +31,9 @@ export class CoreService {
     } catch (e) {
       return null;
     }
+  }
+
+  private async getOtherSchema(): Promise<GraphQLSchema | null> {
+    return null;
   }
 }
