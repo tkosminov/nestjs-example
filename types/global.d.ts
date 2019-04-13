@@ -1,7 +1,3 @@
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-
-type Poss<T, K extends keyof T> = Partial<Pick<T, Exclude<keyof T, K>>>;
-
 interface IDBSettings {
   readonly host: string;
   readonly port: number;
@@ -27,4 +23,13 @@ interface IJwtSettings {
 
 interface IApiUrls {
   readonly CORE_SERVICE: string;
+}
+
+interface IRabbitMQSettings {
+  readonly name: string;
+  readonly host: string;
+  readonly vhost: string;
+  readonly port: number;
+  readonly username: string;
+  readonly password: string;
 }

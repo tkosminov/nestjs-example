@@ -22,5 +22,13 @@
   },
   "API_URLS": {
     "CORE_SERVICE": "http://localhost:5010/graphql"
+  },
+  "RABBITMQ_SETTINGS": {
+    "name": "rabbitmq",
+    "host": "localhost",
+    "vhost": "vhost",
+    "port": 5672,
+    "username": "admin",
+    "password": "password"
   }
 }

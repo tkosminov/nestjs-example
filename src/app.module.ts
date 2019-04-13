@@ -9,21 +9,24 @@ import { LoaderInterceptor } from './common/loader/loader.interceptor';
 
 import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
-import { WssModule } from './wss/wss.module';
+import GraphQLModule from './graphql/graphql.module';
+// import { RabbitModule } from './rabbitmq/rabbitmq.module';
+// import { WssModule } from './wss/wss.module';
+
+import { HealthcheckController } from './healthcheck/healthcheck.controller';
 
 import { PermissionModule } from './permission/permission.module';
 import { UserModule } from './user/user.module';
 
-import GraphQLModule from './gql/gql.module';
-
 @Module({
-  imports: [GraphQLModule, DatabaseModule, LoggerModule, WssModule, AuthModule, UserModule, PermissionModule],
+  imports: [GraphQLModule, DatabaseModule, LoggerModule, AuthModule, UserModule, PermissionModule],
   providers: [
     {
       provide: APP_INTERCEPTOR,
       useClass: LoaderInterceptor,
     },
   ],
+  controllers: [HealthcheckController],
 })
 export class AppModule implements NestModule {
   public configure(consumer: MiddlewareConsumer): void | MiddlewareConsumer {

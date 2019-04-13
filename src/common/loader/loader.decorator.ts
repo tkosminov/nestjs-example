@@ -1,6 +1,6 @@
-import { ReflectMetadata, Type } from '@nestjs/common';
+import { SetMetadata, Type } from '@nestjs/common';
 
 import { ILoader } from './loader.interface';
 
 // tslint:disable-next-line: variable-name
-export const Loader = (loader: Type<ILoader>) => ReflectMetadata('dataloader', loader);
+export const Loader = (loader: Type<ILoader>) => SetMetadata('dataloader', loader);

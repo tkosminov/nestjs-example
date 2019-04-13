@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { IsEmail, MinLength } from 'class-validator';
+import { IsEmail, IsOptional, IsUUID, MinLength } from 'class-validator';
 
 import { passwordToHash } from '../common/helpers/pswd.helper';
 
@@ -19,6 +19,8 @@ import { Permission } from '../permission/permission.entity';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
+  @IsOptional()
+  @IsUUID()
   public id: string;
 
   @Column()
@@ -42,9 +44,9 @@ export class User {
   })
   public updatedAt: Date;
 
-  @ManyToMany(() => Permission, permission => permission.users)
+  @ManyToMany(() => Permission, { nullable: true })
   @JoinTable()
-  public permissions: Permission[];
+  public permissions?: Permission[];
 
   @BeforeInsert()
   protected hashPassword() {

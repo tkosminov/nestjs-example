@@ -19,10 +19,13 @@ export class UserService {
 
   public async login(user: LoginUserDTO) {
     //tslint:disable-next-line:no-feature-envy
-    const model = await this.userRepository.findOne({
-      email: user.email,
-      password: passwordToHash(user.password),
-    });
+    const model = await this.userRepository.findOne(
+      {
+        email: user.email,
+        password: passwordToHash(user.password),
+      },
+      { relations: ['permissions'] }
+    );
 
     if (!model) {
       throw new NotFoundException(`Invalid email or password`);

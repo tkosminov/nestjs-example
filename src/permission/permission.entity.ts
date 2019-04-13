@@ -1,21 +1,11 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  Index,
-  JoinTable,
-  ManyToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
-import { IsString } from 'class-validator';
-
-import { User } from '../user/user.entity';
+import { IsInt, IsString } from 'class-validator';
 
 @Entity()
 export class Permission {
   @PrimaryGeneratedColumn()
+  @IsInt()
   public id: number;
 
   @Column()
@@ -34,8 +24,4 @@ export class Permission {
     default: () => 'CURRENT_TIMESTAMP',
   })
   public updatedAt: Date;
-
-  @ManyToMany(() => User, user => user.permissions)
-  @JoinTable()
-  public users: User[];
 }

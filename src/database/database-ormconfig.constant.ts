@@ -14,17 +14,27 @@ export function getOrmConfig(): TypeOrmModuleOptions {
       ...settings,
       database: `${settings.database}_${process.env.NODE_ENV}`,
       entities: [__dirname + '../../**/*.entity{.ts,.js}'],
+      migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+      migrationsRun: true,
       logger: new LoggerService('SQL'),
       maxQueryExecutionTime: 0.1 /** To log request runtime */,
       synchronize: true,
+      cli: {
+        migrationsDir: __dirname + '/migrations/**/*{.ts,.js}',
+      },
     };
   } else {
     ormConfig = {
       type: 'sqlite',
       database: ':memory:',
       entities: [__dirname + '../../**/*.entity{.ts,.js}'],
+      migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+      migrationsRun: true,
       keepConnectionAlive: true,
       synchronize: true,
+      cli: {
+        migrationsDir: __dirname + '/migrations/**/*{.ts,.js}',
+      },
     };
   }
   return ormConfig;

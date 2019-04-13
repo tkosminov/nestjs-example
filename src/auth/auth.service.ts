@@ -21,9 +21,13 @@ export class AuthService {
 
   public async createToken(credentials: LoginUserDTO) {
     const user = await this.userService.login(credentials);
-    const accessToken = jwt.sign({ id: user.id, email: user.email }, jwtSettings.secretKey, {
-      expiresIn: jwtSettings.expiresIn,
-    });
+    const accessToken = jwt.sign(
+      { id: user.id, email: user.email, permissions: user.permissions },
+      jwtSettings.secretKey,
+      {
+        expiresIn: jwtSettings.expiresIn,
+      }
+    );
 
     // tslint:disable-next-line: no-feature-envy
     return {

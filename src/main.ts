@@ -1,18 +1,25 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { ExpressAdapter } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
+import express from 'express';
+
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 
 import { AppModule } from './app.module';
 import { LoggerService } from './common/logger/logger.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const server = express();
+
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
     logger: LoggerService,
   });
 
   app.use(helmet());
+  app.use(cookieParser());
   app.enableCors();
 
   app.useGlobalPipes(

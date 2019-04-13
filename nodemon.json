@@ -2,12 +2,12 @@
   "watch": [
     "src"
   ],
-  "ext": "ts",
   "env": {
     "NODE_ENV": "development"
   },
+  "ext": "ts",
   "ignore": [
     "src/**/*.spec.ts"
   ],
-  "exec": "ts-node --files src/main.ts"
+  "exec": "ts-node --files -r tsconfig-paths/register src/main.ts"
 }

@@ -39,15 +39,20 @@ export class LoggerService extends Logger implements ISQLLogger {
     }
   }
 
+  // tslint:disable-next-line: no-any
   public logQuery(query: string, _parameters?: any[], queryRunner?: QueryRunner) {
     if (queryRunner.connection.options.maxQueryExecutionTime) {
       return;
     }
     this.info(query);
   }
+
+  // tslint:disable-next-line: no-any
   public logQueryError(error: string, _query: string, _parameters?: any[], _queryRunner?: QueryRunner) {
     this.error(error);
   }
+
+  // tslint:disable-next-line: no-any
   public logQuerySlow(time: number, query: string, _parameters?: any[], _queryRunner?: QueryRunner) {
     this.info(`\x1b[35m(${time} ms)\x1b[0m ${query}`);
   }

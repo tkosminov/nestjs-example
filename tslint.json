@@ -13,7 +13,8 @@
   "linterOptions": {
     "exclude": [
       "./test/**/*",
-      "./**/*spec.ts"
+      "./**/*spec.ts",
+      "./src/database/migrations/**/*.ts"
     ]
   },
   "rules": {

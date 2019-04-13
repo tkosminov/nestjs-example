@@ -1,4 +1,4 @@
-import { ExecutionContext, Injectable, NestInterceptor, Type } from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor, Type } from '@nestjs/common';
 import { ModuleRef, Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
@@ -12,7 +12,7 @@ export class LoaderInterceptor implements NestInterceptor {
 
   // tslint:disable: no-unsafe-any
   // tslint:disable-next-line: no-any
-  public intercept(context: ExecutionContext, call$: Observable<any>) {
+  public intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
     const type = this.reflector.get<Type<ILoader>>('dataloader', context.getHandler());
 
     if (type) {
@@ -24,6 +24,6 @@ export class LoaderInterceptor implements NestInterceptor {
       }
     }
 
-    return call$;
+    return next.handle();
   }
 }

@@ -1,4 +1,10 @@
+interface IPermission {
+  readonly id: number;
+  readonly value: string;
+}
+
 export interface IJwtPayload {
-  id: string;
-  email: string;
+  readonly id: string;
+  readonly email: string;
+  readonly permissions: IPermission[];
 }
