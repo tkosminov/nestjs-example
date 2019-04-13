@@ -14,9 +14,16 @@ export class PermissionLoader implements ILoader {
     return new DataLoader<string, Permission[]>(this.findByUserIds);
   }
 
+  // tslint:disable-next-line: no-feature-envy
   private async findByUserIds(ids: string[]) {
     const users = await getRepository(User).findByIds(ids, { relations: ['permissions'] });
 
-    return ids.map(id => users.find(u => u.id === id).permissions);
+    const permissions = users.reduce((agg, user) => {
+      agg[user.id] = user.permissions;
+      return agg;
+    });
+
+    // tslint:disable-next-line: no-unsafe-any
+    return ids.map(id => permissions[id]);
   }
 }
