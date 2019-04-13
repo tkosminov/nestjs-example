@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { IsEmail, IsOptional, IsUUID, MinLength } from 'class-validator';
+import { IsEmail, IsUUID, MinLength } from 'class-validator';
 
 import { passwordToHash } from '../common/helpers/pswd.helper';
 
@@ -19,7 +19,6 @@ import { Permission } from '../permission/permission.entity';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  @IsOptional()
   @IsUUID()
   public id: string;
 
