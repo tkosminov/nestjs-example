@@ -59,4 +59,12 @@ export class User {
   protected hashPassword() {
     this.password = passwordToHash(this.password);
   }
+
+  public toJSON() {
+    return {
+      id: this.id,
+      email: this.email,
+      permissions: this.permissions.map(p => p.value),
+    };
+  }
 }
