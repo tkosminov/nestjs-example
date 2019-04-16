@@ -13,7 +13,8 @@ export default GraphQLModule.forRootAsync({
   imports: [SchemasModule],
   useFactory: (schemasService: SchemasService) => {
     return {
-      typePaths: ['./src/**/*.graphql'],
+      autoSchemaFile: __dirname + '/../schema.graphql',
+      typePaths: ['../**/*.graphql'],
       debug: true,
       playground: true,
       installSubscriptionHandlers: true,

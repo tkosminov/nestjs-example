@@ -20,11 +20,7 @@ export class RabbitService {
   })
   public async createUser(msg: CreateUserDTO) {
     try {
-      const user = Object.assign(new User(), {
-        id: msg.id,
-        email: msg.email,
-        password: msg.password,
-      });
+      const user = Object.assign(new User(), msg);
 
       await this.userService.save(user);
     } catch (e) {

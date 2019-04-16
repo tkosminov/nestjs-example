@@ -3,7 +3,6 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 
 import { LoggerModule } from './common/logger/logger.module';
 import { AuthMiddleware } from './common/middlewares/auth.middleware';
-import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 
 import { LoaderInterceptor } from './common/loader/loader.interceptor';
 
@@ -30,6 +29,6 @@ import { UserModule } from './user/user.module';
 })
 export class AppModule implements NestModule {
   public configure(consumer: MiddlewareConsumer): void | MiddlewareConsumer {
-    consumer.apply(LoggerMiddleware, AuthMiddleware).forRoutes('*');
+    consumer.apply(AuthMiddleware).forRoutes('*');
   }
 }

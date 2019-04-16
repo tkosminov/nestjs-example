@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import config from 'config';
 import fetch from 'isomorphic-unfetch';
 
+import { setContext } from 'apollo-link-context';
 import { HttpLink } from 'apollo-link-http';
 import { GraphQLSchema } from 'graphql';
 import { introspectSchema, makeRemoteExecutableSchema } from 'graphql-tools';
@@ -22,11 +23,28 @@ export class SchemasService {
         fetch,
       });
 
-      const coreIntrospect = await introspectSchema(coreLink);
+      const link = setContext((_req, previousContext) => {
+        let currentUser = '{}';
+
+        // tslint:disable: no-unsafe-any
+        if (Object.keys(previousContext).length) {
+          // see 'src/common/middlewares/auth.middleware.ts'
+          currentUser = JSON.stringify(previousContext.graphqlContext.req.user);
+        }
+
+        return {
+          headers: {
+            currentUser,
+          },
+        };
+      }).concat(coreLink);
+      // tslint:enable: no-unsafe-any
+
+      const coreIntrospect = await introspectSchema(link);
 
       return makeRemoteExecutableSchema({
         schema: coreIntrospect,
-        link: coreLink,
+        link,
       });
     } catch (e) {
       return null;

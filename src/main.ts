@@ -9,14 +9,11 @@ import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 
 import { AppModule } from './app.module';
-import { LoggerService } from './common/logger/logger.service';
 
 async function bootstrap() {
   const server = express();
 
-  const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
-    logger: LoggerService,
-  });
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
 
   app.use(helmet());
   app.use(cookieParser());

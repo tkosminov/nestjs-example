@@ -35,6 +35,7 @@
     "@nestjs/typeorm": "^6.0.0",
     "@nestjs/websockets": "^6.1.0",
     "amqplib": "^0.5.3",
+    "apollo-link-context": "^1.0.17",
     "apollo-link-http": "^1.5.14",
     "apollo-server-express": "^2.4.8",
     "class-transformer": "^0.2.0",
