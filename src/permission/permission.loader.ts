@@ -18,15 +18,12 @@ export class PermissionLoader implements ILoader {
   private async findByUserIds(ids: string[]) {
     const users = await getRepository(User).findByIds(ids, { relations: ['permissions'] });
 
-    return ids.map(id => users.find(u => u.id === id).permissions);
+    const permissionMap: Map<string, Permission[]> = new Map();
 
-    // const permissionMap: Map<string, Permission[]> = new Map();
+    users.forEach(u => {
+      permissionMap.set(u.id, u.permissions);
+    });
 
-    // users.forEach(u => {
-    //   permissionMap.set(u.id, u.permissions);
-    // });
-
-    // // tslint:disable-next-line: no-unsafe-any
-    // return ids.map(id => permissionMap[id]);
+    return ids.map(id => permissionMap.get(id));
   }
 }
