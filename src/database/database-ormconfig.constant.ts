@@ -1,8 +1,6 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import config from 'config';
 
-import { LoggerService } from '../common/logger/logger.service';
-
 const settings: IDBSettings = config.get('DB_SETTINGS');
 
 export function getOrmConfig(): TypeOrmModuleOptions {
@@ -16,7 +14,6 @@ export function getOrmConfig(): TypeOrmModuleOptions {
       entities: [__dirname + '../../**/*.entity{.ts,.js}'],
       migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
       migrationsRun: true,
-      logger: new LoggerService('SQL'),
       maxQueryExecutionTime: 0.1 /** To log request runtime */,
       synchronize: true,
       cli: {

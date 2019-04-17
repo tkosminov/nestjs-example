@@ -6,6 +6,7 @@ import { AuthMiddleware } from './common/middlewares/auth.middleware';
 
 import { LoaderInterceptor } from './common/loader/loader.interceptor';
 
+// import { ApiModule } from './api/api.module';
 import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
 import GraphQLModule from './graphql/graphql.module';

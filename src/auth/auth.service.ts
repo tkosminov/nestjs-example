@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 
 import config from 'config';
 import jwt from 'jsonwebtoken';
@@ -10,6 +10,8 @@ import { LoginUserDTO } from '../user/dto/login.dto';
 
 import { IJwtPayload } from './interfaces/jwt-payload.iterface';
 
+import { passwordToHash } from 'src/common/helpers/pswd.helper';
+
 const jwtSettings = config.get<IJwtSettings>('JWT_SETTINGS');
 
 @Injectable()
@@ -20,7 +22,18 @@ export class AuthService {
   ) {}
 
   public async createToken(credentials: LoginUserDTO) {
-    const user = await this.userService.login(credentials);
+    const user = await this.userService.findOneBy(
+      {
+        email: credentials.email,
+        password: passwordToHash(credentials.password),
+      },
+      ['permissions']
+    );
+
+    if (!user) {
+      throw new UnauthorizedException('Invalie email or password');
+    }
+
     const accessToken = jwt.sign(user.toJSON(), jwtSettings.secretKey, {
       expiresIn: jwtSettings.expiresIn,
     });
