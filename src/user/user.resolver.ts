@@ -1,5 +1,7 @@
 import { Args, Context, Mutation, Parent, Query, ResolveProperty, Resolver } from '@nestjs/graphql';
 
+import { ID } from 'type-graphql';
+
 import DataLoader from 'dataloader';
 import { Loader } from '../common/loader/loader.decorator';
 
@@ -19,7 +21,7 @@ export class UserResolver {
   constructor(private readonly userService: UserService, private readonly permissionService: PermissionService) {}
 
   @Query(() => User)
-  public async findUser(@Args('id') id: string): Promise<User> {
+  public async findUser(@Args({ name: 'id', type: () => ID }) id: string): Promise<User> {
     return await this.userService.findOne(id);
   }
 
@@ -34,17 +36,23 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  public async updateUser(@Args('id') id: string, @Args('data') updateUserInput: UpdateUserDTO): Promise<User> {
+  public async updateUser(
+    @Args({ name: 'id', type: () => ID }) id: string,
+    @Args('data') updateUserInput: UpdateUserDTO
+  ): Promise<User> {
     return this.userService.update(id, updateUserInput);
   }
 
   @Mutation(() => User)
-  public async deleteUser(@Args('id') id: string): Promise<User> {
+  public async deleteUser(@Args({ name: 'id', type: () => ID }) id: string): Promise<User> {
     return await this.userService.delete(id);
   }
 
   @Mutation(() => User)
-  public async addUserPermission(@Args('userId') userId: string, @Args('permissionId') permissionId: number) {
+  public async addUserPermission(
+    @Args({ name: 'userId', type: () => ID }) userId: string,
+    @Args({ name: 'permissionId', type: () => ID }) permissionId: number
+  ) {
     const user = await this.userService.findOne(userId, { relations: ['permissions'] });
     const permission = await this.permissionService.findOne(permissionId);
 
