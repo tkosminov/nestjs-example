@@ -9,7 +9,7 @@ export class CoreController {
   constructor(private readonly coreService: CoreService) {}
 
   @Get()
-  public index() {
-    return this.coreService.index();
+  public async index() {
+    return await this.coreService.index();
   }
 }
