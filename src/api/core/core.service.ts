@@ -1,10 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { HttpService, Injectable } from '@nestjs/common';
+
+import config from 'config';
+
+const apiUrls: IApiUrls = config.get('API_URLS');
 
 @Injectable()
 export class CoreService {
-  public index() {
-    return {
-      message: 'OK',
-    };
+  constructor(private readonly httpService: HttpService) {}
+
+  public async index() {
+    return await this.httpService.get(apiUrls.CORE_SERVICE);
   }
 }

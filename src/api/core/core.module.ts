@@ -11,7 +11,7 @@ import { CoreService } from './core.service';
     CoreService,
     {
       provide: LoggerService,
-      useValue: new LoggerService('CoreController'),
+      useValue: new LoggerService('ApiCoreController'),
     },
   ],
   controllers: [CoreController],
