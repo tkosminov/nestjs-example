@@ -16,7 +16,12 @@ export default GraphQLModule.forRootAsync({
       autoSchemaFile: __dirname + '/../schema.graphql',
       typePaths: ['../**/*.graphql'],
       debug: true,
-      playground: true,
+      playground: {
+        settings: {
+          'editor.theme': 'dark',
+          'editor.reuseHeaders': true,
+        },
+      },
       installSubscriptionHandlers: true,
       context: ({ req }: { req: Request }) => ({ req }),
       definitions: {

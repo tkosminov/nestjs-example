@@ -1,12 +1,14 @@
-import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
 import { Field, ID, ObjectType } from 'type-graphql';
 
 import { IsInt, IsString } from 'class-validator';
 
+import { EntityHelper } from '../common/helpers/module/entity.helper';
+
 @ObjectType()
 @Entity()
-export class Permission {
+export class Permission extends EntityHelper {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
   @IsInt()
@@ -17,18 +19,4 @@ export class Permission {
   @Index({ unique: true })
   @IsString()
   public value: string;
-
-  @Field()
-  @CreateDateColumn({
-    type: 'timestamp without time zone',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  public createdAt: Date;
-
-  @Field()
-  @UpdateDateColumn({
-    type: 'timestamp without time zone',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  public updatedAt: Date;
 }

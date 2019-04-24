@@ -21,7 +21,7 @@ export class UserResolver {
   constructor(private readonly userService: UserService, private readonly permissionService: PermissionService) {}
 
   @Query(() => User)
-  public async findUser(@Args({ name: 'id', type: () => ID }) id: string): Promise<User> {
+  public async findUser(@Args({ name: 'id', type: () => ID }) id: string) {
     return await this.userService.findOne(id);
   }
 
@@ -31,7 +31,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  public async createUser(@Args('data') createUserInput: CreateUserDTO): Promise<User> {
+  public async createUser(@Args('data') createUserInput: CreateUserDTO) {
     return await this.userService.create(createUserInput);
   }
 
@@ -39,13 +39,13 @@ export class UserResolver {
   public async updateUser(
     @Args({ name: 'id', type: () => ID }) id: string,
     @Args('data') updateUserInput: UpdateUserDTO
-  ): Promise<User> {
-    return this.userService.update(id, updateUserInput);
+  ) {
+    return await this.userService.update(id, updateUserInput, { relations: ['permissions'] });
   }
 
   @Mutation(() => User)
-  public async deleteUser(@Args({ name: 'id', type: () => ID }) id: string): Promise<User> {
-    return await this.userService.delete(id);
+  public async deleteUser(@Args({ name: 'id', type: () => ID }) id: string) {
+    return await this.userService.delete(id, { relations: ['permissions'] });
   }
 
   @Mutation(() => User)
