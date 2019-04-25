@@ -34,13 +34,13 @@ export class ServiceHelper<T> {
 
   public async create(model: DeepPartial<T>, options: SaveOptions = {}) {
     const result = await this.repository.create(model);
-    return await this.repository.save(result, options);
+    return await this.save(result, options);
   }
 
   // tslint:disable-next-line: no-shadowed-variable
   public async update(id: id, partial: QueryDeepPartialEntity<T>, options: FindOneOptions<T> = {}) {
     await this.repository.update(id, partial); // UpdateResult in PostgresQueryBuilder returning empty arrays
-    return await this.repository.findOne(id, options);
+    return await this.findOne(id, options);
   }
 
   public async save(model: T, options: SaveOptions = {}) {
