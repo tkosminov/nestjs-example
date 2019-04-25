@@ -34,7 +34,7 @@ export class ServiceHelper<T> {
 
   public async create(model: DeepPartial<T>, options: SaveOptions = {}) {
     const result = await this.repository.create(model);
-    return this.repository.save(result, options);
+    return await this.repository.save(result, options);
   }
 
   // tslint:disable-next-line: no-shadowed-variable
