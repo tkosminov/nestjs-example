@@ -11,6 +11,7 @@ import { ReqHelper } from '../helpers/req.helper';
 import { IJwtPayload } from '../../auth/interfaces/jwt-payload.iterface';
 
 const secretJWTKey = config.get<IJwtSettings>('JWT_SETTINGS').secretKey;
+const authBypass = config.get<IAuthBypass[]>('AUTH_BYPASS');
 
 @Injectable()
 export class AuthMiddleware extends ReqHelper implements NestMiddleware {
@@ -18,16 +19,7 @@ export class AuthMiddleware extends ReqHelper implements NestMiddleware {
     super();
   }
 
-  // tslint:disable-next-line: no-feature-envy
   public async use(req: Request, _res: Response, next: NextFunction) {
-    if (process.env.NODE_ENV === 'development') {
-      return next();
-    }
-
-    if (this.getUrl(req).split('/')[1] === 'auth') {
-      return next();
-    }
-
     // tslint:disable-next-line: no-unsafe-any
     const token: string = req.headers.authorization || req.cookies.JWT;
 
@@ -50,6 +42,21 @@ export class AuthMiddleware extends ReqHelper implements NestMiddleware {
       }
     }
 
+    if (this.checkAuthBypass(req)) {
+      return next();
+    }
+
     throw new UnauthorizedException();
+  }
+
+  private checkAuthBypass(req: Request) {
+    const currentAction = this.getUrl(req).split('/')[1];
+    const bypass = authBypass.filter(obj => obj.action === currentAction);
+
+    if (bypass.length) {
+      return true;
+    }
+
+    return false;
   }
 }

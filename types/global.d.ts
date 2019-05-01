@@ -34,3 +34,7 @@ interface IRabbitMQSettings {
   readonly username: string;
   readonly password: string;
 }
+
+interface IAuthBypass {
+  readonly action: string;
+}

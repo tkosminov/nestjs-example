@@ -31,5 +31,13 @@
     "port": 5672,
     "username": "admin",
     "password": "password"
-  }
+  },
+  "AUTH_BYPASS": [
+    {
+      "action": "auth"
+    },
+    {
+      "action": "healthz"
+    }
+  ]
 }
