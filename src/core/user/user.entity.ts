@@ -24,7 +24,7 @@ export class User extends EntityHelper {
   public email: string;
 
   @Column()
-  @MinLength(7)
+  @MinLength(4)
   public password: string;
 
   @Field(() => [Permission], { nullable: true })
@@ -37,11 +37,11 @@ export class User extends EntityHelper {
     this.password = passwordToHash(this.password);
   }
 
-  public toJSON() {
+  public jwtPayload() {
     return {
       id: this.id,
       email: this.email,
-      permissions: this.permissions.map(p => p.value),
+      permissions: (this.permissions || []).map(p => p.value),
     };
   }
 }

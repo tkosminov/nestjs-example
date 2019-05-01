@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
@@ -6,18 +6,23 @@ import { LoggerService } from '../common/logger/logger.service';
 
 import config from 'config';
 
-import { UserModule } from '../core/user/user.module';
 import { DatabaseModule } from '../database/database.module';
 
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { AuthStrategy } from './auth.strategy';
+import { OAuthController } from './oauth.controller';
+import { OAuthService } from './oauth.service';
+import { OAuthStrategy } from './oauth.strategy';
+
+import { UserModule } from '../core/user/user.module';
+import { AuthModule } from './auth/auth.module';
+import { ClientModule } from './client/client.module';
 
 const jwtSettings = config.get<IJwtSettings>('JWT_SETTINGS');
 
 @Module({
   imports: [
-    UserModule,
+    forwardRef(() => UserModule),
+    forwardRef(() => ClientModule),
+    forwardRef(() => AuthModule),
     DatabaseModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
@@ -28,13 +33,13 @@ const jwtSettings = config.get<IJwtSettings>('JWT_SETTINGS');
     }),
   ],
   providers: [
-    AuthService,
-    AuthStrategy,
+    OAuthService,
+    OAuthStrategy,
     {
       provide: LoggerService,
-      useValue: new LoggerService('AuthController'),
+      useValue: new LoggerService('OAuthController'),
     },
   ],
-  controllers: [AuthController],
+  controllers: [OAuthController],
 })
-export class AuthModule {}
+export class OAuthModule {}

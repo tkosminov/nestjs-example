@@ -32,6 +32,10 @@ export class ServiceHelper<T> {
     return await this.repository.findByIds(ids, options);
   }
 
+  public async newModel(model: DeepPartial<T>) {
+    return await this.repository.create(model);
+  }
+
   public async create(model: DeepPartial<T>, options: SaveOptions = {}) {
     const result = await this.repository.create(model);
     return await this.save(result, options);

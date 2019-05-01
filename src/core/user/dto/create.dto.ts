@@ -19,6 +19,6 @@ export class CreateUserDTO {
 
   @Field()
   @ApiModelProperty()
-  @MinLength(7)
+  @MinLength(4)
   public readonly password: string;
 }

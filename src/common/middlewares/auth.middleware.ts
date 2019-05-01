@@ -8,7 +8,7 @@ import { UserService } from '../../core/user/user.service';
 
 import { ReqHelper } from '../helpers/req.helper';
 
-import { IJwtPayload } from '../../auth/interfaces/jwt-payload.iterface';
+import { IJwtPayload } from '../../oauth/interface/jwt-payload.iterface';
 
 const secretJWTKey = config.get<IJwtSettings>('JWT_SETTINGS').secretKey;
 const authBypass = config.get<IAuthBypass[]>('AUTH_BYPASS');

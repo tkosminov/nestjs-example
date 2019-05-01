@@ -29,7 +29,7 @@ export class GraphqlOptions implements GqlOptionsFactory {
         const schemas: GraphQLSchema[] = [schema, ...(await this.schemasService.getSchemas())];
 
         return mergeSchemas({
-          schemas: schemas.filter(s => s),
+          schemas: schemas.filter(Boolean),
         });
       },
     };

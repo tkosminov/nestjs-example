@@ -5,15 +5,15 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import config from 'config';
 
-import { AuthService } from './auth.service';
+import { OAuthService } from './oauth.service';
 
-import { IJwtPayload } from './interfaces/jwt-payload.iterface';
+import { IJwtPayload } from './interface/jwt-payload.iterface';
 
 const secretJWTKey = config.get<IJwtSettings>('JWT_SETTINGS').secretKey;
 
 @Injectable()
-export class AuthStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly authService: AuthService) {
+export class OAuthStrategy extends PassportStrategy(Strategy) {
+  constructor(private readonly oauthService: OAuthService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: secretJWTKey,
@@ -21,7 +21,7 @@ export class AuthStrategy extends PassportStrategy(Strategy) {
   }
 
   public async validate(payload: IJwtPayload) {
-    const user = await this.authService.validateUser(payload);
+    const user = await this.oauthService.validateUser(payload);
 
     if (!user) {
       throw new UnauthorizedException();
