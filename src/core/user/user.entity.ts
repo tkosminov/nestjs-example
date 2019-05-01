@@ -4,8 +4,8 @@ import { Field, ID, ObjectType } from 'type-graphql';
 
 import { IsEmail, IsUUID, MinLength } from 'class-validator';
 
-import { EntityHelper } from '../common/helpers/module/entity.helper';
-import { passwordToHash } from '../common/helpers/pswd.helper';
+import { EntityHelper } from '../../common/helpers/module/entity.helper';
+import { passwordToHash } from '../../common/helpers/pswd.helper';
 
 import { Permission } from '../permission/permission.entity';
 

@@ -8,6 +8,7 @@ import { LoaderInterceptor } from './common/loader/loader.interceptor';
 
 // import { ApiModule } from './api/api.module';
 import { AuthModule } from './auth/auth.module';
+import { CoreModule } from './core/core.module';
 import { DatabaseModule } from './database/database.module';
 import GraphQLModule from './graphql/graphql.module';
 // import { RabbitModule } from './rabbitmq/rabbitmq.module';
@@ -15,11 +16,8 @@ import GraphQLModule from './graphql/graphql.module';
 
 import { HealthcheckController } from './healthcheck/healthcheck.controller';
 
-import { PermissionModule } from './permission/permission.module';
-import { UserModule } from './user/user.module';
-
 @Module({
-  imports: [GraphQLModule, DatabaseModule, LoggerModule, AuthModule, UserModule, PermissionModule],
+  imports: [GraphQLModule, DatabaseModule, LoggerModule, AuthModule, CoreModule],
   providers: [
     {
       provide: APP_INTERCEPTOR,

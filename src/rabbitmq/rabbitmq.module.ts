@@ -5,9 +5,9 @@ import config from 'config';
 
 import { LoggerModule } from '../common/logger/logger.module';
 
-import { RabbitService } from './rabbitmq.service';
+import { UserAMQPService } from './services/user.service';
 
-import { UserModule } from 'src/user/user.module';
+import { UserModule } from '../core/user/user.module';
 
 const rabbitSettings: IRabbitMQSettings = config.get('RABBITMQ_SETTINGS');
 
@@ -16,9 +16,12 @@ const rabbitSettings: IRabbitMQSettings = config.get('RABBITMQ_SETTINGS');
     forwardRef(() => UserModule),
     forwardRef(() => LoggerModule),
     RabbitMQModule.forRoot({
+      prefetchCount: 1,
+      defaultRpcErrorBehavior: 0, // ack!
+      defaultSubscribeErrorBehavior: 0, // ack!
       exchanges: [
         {
-          name: 'auth_service',
+          name: 'api_1',
         },
       ],
       uri: `amqp://${rabbitSettings.username}:${rabbitSettings.password}@${rabbitSettings.host}:${
@@ -26,6 +29,6 @@ const rabbitSettings: IRabbitMQSettings = config.get('RABBITMQ_SETTINGS');
       }/${rabbitSettings.vhost}`,
     }),
   ],
-  providers: [RabbitService],
+  providers: [UserAMQPService],
 })
 export class RabbitModule {}

@@ -1,7 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { LoggerService } from '../common/logger/logger.service';
+import { LoggerService } from '../../common/logger/logger.service';
 
 import { User } from './user.entity';
 import { UserLoader } from './user.loader';

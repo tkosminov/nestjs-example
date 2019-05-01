@@ -4,7 +4,7 @@ import { Field, ID, ObjectType } from 'type-graphql';
 
 import { IsInt, IsString } from 'class-validator';
 
-import { EntityHelper } from '../common/helpers/module/entity.helper';
+import { EntityHelper } from '../../common/helpers/module/entity.helper';
 
 @ObjectType()
 @Entity()

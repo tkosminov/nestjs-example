@@ -3,7 +3,7 @@ import { Args, Context, Mutation, Parent, Query, ResolveProperty, Resolver } fro
 import { ID } from 'type-graphql';
 
 import DataLoader from 'dataloader';
-import { Loader } from '../common/loader/loader.decorator';
+import { Loader } from '../../common/loader/loader.decorator';
 
 import { User } from './user.entity';
 import { UserService } from './user.service';
@@ -21,22 +21,22 @@ export class UserResolver {
   constructor(private readonly userService: UserService, private readonly permissionService: PermissionService) {}
 
   @Query(() => User)
-  public async findUser(@Args({ name: 'id', type: () => ID }) id: string) {
+  public async user(@Args({ name: 'id', type: () => ID }) id: string) {
     return await this.userService.findOne(id);
   }
 
   @Query(() => [User])
-  public async findUsers(): Promise<User[]> {
+  public async users(): Promise<User[]> {
     return await this.userService.findAll();
   }
 
   @Mutation(() => User)
-  public async createUser(@Args('data') createUserInput: CreateUserDTO) {
+  public async userCreate(@Args('data') createUserInput: CreateUserDTO) {
     return await this.userService.create(createUserInput);
   }
 
   @Mutation(() => User)
-  public async updateUser(
+  public async userUpdate(
     @Args({ name: 'id', type: () => ID }) id: string,
     @Args('data') updateUserInput: UpdateUserDTO
   ) {
@@ -44,12 +44,12 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  public async deleteUser(@Args({ name: 'id', type: () => ID }) id: string) {
+  public async userDelete(@Args({ name: 'id', type: () => ID }) id: string) {
     return await this.userService.delete(id, { relations: ['permissions'] });
   }
 
   @Mutation(() => User)
-  public async addUserPermission(
+  public async userAddPermission(
     @Args({ name: 'userId', type: () => ID }) userId: string,
     @Args({ name: 'permissionId', type: () => ID }) permissionId: number
   ) {

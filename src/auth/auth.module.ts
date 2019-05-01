@@ -6,8 +6,8 @@ import { LoggerService } from '../common/logger/logger.service';
 
 import config from 'config';
 
+import { UserModule } from '../core/user/user.module';
 import { DatabaseModule } from '../database/database.module';
-import { UserModule } from '../user/user.module';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';

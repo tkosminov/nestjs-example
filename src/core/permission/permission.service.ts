@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 
 import { Permission } from './permission.entity';
 
-import { ServiceHelper } from '../common/helpers/module/service.helper';
+import { ServiceHelper } from '../../common/helpers/module/service.helper';
 
 @Injectable()
 export class PermissionService extends ServiceHelper<Permission> {

@@ -14,22 +14,22 @@ export class PermissionResolver {
   constructor(private readonly permissionService: PermissionService) {}
 
   @Query(() => Permission)
-  public async findPermission(@Args({ name: 'id', type: () => ID }) id: number) {
+  public async permission(@Args({ name: 'id', type: () => ID }) id: number) {
     return await this.permissionService.findOne(id);
   }
 
   @Query(() => [Permission])
-  public async findPermissions(): Promise<Permission[]> {
+  public async permissions(): Promise<Permission[]> {
     return await this.permissionService.findAll();
   }
 
   @Mutation(() => Permission)
-  public async createPermission(@Args('data') createPermissionInput: CreatePermissionDTO) {
+  public async permissionCreate(@Args('data') createPermissionInput: CreatePermissionDTO) {
     return await this.permissionService.create(createPermissionInput);
   }
 
   @Mutation(() => Permission)
-  public async updatePermission(
+  public async permissionUpdate(
     @Args({ name: 'id', type: () => ID }) id: number,
     @Args('data') updatePermissionInput: UpdatePermissionDTO
   ) {
@@ -37,7 +37,7 @@ export class PermissionResolver {
   }
 
   @Mutation(() => Permission)
-  public async deletePermission(@Args({ name: 'id', type: () => ID }) id: number) {
+  public async permissionDelete(@Args({ name: 'id', type: () => ID }) id: number) {
     return await this.permissionService.delete(id);
   }
 }

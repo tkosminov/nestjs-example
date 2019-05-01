@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { LoggerService } from '../common/logger/logger.service';
+import { LoggerService } from '../../common/logger/logger.service';
 
 import { Permission } from './permission.entity';
 import { PermissionLoader } from './permission.loader';

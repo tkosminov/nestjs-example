@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 import config from 'config';
 import jwt from 'jsonwebtoken';
 
-import { UserService } from '../../user/user.service';
+import { UserService } from '../../core/user/user.service';
 
 import { ReqHelper } from '../helpers/req.helper';
 

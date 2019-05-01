@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-import { Permission } from '../../permission/permission.entity';
+import { Permission } from '../../core/permission/permission.entity';
 
 export class seed1555139717086 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {

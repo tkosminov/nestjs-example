@@ -3,14 +3,14 @@ import { forwardRef, Inject, Injectable, UnauthorizedException } from '@nestjs/c
 import config from 'config';
 import jwt from 'jsonwebtoken';
 
-import { UserService } from '../user/user.service';
+import { UserService } from '../core/user/user.service';
 
-import { CreateUserDTO } from '../user/dto/create.dto';
-import { LoginUserDTO } from '../user/dto/login.dto';
+import { CreateUserDTO } from '../core/user/dto/create.dto';
+import { LoginUserDTO } from '../core/user/dto/login.dto';
 
 import { IJwtPayload } from './interfaces/jwt-payload.iterface';
 
-import { passwordToHash } from 'src/common/helpers/pswd.helper';
+import { passwordToHash } from '../common/helpers/pswd.helper';
 
 const jwtSettings = config.get<IJwtSettings>('JWT_SETTINGS');
 
