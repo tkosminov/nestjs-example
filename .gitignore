@@ -1,4 +1,6 @@
 node_modules
 
-src/graphql.schema.ts
-src/schema.graphql
+src/graphql/schema.ts
+src/graphql/schema.graphql
+
+dist

@@ -22,7 +22,8 @@ interface IJwtSettings {
 }
 
 interface IApiUrls {
-  readonly CORE_SERVICE: string;
+  readonly API_1_SERVICE: string;
+  readonly API_2_SERVICE: string;
 }
 
 interface IRabbitMQSettings {

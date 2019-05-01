@@ -21,7 +21,8 @@
     "expiresIn": 3600
   },
   "API_URLS": {
-    "CORE_SERVICE": "http://localhost:5010/graphql"
+    "API_1_SERVICE": "http://localhost:5010/graphql",
+    "API_2_SERVICE": "http://localhost:5011/api/v1"
   },
   "RABBITMQ_SETTINGS": {
     "name": "rabbitmq",

@@ -9,6 +9,6 @@ export class CoreService {
   constructor(private readonly httpService: HttpService) {}
 
   public async index() {
-    return await this.httpService.get(apiUrls.CORE_SERVICE);
+    return await this.httpService.get(apiUrls.API_2_SERVICE);
   }
 }
