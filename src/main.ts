@@ -4,6 +4,7 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import express from 'express';
+import { express as voyagerMiddleware } from 'graphql-voyager/middleware';
 
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
@@ -24,6 +25,8 @@ async function bootstrap() {
       transform: true,
     })
   );
+
+  app.use('/voyager', voyagerMiddleware({ endpointUrl: '/graphql' }));
 
   const options = new DocumentBuilder()
     .setTitle('Auth example')

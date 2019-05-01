@@ -47,6 +47,7 @@
     "dataloader": "^1.4.0",
     "graphql": "^14.1.1",
     "graphql-tools": "^4.0.4",
+    "graphql-voyager": "^1.0.0-rc.27",
     "helmet": "^3.16.0",
     "isomorphic-unfetch": "^3.0.0",
     "passport": "^0.4.0",
