@@ -93,7 +93,7 @@ export class OAuthService {
     return {
       expires_in: jwtSettings.expiresIn,
       refresh_token: updatedAuth.refreshToken,
-      jwt_token: jwtToken,
+      access_token: jwtToken,
       token_type: 'bearer',
     };
   }

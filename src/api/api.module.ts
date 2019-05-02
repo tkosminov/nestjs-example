@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 
-import { CoreModule } from './core/core.module';
+import { Back2Module } from './back2/back2.module';
 
 @Module({
-  imports: [CoreModule],
+  imports: [Back2Module],
   providers: [],
-  exports: [CoreModule],
+  exports: [Back2Module],
 })
 export class ApiModule {}

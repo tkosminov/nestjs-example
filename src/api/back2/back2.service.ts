@@ -5,7 +5,7 @@ import config from 'config';
 const apiUrls: IApiUrls = config.get('API_URLS');
 
 @Injectable()
-export class CoreService {
+export class Back2Service {
   constructor(private readonly httpService: HttpService) {}
 
   public async index() {
