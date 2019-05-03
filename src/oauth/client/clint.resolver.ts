@@ -19,7 +19,7 @@ export class ClientResolver {
   }
 
   @Query(() => [Client])
-  public async clients(): Promise<Client[]> {
+  public async clients() {
     return await this.clientService.findAll();
   }
 

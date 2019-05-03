@@ -20,10 +20,10 @@ const jwtSettings = config.get<IJwtSettings>('JWT_SETTINGS');
 
 @Module({
   imports: [
+    ClientModule,
+    AuthModule,
     forwardRef(() => UserModule),
-    forwardRef(() => ClientModule),
-    forwardRef(() => AuthModule),
-    DatabaseModule,
+    forwardRef(() => DatabaseModule),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secretOrPrivateKey: jwtSettings.secretKey,
@@ -41,5 +41,6 @@ const jwtSettings = config.get<IJwtSettings>('JWT_SETTINGS');
     },
   ],
   controllers: [OAuthController],
+  exports: [ClientModule, AuthModule],
 })
 export class OAuthModule {}

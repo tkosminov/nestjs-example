@@ -15,7 +15,7 @@ export class Client extends EntityHelper {
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
-  @Field(() => ID)
+  @Field()
   @Column({
     nullable: false,
     default: () => 'MD5(random()::text)',
@@ -27,7 +27,7 @@ export class Client extends EntityHelper {
   @Column()
   @Index({ unique: true })
   @IsString()
-  @MinLength(1)
+  @MinLength(4)
   public title: string;
 
   @OneToMany(() => Auth, auth => auth.client)
