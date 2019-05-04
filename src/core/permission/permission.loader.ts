@@ -3,7 +3,7 @@ import { getRepository } from 'typeorm';
 
 import DataLoader from 'dataloader';
 
-import { ILoader } from '../../common/loader/loader.interface';
+import { ILoader } from '../../graphql/loader/loader.interface';
 
 import { User } from '../user/user.entity';
 import { Permission } from './permission.entity';

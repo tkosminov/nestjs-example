@@ -4,7 +4,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggerModule } from './common/logger/logger.module';
 import { AuthMiddleware } from './common/middlewares/auth.middleware';
 
-import { LoaderInterceptor } from './common/loader/loader.interceptor';
+import { LoaderInterceptor } from './graphql/loader/loader.interceptor';
 
 // import { ApiModule } from './api/api.module';
 import { CoreModule } from './core/core.module';

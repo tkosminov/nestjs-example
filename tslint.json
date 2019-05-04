@@ -14,7 +14,8 @@
     "exclude": [
       "./test/**/*",
       "./**/*spec.ts",
-      "./src/database/migrations/**/*.ts"
+      "./src/database/migrations/**/*.ts",
+      "./src/graphql/schema.ts",
     ]
   },
   "rules": {

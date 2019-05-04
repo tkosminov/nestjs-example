@@ -3,6 +3,7 @@
   "exclude": [
     "node_modules",
     "test",
-    "**/*spec.ts"
+    "**/*spec.ts",
+    "src/graphql/schema.ts",
   ]
 }

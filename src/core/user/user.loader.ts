@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import DataLoader from 'dataloader';
 
-import { ILoader } from '../../common/loader/loader.interface';
+import { ILoader } from '../../graphql/loader/loader.interface';
 
 import { User } from './user.entity';
 import { UserService } from './user.service';

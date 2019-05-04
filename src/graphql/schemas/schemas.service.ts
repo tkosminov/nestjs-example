@@ -11,7 +11,7 @@ import { RetryLink } from 'apollo-link-retry';
 
 import config from 'config';
 
-const apiUrls: IApiUrls = config.get('API_URLS');
+const apiUrls = config.get<IApiUrls>('API_URLS');
 
 @Injectable()
 export class SchemasService {

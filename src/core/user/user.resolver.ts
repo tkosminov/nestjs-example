@@ -3,7 +3,7 @@ import { Args, Context, Mutation, Parent, Query, ResolveProperty, Resolver } fro
 import { ID } from 'type-graphql';
 
 import DataLoader from 'dataloader';
-import { Loader } from '../../common/loader/loader.decorator';
+import { Loader } from '../../graphql/loader/loader.decorator';
 
 import { User } from './user.entity';
 import { UserService } from './user.service';
