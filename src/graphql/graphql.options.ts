@@ -15,7 +15,7 @@ export class GraphqlOptions implements GqlOptionsFactory {
   public createGqlOptions(): Promise<GqlModuleOptions> | GqlModuleOptions {
     return {
       autoSchemaFile: __dirname + '/schema.graphql',
-      typePaths: ['../**/*.graphql'],
+      typePaths: [__dirname + '../**/*.graphql'],
       debug: true,
       playground: true,
       installSubscriptionHandlers: true,

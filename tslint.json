@@ -15,7 +15,7 @@
       "./test/**/*",
       "./**/*spec.ts",
       "./src/database/migrations/**/*.ts",
-      "./src/graphql/schema.ts",
+      "./src/graphql/schema.ts"
     ]
   },
   "rules": {
@@ -161,7 +161,6 @@
       "check-format",
       "allow-leading-underscore"
     ],
-    // tslint-clean-code
     "try-catch-first": true,
     "max-func-args": [
       true,
@@ -179,7 +178,6 @@
     "no-map-without-usage": true,
     "no-complex-conditionals": true,
     "prefer-dry-conditionals": true,
-    // tslint-eslint-rules
     "no-constant-condition": true,
     "no-control-regex": true,
     "no-duplicate-case": true,
