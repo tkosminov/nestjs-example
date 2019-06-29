@@ -2,7 +2,9 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 
 import { LoggerModule } from './common/logger/logger.module';
+
 import { AuthMiddleware } from './common/middlewares/auth.middleware';
+import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 
 import { LoaderInterceptor } from './graphql/loader/loader.interceptor';
 
@@ -28,6 +30,6 @@ import { HealthcheckController } from './healthcheck/healthcheck.controller';
 })
 export class AppModule implements NestModule {
   public configure(consumer: MiddlewareConsumer): void | MiddlewareConsumer {
-    consumer.apply(AuthMiddleware).forRoutes('*');
+    consumer.apply(LoggerMiddleware, AuthMiddleware).forRoutes('*');
   }
 }

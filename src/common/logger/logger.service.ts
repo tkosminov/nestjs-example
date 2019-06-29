@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import config from 'config';
-import { Logger as ISQLLogger, QueryRunner } from 'typeorm';
 
 enum ELogLevel {
   debug,
@@ -10,7 +9,7 @@ enum ELogLevel {
 }
 
 @Injectable()
-export class LoggerService extends Logger implements ISQLLogger {
+export class LoggerService extends Logger {
   // tslint:disable-next-line: no-unsafe-any
   private readonly _currentLevel: ELogLevel = ELogLevel[config.get<ILogSettings>('LOGGER_SETTINGS').level];
 
@@ -37,30 +36,6 @@ export class LoggerService extends Logger implements ISQLLogger {
     if (this.isValidLevel(ELogLevel.error)) {
       Logger.error(message, trace, context || this._context);
     }
-  }
-
-  // tslint:disable-next-line: no-any
-  public logQuery(query: string, _parameters?: any[], queryRunner?: QueryRunner) {
-    if (queryRunner.connection.options.maxQueryExecutionTime) {
-      return;
-    }
-    this.info(query);
-  }
-
-  // tslint:disable-next-line: no-any
-  public logQueryError(error: string, _query: string, _parameters?: any[], _queryRunner?: QueryRunner) {
-    this.error(error);
-  }
-
-  // tslint:disable-next-line: no-any
-  public logQuerySlow(time: number, query: string, _parameters?: any[], _queryRunner?: QueryRunner) {
-    this.info(`\x1b[35m(${time} ms)\x1b[0m ${query}`);
-  }
-  public logSchemaBuild(message: string, _queryRunner?: QueryRunner) {
-    this.log(message);
-  }
-  public logMigration(message: string, _queryRunner?: QueryRunner) {
-    this.log(message);
   }
 
   private isValidLevel(level: ELogLevel): boolean {

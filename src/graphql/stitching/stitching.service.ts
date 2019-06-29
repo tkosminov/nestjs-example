@@ -4,29 +4,32 @@ import { GraphQLSchema } from 'graphql';
 import { introspectSchema, makeRemoteExecutableSchema } from 'graphql-tools';
 import fetch from 'isomorphic-unfetch';
 
-import { Operation } from 'apollo-link';
 import { setContext } from 'apollo-link-context';
 import { HttpLink } from 'apollo-link-http';
 import { RetryLink } from 'apollo-link-retry';
 
+import { LoggerService } from '../../common/logger/logger.service';
+
 import config from 'config';
 
-const apiUrls = config.get<IApiUrls>('API_URLS');
+const apiUrls: string[] = config.get('GRAPHQL_API_URLS');
 
 @Injectable()
-export class SchemasService {
-  public async getSchemas(): Promise<GraphQLSchema[] | null[]> {
-    return Promise.all([this.getApi1Schema(), this.getOtherSchema()]);
+export class StitchingService {
+  constructor(private readonly logger: LoggerService) {}
+
+  public async schemas(): Promise<GraphQLSchema[] | null[]> {
+    return Promise.all(apiUrls.map(url => this.getApiSchema(url)));
   }
 
-  private async getApi1Schema(): Promise<GraphQLSchema | null> {
+  private async getApiSchema(apiLink: string): Promise<GraphQLSchema | null> {
     try {
-      const api1Link = new HttpLink({
-        uri: apiUrls.API_1_SERVICE,
+      const httpLink = new HttpLink({
+        uri: apiLink,
         fetch,
       });
 
-      const retryLink = this.retryLink().concat(api1Link);
+      const retryLink = this.retryLink().concat(httpLink);
       const link = this.contextLink().concat(retryLink);
 
       const coreIntrospect = await introspectSchema(link);
@@ -36,19 +39,16 @@ export class SchemasService {
         link,
       });
     } catch (error) {
+      this.logger.error(JSON.stringify(error));
       return null;
     }
-  }
-
-  private async getOtherSchema(): Promise<GraphQLSchema | null> {
-    return null;
   }
 
   private retryLink() {
     return new RetryLink({
       attempts: {
         max: 1,
-        retryIf: (error: Error, _operation: Operation) => !!error,
+        retryIf: (error, _operation) => !!error,
       },
     });
   }
@@ -59,7 +59,10 @@ export class SchemasService {
 
       // tslint:disable: no-unsafe-any
       if (Object.keys(previousContext).length) {
-        currentUser = JSON.stringify(previousContext.graphqlContext.req.user);
+        const user = previousContext.graphqlContext.req.user;
+        if (user) {
+          currentUser = JSON.stringify(user);
+        }
       }
       // tslint:enable: no-unsafe-any
 

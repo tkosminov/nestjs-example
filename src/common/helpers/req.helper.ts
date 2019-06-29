@@ -7,7 +7,7 @@ export class ReqHelper {
   }
 
   public getUrl(req: Request): string {
-    return req.originalUrl || req.url || '-';
+    return req.originalUrl || req.url || req.baseUrl || '-';
   }
 
   public getHttpVersion(req: Request): string {

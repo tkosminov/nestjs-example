@@ -6,11 +6,11 @@ import { mergeSchemas } from 'graphql-tools';
 
 import { Request } from 'express';
 
-import { SchemasService } from './schemas/schemas.service';
+import { StitchingService } from './stitching/stitching.service';
 
 @Injectable()
 export class GraphqlOptions implements GqlOptionsFactory {
-  constructor(private readonly schemasService: SchemasService) {}
+  constructor(private readonly stitchingService: StitchingService) {}
 
   public createGqlOptions(): Promise<GqlModuleOptions> | GqlModuleOptions {
     return {
@@ -26,7 +26,7 @@ export class GraphqlOptions implements GqlOptionsFactory {
       },
 
       transformSchema: async (schema: GraphQLSchema) => {
-        const schemas: GraphQLSchema[] = [schema, ...(await this.schemasService.getSchemas())];
+        const schemas: GraphQLSchema[] = [schema, ...(await this.stitchingService.schemas())];
 
         return mergeSchemas({
           schemas: schemas.filter(Boolean),

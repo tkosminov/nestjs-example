@@ -5,6 +5,8 @@ import { ID } from 'type-graphql';
 import DataLoader from 'dataloader';
 import { Loader } from '../../graphql/loader/loader.decorator';
 
+import { passwordToHash } from '../../common/helpers/pswd.helper';
+
 import { User } from './user.entity';
 import { UserService } from './user.service';
 
@@ -32,7 +34,10 @@ export class UserResolver {
 
   @Mutation(() => User)
   public async userCreate(@Args('data') createUserInput: CreateUserDTO) {
-    return await this.userService.create(createUserInput);
+    const data = { ...createUserInput };
+    data.password = passwordToHash(createUserInput.password);
+
+    return await this.userService.create(data);
   }
 
   @Mutation(() => User)

@@ -7,24 +7,24 @@
     "database": "nestjs_example"
   },
   "LOGGER_SETTINGS": {
-    "level": "debug",
-    "timestamps": true,
+    "level": "error",
     "silence": [
-      "/healthz"
+      "healthz",
+      "auth"
     ]
-  },
-  "APP_SETTINGS": {
-    "secretKey": "key"
   },
   "JWT_SETTINGS": {
     "secretKey": "key",
     "expiresIn": 3600
   },
-  "API_URLS": {
-    "API_1_SERVICE": "http://localhost:5010/graphql",
+  "GRAPHQL_API_URLS": [
+    "http://localhost:5010/graphql"
+  ],
+  "REST_API_URLS": {
     "API_2_SERVICE": "http://localhost:5011/api/v1"
   },
   "RABBITMQ_SETTINGS": {
+    "exchange": "example",
     "name": "rabbitmq",
     "host": "localhost",
     "vhost": "vhost",
@@ -32,12 +32,10 @@
     "username": "admin",
     "password": "password"
   },
-  "AUTH_BYPASS": [
-    {
-      "action": "auth"
-    },
-    {
-      "action": "healthz"
-    }
+  "ACTION_BYPASS": [
+    "healthz",
+    "graphql",
+    "voyager",
+    "auth"
   ]
 }

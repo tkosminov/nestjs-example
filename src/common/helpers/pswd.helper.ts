@@ -1,9 +1,12 @@
-import { createHmac } from 'crypto';
-
-import config from 'config';
+import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
 
 export const passwordToHash = (password: string) => {
-  return createHmac('sha256', config.get<IAppSettings>('APP_SETTINGS').secretKey)
-    .update(password)
-    .digest('hex');
+  const salt = genSaltSync(10);
+  const hash = hashSync(password, salt);
+
+  return hash;
+};
+
+export const checkPassword = (password: string, hash: string) => {
+  return compareSync(password, hash);
 };

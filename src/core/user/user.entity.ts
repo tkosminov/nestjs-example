@@ -1,11 +1,10 @@
-import { BeforeInsert, Column, Entity, Index, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { Field, ID, ObjectType } from 'type-graphql';
 
 import { IsEmail, IsUUID, MinLength } from 'class-validator';
 
 import { EntityHelper } from '../../common/helpers/module/entity.helper';
-import { passwordToHash } from '../../common/helpers/pswd.helper';
 
 import { Permission } from '../permission/permission.entity';
 
@@ -31,11 +30,6 @@ export class User extends EntityHelper {
   @ManyToMany(() => Permission, { nullable: true })
   @JoinTable()
   public permissions?: Permission[];
-
-  @BeforeInsert()
-  protected hashPassword() {
-    this.password = passwordToHash(this.password);
-  }
 
   public jwtPayload() {
     return {

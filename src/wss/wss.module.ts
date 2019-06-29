@@ -8,7 +8,7 @@ import { WssGateway } from './wss.gateway';
     WssGateway,
     {
       provide: LoggerService,
-      useValue: new LoggerService('WebSocketService'),
+      useValue: new LoggerService('WssModule'),
     },
   ],
 })

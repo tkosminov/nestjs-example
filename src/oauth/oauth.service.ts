@@ -16,7 +16,7 @@ import { ClientDTO } from './dto/client.dto';
 import { PasswordDTO } from './dto/password.dto';
 import { RefreshDTO } from './dto/refresh.dto';
 
-import { passwordToHash } from '../common/helpers/pswd.helper';
+import { checkPassword } from '../common/helpers/pswd.helper';
 
 const jwtSettings = config.get<IJwtSettings>('JWT_SETTINGS');
 
@@ -32,11 +32,14 @@ export class OAuthService {
     const client = await this.checkClient(clientCredentials);
     const user = await this.userService.findOneBy({
       email: userCredentials.email,
-      password: passwordToHash(userCredentials.password),
     });
 
     if (!user) {
       throw new UnauthorizedException(`Invalid email or password`);
+    }
+
+    if (!checkPassword(userCredentials.password, user.password)) {
+      throw new UnauthorizedException('Invalid email or password');
     }
 
     let auth = await this.authService.findOneBy({ client, user }, ['client', 'user']);
