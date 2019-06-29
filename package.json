@@ -25,7 +25,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-add": "npm run lint"
+      "pre-commit": "npm run lint && git add -A"
     }
   },
   "dependencies": {
