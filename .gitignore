@@ -4,3 +4,6 @@ src/graphql/schema.ts
 src/graphql/schema.graphql
 
 dist
+
+uploads/**/*
+!uploads/.gitkeep

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Upload Test</title>
+
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+
+<body>
+  <div class="app">
+    <div class="app__main">
+      <form method="post" enctype="multipart/form-data">
+        <div>
+          <label for="profile_pic">Choose file to upload</label>
+          <input type="file" id="profile_pic" name="profile_pic" accept=".jpg, .jpeg, .png">
+        </div>
+        <div>
+          <button>Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    $(function() {
+      $('form').on('submit', (event) => {
+        event.preventDefault();
+
+        const fileLists = event.target[0].files;
+        const file = event.target[0].files[0];
+
+        const fileBlob = new Blob([file], { type: file.type })
+
+        // more https://github.com/jaydenseric/graphql-multipart-request-spec
+        
+        const query = `
+          mutation($file: Upload!) {
+            singleUpload(file: $file, data: { modifyNeed: true }) {
+              url
+            }
+          }
+        `;
+        const variables = { file };
+
+        const formData = new FormData()
+        const operations = JSON.stringify({ query, variables })
+        const map = JSON.stringify({ "0": ["variables.file"] })
+
+        formData.append('operations', operations)
+        formData.append('map', map)
+        formData.append('0', file)
+
+         $.ajax({
+          url: 'http://localhost:8080/graphql',
+          data: formData,
+          processData: false,
+          contentType: false,
+          type: 'POST',
+        });
+      })
+    })
+  </script>
+</body>
+
+</html>

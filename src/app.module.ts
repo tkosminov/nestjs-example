@@ -13,13 +13,14 @@ import { CoreModule } from './core/core.module';
 import { DatabaseModule } from './database/database.module';
 import GraphQLModule from './graphql/graphql.module';
 import { OAuthModule } from './oauth/oauth.module';
+import { UploadModule } from './upload/upload.module';
 // import { RabbitModule } from './rabbitmq/rabbitmq.module';
 // import { WssModule } from './wss/wss.module';
 
 import { HealthcheckController } from './healthcheck/healthcheck.controller';
 
 @Module({
-  imports: [GraphQLModule, DatabaseModule, LoggerModule, OAuthModule, CoreModule],
+  imports: [GraphQLModule, DatabaseModule, LoggerModule, OAuthModule, CoreModule, UploadModule],
   providers: [
     {
       provide: APP_INTERCEPTOR,

@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { GqlModuleOptions, GqlOptionsFactory } from '@nestjs/graphql';
 
-import { GraphQLSchema } from 'graphql';
+import { GraphQLError, GraphQLSchema } from 'graphql';
 import { mergeSchemas } from 'graphql-tools';
 
 import { Request } from 'express';
 
+import { LoggerService } from '../common/logger/logger.service';
 import { StitchingService } from './stitching/stitching.service';
 
 @Injectable()
 export class GraphqlOptions implements GqlOptionsFactory {
-  constructor(private readonly stitchingService: StitchingService) {}
+  constructor(private readonly stitchingService: StitchingService, private readonly logger: LoggerService) {}
 
   public createGqlOptions(): Promise<GqlModuleOptions> | GqlModuleOptions {
     return {
@@ -24,7 +25,14 @@ export class GraphqlOptions implements GqlOptionsFactory {
         path: __dirname + '/schema.ts',
         outputAs: 'interface',
       },
-
+      uploads: {
+        maxFiles: 5,
+        maxFileSize: 10000000, // 10 MB
+      },
+      formatError: (error: GraphQLError) => {
+        this.logger.error(JSON.stringify(error, null, 2));
+        return error;
+      },
       transformSchema: async (schema: GraphQLSchema) => {
         const schemas: GraphQLSchema[] = [schema, ...(await this.stitchingService.schemas())];
 

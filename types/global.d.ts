@@ -11,10 +11,6 @@ interface ILogSettings {
   readonly silence: string[];
 }
 
-interface IAppSettings {
-  readonly secretKey: string;
-}
-
 interface IJwtSettings {
   readonly secretKey: string;
   readonly expiresIn: number;
