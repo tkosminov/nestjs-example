@@ -1,6 +1,6 @@
 {
   "name": "nestjs_example",
-  "version": "0.3.3",
+  "version": "0.3.5",
   "description": "nestjs_example",
   "author": "t.kosminov",
   "license": "MIT",
@@ -61,6 +61,7 @@
     "hasha": "^5.0.0",
     "helmet": "^3.18.0",
     "isomorphic-unfetch": "^3.0.0",
+    "lodash": "^4.17.14",
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
     "passport-jwt": "^4.0.0",
