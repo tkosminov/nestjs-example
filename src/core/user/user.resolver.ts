@@ -18,6 +18,7 @@ import { CreateUserDTO } from './dto/create.dto';
 import { UpdateUserDTO } from './dto/update.dto';
 
 // tslint:disable: no-unsafe-any
+@Loader(PermissionLoader)
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly userService: UserService, private readonly permissionService: PermissionService) {}
@@ -66,8 +67,8 @@ export class UserResolver {
     return await this.userService.save(user);
   }
 
-  @ResolveProperty()
   @Loader(PermissionLoader)
+  @ResolveProperty()
   public async permissions(
     @Parent() user: User,
     @Context('PermissionLoader') permissionLoader: DataLoader<string, Permission[]>

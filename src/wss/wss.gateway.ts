@@ -7,17 +7,18 @@ import {
   WsResponse,
 } from '@nestjs/websockets';
 
+import { Socket } from 'dgram';
 import { from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Server, Socket } from 'socket.io';
+import ws from 'ws';
 
 import { LoggerService } from '../common/logger/logger.service';
 
 // tslint:disable-next-line: no-unsafe-any
-@WebSocketGateway()
+@WebSocketGateway(8081)
 export class WssGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  public server: Server;
+  public server: ws.Server;
 
   constructor(private readonly logger: LoggerService) {}
 

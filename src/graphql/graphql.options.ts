@@ -21,13 +21,9 @@ export class GraphqlOptions implements GqlOptionsFactory {
       playground: true,
       installSubscriptionHandlers: true,
       context: ({ req }: { req: Request }) => ({ req }),
-      definitions: {
-        path: __dirname + '/schema.ts',
-        outputAs: 'interface',
-      },
       uploads: {
         maxFiles: 5,
-        maxFileSize: 10000000, // 10 MB
+        maxFileSize: 1024 * 1024 * 10, // 10 MB
       },
       formatError: (error: GraphQLError) => {
         this.logger.error(JSON.stringify(error, null, 2));

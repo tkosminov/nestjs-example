@@ -13,7 +13,7 @@ export class LoaderInterceptor implements NestInterceptor {
   // tslint:disable: no-unsafe-any
   // tslint:disable-next-line: no-any
   public intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
-    const type = this.reflector.get<Type<ILoader>>('dataloader', context.getHandler());
+    const type = this.reflector.get<Type<ILoader> | undefined>('dataloader', context.getHandler());
 
     if (type) {
       const gqlExecutionContext = GqlExecutionContext.create(context);

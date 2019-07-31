@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Upload Test</title>
+
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+
+<body>
+  <div class="app">
+    <div class="app__main">
+      <button id="wsButton" type="button" title="Open WebSocket connection">
+        Open WebSocket connection
+      </button>
+
+      <pre id="messages" style="height: 400px; overflow: scroll"></pre>
+    </div>
+  </div>
+
+  <script>
+    $(function () {
+      const wsButton = document.querySelector('#wsButton');
+
+      function showMessage(message) {
+        messages.textContent += `\n${message}`;
+        messages.scrollTop = messages.scrollHeight;
+      }
+
+      let ws;
+
+      wsButton.onclick = function () {
+        if (ws) {
+          ws.onerror = ws.onopen = ws.onclose = null;
+          ws.close();
+        }
+
+        ws = new WebSocket(`ws://localhost:8081`);
+        ws.onerror = function () {
+          showMessage('WebSocket error');
+        };
+        ws.onopen = function () {
+          showMessage('WebSocket connection established');
+          ws.send('events')
+        };
+        ws.onclose = function () {
+          showMessage('WebSocket connection closed');
+        };
+        ws.onmessage = function (msg) {
+          console.log(msg)
+          showMessage(JSON.stringify(msg));
+        }
+      };
+    })
+  </script>
+</body>
+
+</html>

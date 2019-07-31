@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
+import { WsAdapter } from '@nestjs/platform-ws';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import express from 'express';
@@ -25,6 +26,9 @@ async function bootstrap() {
       transform: true,
     })
   );
+
+  // tslint:disable-next-line: no-unsafe-any
+  app.useWebSocketAdapter(new WsAdapter(app));
 
   app.use('/voyager', voyagerMiddleware({ endpointUrl: '/graphql' }));
 
