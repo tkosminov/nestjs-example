@@ -25,7 +25,27 @@ export class ReqHelper {
   }
 
   public getReferrer(req: Request) {
-    return req.headers.referer || req.headers.referrer || '-';
+    const referer = req.headers.referer || req.headers.referrer || '-';
+
+    if (typeof referer === 'string') {
+      return referer;
+    }
+
+    return referer[0];
+  }
+
+  public getOrigin(req: Request) {
+    const origin = req.headers.origin;
+
+    if (!origin || typeof origin === 'string') {
+      return origin;
+    }
+
+    return origin[0];
+  }
+
+  public getMethod(req: Request) {
+    return req.method;
   }
 
   public getUserAgent(req: Request) {

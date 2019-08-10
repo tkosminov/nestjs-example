@@ -16,43 +16,48 @@ export class LoggerMiddleware extends ReqHelper implements NestMiddleware {
 
   public use(req: Request, res: Response, next: NextFunction) {
     const action = this.getUrl(req).split('/')[1];
-    if (this._settings.silence.includes(action)) {
+    if (
+      this._settings.silence.includes(action) ||
+      // tslint:disable-next-line: no-unsafe-any
+      (req.method === 'POST' && req.body && this._settings.silence.includes(req.body.operationName))
+    ) {
       return next();
     }
 
     const startTime = process.hrtime();
 
     req.on('error', (error: Error) => {
-      this.logMethodByStatus(JSON.stringify(error.message, null, 2), error.stack, req.statusCode);
+      this.logMethodByStatus(error.message, error.stack, req.statusCode);
     });
 
     res.on('error', (error: Error) => {
-      this.logMethodByStatus(JSON.stringify(error.message, null, 2), error.stack, res.statusCode);
+      this.logMethodByStatus(error.message, error.stack, res.statusCode);
     });
 
     res.on('finish', () => {
       const diff = process.hrtime(startTime);
 
       const message = {
-        method: req.method,
-        url: this.getUrl(req),
+        // tslint:disable-next-line: no-unsafe-any
+        client_id: req.query.client_id,
+        url: `${this.getMethod(req)} ${this.getUrl(req)}`,
         referrer: this.getReferrer(req),
+        origin: this.getOrigin(req),
         userAgent: this.getUserAgent(req),
         remoteAddress: this.getIp(req),
-        httpVersion: `HTTP/${this.getHttpVersion(req)}`,
-        contentLength: this.getResponseHeader(res, 'content-length'),
         statusCode: res.statusCode,
         statusMessage: res.statusMessage,
         requestRunTime: `${(diff[0] * 1e3 + diff[1] * 1e-6).toFixed(4)} ms`,
       };
 
-      this.logMethodByStatus(JSON.stringify(message, null, 2), '', res.statusCode);
+      this.logMethodByStatus(message, '', res.statusCode);
     });
 
     return next();
   }
 
-  private logMethodByStatus(message: string, stack: string, statusCode: number = 500) {
+  // tslint:disable-next-line: no-any
+  private logMethodByStatus(message: any, stack: string, statusCode: number = 500) {
     const prefix = 'LoggerMiddleware';
     if (statusCode < 300) {
       return this.logger.info(message, prefix);

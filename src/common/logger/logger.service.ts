@@ -17,24 +17,28 @@ export class LoggerService extends Logger {
     super(_context);
   }
 
-  public log(message: string, context?: string) {
+  // tslint:disable-next-line: no-any
+  public log(message: any, context?: string) {
     if (this.isValidLevel(ELogLevel.debug)) {
-      Logger.log(message, context || this._context);
+      Logger.log(JSON.stringify(message, null, 2), context || this._context);
     }
   }
-  public info(message: string, context?: string) {
+  // tslint:disable-next-line: no-any
+  public info(message: any, context?: string) {
     if (this.isValidLevel(ELogLevel.info)) {
-      Logger.log(message, context || this._context);
+      Logger.log(JSON.stringify(message, null, 2), context || this._context);
     }
   }
-  public warn(message: string, context?: string) {
+  // tslint:disable-next-line: no-any
+  public warn(message: any, context?: string) {
     if (this.isValidLevel(ELogLevel.warn)) {
-      Logger.warn(message, context || this._context);
+      Logger.warn(JSON.stringify(message, null, 2), context || this._context);
     }
   }
-  public error(message: string, trace?: string, context?: string) {
+  // tslint:disable-next-line: no-any
+  public error(message: any, trace?: string, context?: string) {
     if (this.isValidLevel(ELogLevel.error)) {
-      Logger.error(message, trace, context || this._context);
+      Logger.error(JSON.stringify(message, null, 2), trace, context || this._context);
     }
   }
 

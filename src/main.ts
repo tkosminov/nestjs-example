@@ -11,6 +11,7 @@ import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 
 import { AppModule } from './app.module';
+import corsOptions from './cors.options';
 
 async function bootstrap() {
   const server = express();
@@ -19,7 +20,7 @@ async function bootstrap() {
 
   app.use(helmet());
   app.use(cookieParser());
-  app.enableCors();
+  app.enableCors(corsOptions);
 
   app.useGlobalPipes(
     new ValidationPipe({

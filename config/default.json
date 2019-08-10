@@ -10,7 +10,8 @@
     "level": "error",
     "silence": [
       "healthz",
-      "auth"
+      "auth",
+      "IntrospectionQuery"
     ]
   },
   "JWT_SETTINGS": {
@@ -31,6 +32,12 @@
     "port": 5672,
     "username": "admin",
     "password": "password"
+  },
+  "CORS_SETTINGS": {
+    "allowedOrigins": [],
+    "allowedMethods": [],
+    "allowedHeaders": [],
+    "allowedCredentials": false
   },
   "ACTION_BYPASS": [
     "healthz",

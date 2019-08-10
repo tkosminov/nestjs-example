@@ -29,3 +29,10 @@ interface IRabbitMQSettings {
   readonly username: string;
   readonly password: string;
 }
+
+interface ICorsSettings {
+  readonly allowedOrigins: string[];
+  readonly allowedMethods: string[];
+  readonly allowedHeaders: string[];
+  readonly allowedCredentials: boolean;
+}

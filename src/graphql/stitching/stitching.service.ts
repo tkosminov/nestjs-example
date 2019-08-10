@@ -39,7 +39,7 @@ export class StitchingService {
         link,
       });
     } catch (error) {
-      this.logger.error(JSON.stringify(error));
+      this.logger.error(error);
       return null;
     }
   }
