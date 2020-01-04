@@ -1,8 +1,6 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-
-import { LoggerService } from '../common/logger/logger.service';
 
 import config from 'config';
 
@@ -12,18 +10,16 @@ import { OAuthController } from './oauth.controller';
 import { OAuthService } from './oauth.service';
 import { OAuthStrategy } from './oauth.strategy';
 
-import { UserModule } from '../core/user/user.module';
-import { AuthModule } from './auth/auth.module';
-import { ClientModule } from './client/client.module';
+import { RefreshTokenModule } from './refresh_token/refresh_token.module';
+import { UserModule } from './user/user.module';
 
 const jwtSettings = config.get<IJwtSettings>('JWT_SETTINGS');
 
 @Module({
   imports: [
-    ClientModule,
-    AuthModule,
-    forwardRef(() => UserModule),
-    forwardRef(() => DatabaseModule),
+    RefreshTokenModule,
+    UserModule,
+    DatabaseModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secretOrPrivateKey: jwtSettings.secretKey,
@@ -32,15 +28,8 @@ const jwtSettings = config.get<IJwtSettings>('JWT_SETTINGS');
       },
     }),
   ],
-  providers: [
-    OAuthService,
-    OAuthStrategy,
-    {
-      provide: LoggerService,
-      useValue: new LoggerService('OAuthController'),
-    },
-  ],
+  providers: [OAuthService, OAuthStrategy],
   controllers: [OAuthController],
-  exports: [ClientModule, AuthModule],
+  exports: [RefreshTokenModule, UserModule],
 })
 export class OAuthModule {}

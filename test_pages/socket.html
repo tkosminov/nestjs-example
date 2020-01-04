@@ -8,6 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
 </head>
 
 <body>
@@ -25,34 +26,25 @@
     $(function () {
       const wsButton = document.querySelector('#wsButton');
 
-      function showMessage(message) {
-        messages.textContent += `\n${message}`;
-        messages.scrollTop = messages.scrollHeight;
-      }
-
-      let ws;
-
       wsButton.onclick = function () {
-        if (ws) {
-          ws.onerror = ws.onopen = ws.onclose = null;
-          ws.close();
-        }
+        let socket = io('http://localhost:8081', {
+          query: {
+            room_id: 1,
+            user_id: Math.random(),
+          }
+        });
 
-        ws = new WebSocket(`ws://localhost:8081`);
-        ws.onerror = function () {
-          showMessage('WebSocket error');
-        };
-        ws.onopen = function () {
-          showMessage('WebSocket connection established');
-          ws.send('events')
-        };
-        ws.onclose = function () {
-          showMessage('WebSocket connection closed');
-        };
-        ws.onmessage = function (msg) {
-          console.log(msg)
-          showMessage(JSON.stringify(msg));
-        }
+        socket.on('connect', () => {
+          console.log('connect')
+        })
+
+        socket.on('disconnect', () => {
+          console.log('disconnect')
+        })
+
+        socket.on('event', (data) => {
+          console.log(data)
+        })
       };
     })
   </script>

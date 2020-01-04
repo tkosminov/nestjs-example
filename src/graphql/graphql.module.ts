@@ -1,7 +1,7 @@
 import { GraphQLModule } from '@nestjs/graphql';
 
-import { LoggerModule } from '../common/logger/logger.module';
-import { LoggerService } from '../common/logger/logger.service';
+import { LoggerModule } from '../logger/logger.module';
+import { LoggerService } from '../logger/logger.service';
 
 import { StitchingModule } from './stitching/stitching.module';
 import { StitchingService } from './stitching/stitching.service';
@@ -9,7 +9,7 @@ import { StitchingService } from './stitching/stitching.service';
 import { GraphqlOptions } from './graphql.options';
 
 export default GraphQLModule.forRootAsync({
-  imports: [StitchingModule, LoggerModule],
+  imports: [LoggerModule, StitchingModule],
   useClass: GraphqlOptions,
-  inject: [StitchingService, LoggerService],
+  inject: [LoggerService, StitchingService],
 });

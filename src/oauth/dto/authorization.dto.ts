@@ -1,10 +1,10 @@
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 import { IsString, MinLength } from 'class-validator';
 
 export class AuthorizationDTO {
-  @ApiModelProperty()
+  @ApiProperty()
   @IsString()
-  @MinLength(16)
+  @MinLength(64)
   public readonly authorizationCode: string;
 }

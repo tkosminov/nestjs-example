@@ -14,8 +14,10 @@
     "exclude": [
       "./test/**/*",
       "./**/*spec.ts",
-      "./src/database/migrations/**/*.ts",
-      "./src/graphql/schema.ts"
+      "./src/database/migrations/.ts",
+      "./src/graphql/schema.ts",
+      "./dist/**/*",
+      "./node_modules/**/*"
     ]
   },
   "rules": {
@@ -78,7 +80,6 @@
     "no-trailing-whitespace": true,
     "no-unnecessary-initializer": true,
     "no-unused-expression": true,
-    "no-use-before-declare": true,
     "no-var-keyword": true,
     "object-literal-sort-keys": false,
     "one-line": [
@@ -153,7 +154,7 @@
       }
     ],
     "no-any": true,
-    "no-unsafe-any": true,
+    "no-unsafe-any": false,
     "only-arrow-functions": false,
     "variable-name": [
       true,
@@ -169,7 +170,7 @@
     "no-flag-args": true,
     "no-for-each-push": true,
     "no-feature-envy": [
-      true,
+      false,
       1,
       [
         "_"

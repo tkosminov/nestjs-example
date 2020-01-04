@@ -1,36 +1,37 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
 
-import { LoggerModule } from './common/logger/logger.module';
-
-import { AuthMiddleware } from './common/middlewares/auth.middleware';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import { OAuthMiddleware } from './common/middlewares/ouath.middleware';
 
-import { LoaderInterceptor } from './graphql/loader/loader.interceptor';
+import { LoaderProvider } from './graphql/loader/loader.prodiver';
 
-// import { ApiModule } from './api/api.module';
+import { AmqpModule } from './amqp/amqp.module';
 import { CoreModule } from './core/core.module';
 import { DatabaseModule } from './database/database.module';
 import GraphQLModule from './graphql/graphql.module';
+import { GraphQLUploadModule } from './graphql/upload/upload.module';
+import { LoggerModule } from './logger/logger.module';
 import { OAuthModule } from './oauth/oauth.module';
-import { UploadModule } from './upload/upload.module';
-// import { RabbitModule } from './rabbitmq/rabbitmq.module';
-// import { WssModule } from './wss/wss.module';
+import { SocketModule } from './socket/socket.module';
 
 import { HealthcheckController } from './healthcheck/healthcheck.controller';
 
 @Module({
-  imports: [GraphQLModule, DatabaseModule, LoggerModule, OAuthModule, CoreModule, UploadModule],
-  providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: LoaderInterceptor,
-    },
+  imports: [
+    LoggerModule,
+    DatabaseModule,
+    SocketModule,
+    AmqpModule,
+    GraphQLModule,
+    GraphQLUploadModule,
+    OAuthModule,
+    CoreModule,
   ],
+  providers: [LoaderProvider],
   controllers: [HealthcheckController],
 })
 export class AppModule implements NestModule {
   public configure(consumer: MiddlewareConsumer): void | MiddlewareConsumer {
-    consumer.apply(LoggerMiddleware, AuthMiddleware).forRoutes('*');
+    consumer.apply(OAuthMiddleware, LoggerMiddleware).forRoutes('*');
   }
 }

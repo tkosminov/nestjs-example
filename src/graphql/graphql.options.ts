@@ -1,33 +1,32 @@
 import { Injectable } from '@nestjs/common';
 import { GqlModuleOptions, GqlOptionsFactory } from '@nestjs/graphql';
-
 import { GraphQLError, GraphQLSchema } from 'graphql';
 import { mergeSchemas } from 'graphql-tools';
 
+import config from 'config';
 import { Request } from 'express';
 
-import { LoggerService } from '../common/logger/logger.service';
+import corsOption from '../cors.option';
+import { LoggerService } from '../logger/logger.service';
+
 import { StitchingService } from './stitching/stitching.service';
 
-import corsOptions from '../cors.options';
+const graphqlSettings = config.get<IGraphqlSettings>('GRAPHQL_SETTINGS');
 
 @Injectable()
 export class GraphqlOptions implements GqlOptionsFactory {
-  constructor(private readonly stitchingService: StitchingService, private readonly logger: LoggerService) {}
+  constructor(private readonly logger: LoggerService, private readonly stitchingService: StitchingService) {}
 
   public createGqlOptions(): Promise<GqlModuleOptions> | GqlModuleOptions {
     return {
+      ...graphqlSettings,
       autoSchemaFile: __dirname + '/schema.graphql',
       typePaths: [__dirname + '../**/*.graphql'],
-      debug: true,
-      playground: true,
-      installSubscriptionHandlers: true,
-      cors: corsOptions,
-      context: ({ req }: { req: Request }) => ({ req }),
-      uploads: {
-        maxFiles: 5,
-        maxFileSize: 1024 * 1024 * 10, // 10 MB
-      },
+      cors: corsOption,
+      context: ({ req }: { req: Request }) => ({
+        req,
+        user: req.user,
+      }),
       formatError: (error: GraphQLError) => {
         this.logger.error(error);
         return error;

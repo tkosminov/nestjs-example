@@ -1,114 +1,93 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import config from 'config';
 import jwt from 'jsonwebtoken';
 
-import { Auth } from './auth/auth.entity';
+import { RefreshToken } from './refresh_token/refresh_token.entity';
 
-import { UserService } from '../core/user/user.service';
-import { AuthService } from './auth/auth.service';
-import { ClientService } from './client/client.service';
+import { RefreshTokenService } from './refresh_token/refresh_token.service';
+import { UserService } from './user/user.service';
 
-import { IJwtPayload } from './interface/jwt-payload.iterface';
+import { IPayload } from './interface/payload.interface';
 
 import { AuthorizationDTO } from './dto/authorization.dto';
-import { ClientDTO } from './dto/client.dto';
 import { PasswordDTO } from './dto/password.dto';
 import { RefreshDTO } from './dto/refresh.dto';
 
-import { checkPassword } from '../common/helpers/pswd.helper';
+import { throwREFRESHEXPIRED, throwUNAUTHORIZED } from '../common/errors';
+import { checkPassword } from '../common/helpers/password.helper';
 
 const jwtSettings = config.get<IJwtSettings>('JWT_SETTINGS');
 
 @Injectable()
 export class OAuthService {
-  constructor(
-    private readonly userService: UserService,
-    private readonly authService: AuthService,
-    private readonly clientService: ClientService
-  ) {}
+  constructor(private readonly userService: UserService, private readonly refreshTokenService: RefreshTokenService) {}
 
-  public async signInByPassword(userCredentials: PasswordDTO, clientCredentials: ClientDTO) {
-    const client = await this.checkClient(clientCredentials);
+  public async signInByPassword(userCredentials: PasswordDTO) {
     const user = await this.userService.findOneBy({
       email: userCredentials.email,
     });
 
     if (!user) {
-      throw new UnauthorizedException(`Invalid email or password`);
+      throwUNAUTHORIZED();
     }
 
-    if (!checkPassword(userCredentials.password, user.password)) {
-      throw new UnauthorizedException('Invalid email or password');
+    if (!checkPassword(user.password, userCredentials.password)) {
+      throwUNAUTHORIZED();
     }
 
-    let auth = await this.authService.findOneBy({ client, user }, ['client', 'user']);
+    const refreshToken = await this.refreshTokenService.newModel({ user });
 
-    if (!auth) {
-      auth = await this.authService.newModel({ client, user });
-    }
-
-    return await this.createJWT(auth);
+    return await this.createJWT(refreshToken);
   }
 
-  public async signInByAuthorizationCode(authCredentials: AuthorizationDTO, clientCredentials: ClientDTO) {
-    const client = await this.checkClient(clientCredentials);
-    const auth = await this.authService.findOneBy(
-      {
-        client,
-        authorizationCode: authCredentials.authorizationCode,
-      },
-      ['client', 'user']
-    );
+  public async signInByAuthorizationCode(authCredentials: AuthorizationDTO) {
+    const user = await this.userService.findOneBy({
+      authorizationCode: authCredentials.authorizationCode,
+    });
 
-    if (!auth) {
-      throw new UnauthorizedException(`Invalid authorizationCode`);
+    if (!user) {
+      throwUNAUTHORIZED();
     }
 
-    return await this.createJWT(auth);
+    const refreshToken = await this.refreshTokenService.newModel({ user });
+
+    return await this.createJWT(refreshToken);
   }
 
-  public async signInByRefreshToken(authCredentials: RefreshDTO, clientCredentials: ClientDTO) {
-    const client = await this.checkClient(clientCredentials);
-    const auth = await this.authService.findOneBy(
+  public async signInByRefreshToken(authCredentials: RefreshDTO) {
+    const oldRefreshToken = await this.refreshTokenService.findOneBy(
       {
-        client,
         refreshToken: authCredentials.refreshToken,
       },
-      ['client', 'user']
+      ['user']
     );
 
-    if (!auth || !this.checkExpiresAt(auth.refreshTokenExpiresAt)) {
-      throw new UnauthorizedException(`Invalid refreshToken`);
+    if (!oldRefreshToken || !this.checkExpiresAt(oldRefreshToken.refreshTokenExpiresAt)) {
+      throwREFRESHEXPIRED();
     }
 
-    return await this.createJWT(auth);
+    const refreshToken = await this.refreshTokenService.newModel({ user: oldRefreshToken.user });
+
+    await this.refreshTokenService.delete(oldRefreshToken.id);
+
+    return await this.createJWT(refreshToken);
   }
 
-  // tslint:disable-next-line: no-feature-envy
-  private async createJWT(auth: Auth) {
-    const updatedAuth = await this.authService.save(auth);
+  private async createJWT(refreshToken: RefreshToken) {
+    const updatedRefreshToken = await this.refreshTokenService.save(refreshToken);
 
-    const jwtToken = jwt.sign(updatedAuth.user.jwtPayload(), jwtSettings.secretKey, {
-      expiresIn: jwtSettings.expiresIn,
+    const jwtToken = jwt.sign(updatedRefreshToken.user.jwtPayload(), jwtSettings.secretKey, {
+      expiresIn: `${jwtSettings.expiresIn}m`,
     });
 
     return {
-      expires_in: jwtSettings.expiresIn,
-      refresh_token: updatedAuth.refreshToken,
-      access_token: jwtToken,
-      token_type: 'bearer',
+      token_type: 'jwt',
+      jwt_token: jwtToken,
+      expires_in: new Date(new Date().setMinutes(new Date().getMinutes() + jwtSettings.expiresIn)).toISOString(),
+      refresh_token: updatedRefreshToken.refreshToken,
+      refresh_token_expires_at: updatedRefreshToken.refreshTokenExpiresAt,
     };
-  }
-
-  private async checkClient(clientCredentials: ClientDTO) {
-    const client = await this.clientService.findOneBy(clientCredentials);
-
-    if (!client) {
-      throw new UnauthorizedException(`Invalid clientId or clientSecret`);
-    }
-
-    return client;
   }
 
   private checkExpiresAt(expiresAt: Date) {
@@ -116,10 +95,10 @@ export class OAuthService {
   }
 
   public async verifyToken(token: string) {
-    return (await jwt.verify(token, jwtSettings.secretKey)) as IJwtPayload;
+    return (await jwt.verify(token, jwtSettings.secretKey)) as IPayload;
   }
 
-  public async validateUser(payload: IJwtPayload) {
+  public async validateUser(payload: IPayload) {
     return await this.userService.findOne(payload.id);
   }
 }

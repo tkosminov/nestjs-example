@@ -16,23 +16,33 @@ interface IJwtSettings {
   readonly expiresIn: number;
 }
 
-interface IRestApi {
-  readonly API_2_SERVICE: string;
+interface IAppSettings {
+  readonly port: number;
+  readonly socketPort: number;
 }
 
-interface IRabbitMQSettings {
+interface ICorsSettings {
+  readonly allowedOrigins: string[];
+  readonly allowedMethods: string[];
+  readonly allowedCredentials: boolean;
+}
+
+interface IGraphqlSettings {
+  readonly playground: boolean;
+  readonly debug: boolean;
+  readonly introspection: boolean;
+  readonly installSubscriptionHandlers: boolean;
+}
+
+interface IAmqpSettings {
   readonly exchange: string;
+  readonly exchangeType: string;
   readonly name: string;
   readonly host: string;
   readonly vhost: string;
   readonly port: number;
   readonly username: string;
   readonly password: string;
-}
-
-interface ICorsSettings {
-  readonly allowedOrigins: string[];
-  readonly allowedMethods: string[];
-  readonly allowedHeaders: string[];
-  readonly allowedCredentials: boolean;
+  readonly reconnectDelay: number;
+  readonly prefetch: number;
 }

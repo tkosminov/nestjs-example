@@ -43,8 +43,8 @@ export class ServiceHelper<T> {
 
   // tslint:disable-next-line: no-shadowed-variable
   public async update(id: id, partial: QueryDeepPartialEntity<T>, options: FindOneOptions<T> = {}) {
-    await this.repository.update(id, partial); // UpdateResult in PostgresQueryBuilder returning empty arrays
-    return await this.findOne(id, options);
+    await this.repository.update(id, partial);
+    return this.findOne(id, options);
   }
 
   public async save(model: T, options: SaveOptions = {}) {
@@ -54,7 +54,7 @@ export class ServiceHelper<T> {
   // tslint:disable-next-line: no-shadowed-variable
   public async delete(id: id, options: FindOneOptions<T> = {}) {
     const model = this.repository.findOne(id, options);
-    await this.repository.delete(id); // DeleteResult in PostgresQueryBuilder returning empty arrays
+    await this.repository.delete(id);
     return model;
   }
 

@@ -4,13 +4,15 @@ import { GraphQLSchema } from 'graphql';
 import { introspectSchema, makeRemoteExecutableSchema } from 'graphql-tools';
 import fetch from 'isomorphic-unfetch';
 
+import { ApolloLink } from 'apollo-link';
 import { setContext } from 'apollo-link-context';
 import { HttpLink } from 'apollo-link-http';
 import { RetryLink } from 'apollo-link-retry';
-
-import { LoggerService } from '../../common/logger/logger.service';
+import TimeoutLink from 'apollo-link-timeout';
 
 import config from 'config';
+
+import { LoggerService } from '../../logger/logger.service';
 
 const apiUrls: string[] = config.get('GRAPHQL_API_URLS');
 
@@ -29,7 +31,8 @@ export class StitchingService {
         fetch,
       });
 
-      const retryLink = this.retryLink().concat(httpLink);
+      const timeoutLink = this.timeoutLink().concat(httpLink);
+      const retryLink = this.retryLink().concat(timeoutLink);
       const link = this.contextLink().concat(retryLink);
 
       const coreIntrospect = await introspectSchema(link);
@@ -44,27 +47,29 @@ export class StitchingService {
     }
   }
 
-  private retryLink() {
+  private timeoutLink(): TimeoutLink {
+    return new TimeoutLink(60000); // 60s
+  }
+
+  private retryLink(): RetryLink {
     return new RetryLink({
       attempts: {
-        max: 1,
+        max: 0,
         retryIf: (error, _operation) => !!error,
       },
     });
   }
 
-  private contextLink() {
+  private contextLink(): ApolloLink {
     return setContext((_req, previousContext) => {
       let currentUser = '{}';
 
-      // tslint:disable: no-unsafe-any
       if (Object.keys(previousContext).length) {
         const user = previousContext.graphqlContext.req.user;
         if (user) {
           currentUser = JSON.stringify(user);
         }
       }
-      // tslint:enable: no-unsafe-any
 
       return {
         headers: {

@@ -1,4 +1,8 @@
 {
+  "APP_SETTINGS": {
+    "port": 8080,
+    "socketPort": 8081
+  },
   "DB_SETTINGS": {
     "host": "localhost",
     "port": 5432,
@@ -7,42 +11,48 @@
     "database": "nestjs_example"
   },
   "LOGGER_SETTINGS": {
-    "level": "error",
+    "level": "info",
     "silence": [
       "healthz",
-      "auth",
       "IntrospectionQuery"
     ]
   },
   "JWT_SETTINGS": {
     "secretKey": "key",
-    "expiresIn": 3600
+    "expiresIn": 20
   },
-  "GRAPHQL_API_URLS": [
-    "http://localhost:5010/graphql"
+  "CORS_SETTINGS": {
+    "allowedOrigins": [],
+    "allowedMethods": [
+      "GET",
+      "POST",
+      "OPTIONS"
+    ],
+    "allowedCredentials": true
+  },
+  "GRAPHQL_SETTINGS": {
+    "playground": true,
+    "debug": true,
+    "introspection": true,
+    "installSubscriptionHandlers": true
+  },
+  "GRAPHQL_API_URLS": [],
+  "ACTION_BYPASS": [
+    "healthz",
+    "oauth",
+    "graphql",
+    "voyager"
   ],
-  "REST_API_URLS": {
-    "API_2_SERVICE": "http://localhost:5011/api/v1"
-  },
-  "RABBITMQ_SETTINGS": {
-    "exchange": "example",
+  "AMQP_SETTINGS": {
+    "exchange": "nestjs_example_service",
+    "exchangeType": "direct",
     "name": "rabbitmq",
     "host": "localhost",
     "vhost": "vhost",
     "port": 5672,
     "username": "admin",
-    "password": "password"
-  },
-  "CORS_SETTINGS": {
-    "allowedOrigins": [],
-    "allowedMethods": [],
-    "allowedHeaders": [],
-    "allowedCredentials": false
-  },
-  "ACTION_BYPASS": [
-    "healthz",
-    "graphql",
-    "voyager",
-    "auth"
-  ]
+    "password": "password",
+    "reconnectDelay": 10000,
+    "prefetch": 10
+  }
 }

@@ -7,7 +7,7 @@ import config from 'config';
 
 import { OAuthService } from './oauth.service';
 
-import { IJwtPayload } from './interface/jwt-payload.iterface';
+import { IPayload } from './interface/payload.interface';
 
 const secretJWTKey = config.get<IJwtSettings>('JWT_SETTINGS').secretKey;
 
@@ -20,7 +20,7 @@ export class OAuthStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  public async validate(payload: IJwtPayload) {
+  public async validate(payload: IPayload) {
     const user = await this.oauthService.validateUser(payload);
 
     if (!user) {

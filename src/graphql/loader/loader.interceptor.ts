@@ -1,28 +1,32 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor, Type } from '@nestjs/common';
-import { ModuleRef, Reflector } from '@nestjs/core';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-
 import { Observable } from 'rxjs';
 
-import { ILoader } from './loader.interface';
+import { UserLoaderById } from '../../oauth/user/loader/by_id.loader';
+
+import { BookLoaderById } from '../../core/book/loader/by_id.loader';
+import { BookLoaderByUserId } from '../../core/book/loader/by_user_id.loader';
+
+const generateDataLoaders = () => {
+  return {
+    UserLoaderById: new UserLoaderById().generateDataLoader(),
+    BookLoaderById: new BookLoaderById().generateDataLoader(),
+    BookLoaderByUserId: new BookLoaderByUserId().generateDataLoader(),
+  };
+};
 
 @Injectable()
 export class LoaderInterceptor implements NestInterceptor {
-  constructor(private readonly reflector: Reflector, private readonly moduleRef: ModuleRef) {}
-
-  // tslint:disable: no-unsafe-any
   // tslint:disable-next-line: no-any
   public intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
-    const type = this.reflector.get<Type<ILoader> | undefined>('dataloader', context.getHandler());
+    const gqlExecutionContext = GqlExecutionContext.create(context);
+    const ctx = gqlExecutionContext.getContext();
 
-    if (type) {
-      const gqlExecutionContext = GqlExecutionContext.create(context);
-      const ctx = gqlExecutionContext.getContext();
+    const loaders = generateDataLoaders();
 
-      if (!ctx[type.name]) {
-        ctx[type.name] = this.moduleRef.get<ILoader>(type, { strict: false }).generateDataLoader();
-      }
-    }
+    Object.keys(loaders).forEach(key => {
+      ctx[key] = loaders[key];
+    });
 
     return next.handle();
   }

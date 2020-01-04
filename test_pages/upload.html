@@ -12,16 +12,21 @@
 
 <body>
   <div class="app">
-    <div class="app__main">
+    <div class="app__main" style="border: 1px solid black;">
+      <h3>Upload Form</h3>
       <form method="post" enctype="multipart/form-data">
         <div>
           <label for="profile_pic">Choose file to upload</label>
-          <input type="file" id="profile_pic" name="profile_pic" accept=".jpg, .jpeg, .png">
+          <input type="file" id="profile_pic" name="profile_pic">
         </div>
         <div>
           <button>Submit</button>
         </div>
       </form>
+    </div>
+    <div class="app__main" style="border: 1px solid black;">
+      <h3>Upload Result</h3>
+      <div id="resultJSON"></div>
     </div>
   </div>
 
@@ -39,7 +44,7 @@
         
         const query = `
           mutation($file: Upload!) {
-            singleUpload(file: $file, data: { modifyNeed: true }) {
+            singleUpload(file: $file) {
               url
             }
           }
@@ -60,6 +65,9 @@
           processData: false,
           contentType: false,
           type: 'POST',
+          success: ({ data: res }) => {
+            $('#resultJSON').html(JSON.stringify(res))
+          }
         });
       })
     })
