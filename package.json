@@ -1,12 +1,12 @@
 {
   "name": "nestjs_example",
-  "version": "0.3.5",
+  "version": "0.4.0",
   "description": "nestjs_example",
   "author": "t.kosminov",
   "license": "MIT",
   "engineStrict": true,
   "engines": {
-    "node": "12.13.1"
+    "node": "12.14.1"
   },
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig.build.json",

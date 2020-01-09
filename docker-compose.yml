@@ -1,0 +1,34 @@
+version: '3'
+services:
+  db:
+    image: postgres:11-alpine
+    expose:
+      - "5432"
+    networks:
+      - nestjs_example_network
+    container_name: nestjs_example-db
+    restart: always
+
+  beta-web:
+    build:
+      context: .
+      args:
+        - env=development
+    #image: 
+    ports:
+      - '8080:8080'
+      - '8081:8081'
+      # - '$EXTERNAL:$INTERNAL'
+    links:
+      - db
+    depends_on:
+      - db
+    networks:
+      - nestjs_example_network
+    container_name: nestjs_example-web
+    volumes:
+      - ./uploads:/server/uploads
+
+networks:
+  nestjs_example_network:
+    external: true

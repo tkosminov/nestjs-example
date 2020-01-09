@@ -1,0 +1,58 @@
+{
+  "APP_SETTINGS": {
+    "port": 8080,
+    "socketPort": 8081
+  },
+  "DB_SETTINGS": {
+    "host": "localhost",
+    "port": 5432,
+    "username": "postgres",
+    "password": "postgres",
+    "database": "nestjs_example"
+  },
+  "LOGGER_SETTINGS": {
+    "level": "info",
+    "silence": [
+      "healthz",
+      "IntrospectionQuery"
+    ]
+  },
+  "JWT_SETTINGS": {
+    "secretKey": "key",
+    "expiresIn": 20
+  },
+  "CORS_SETTINGS": {
+    "allowedOrigins": [],
+    "allowedMethods": [
+      "GET",
+      "POST",
+      "OPTIONS"
+    ],
+    "allowedCredentials": true
+  },
+  "GRAPHQL_SETTINGS": {
+    "playground": true,
+    "debug": true,
+    "introspection": true,
+    "installSubscriptionHandlers": true
+  },
+  "GRAPHQL_API_URLS": [],
+  "ACTION_BYPASS": [
+    "healthz",
+    "oauth",
+    "graphql",
+    "voyager"
+  ],
+  "AMQP_SETTINGS": {
+    "exchange": "nestjs_example_service",
+    "exchangeType": "direct",
+    "name": "rabbitmq",
+    "host": "localhost",
+    "vhost": "vhost",
+    "port": 5672,
+    "username": "admin",
+    "password": "password",
+    "reconnectDelay": 10000,
+    "prefetch": 10
+  }
+}
