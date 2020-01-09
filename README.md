@@ -46,6 +46,10 @@ npm run start:prod
 
 ## Running the app with docker
 
+```bash
+docker network create nestjs_example_network
+```
+
 ### docker
 
 ```bash
@@ -56,6 +60,28 @@ docker run -e "env=development" nestjs_example
 
 ### docker-compose
 
+#### Update config.json:
+
+```json
+  "DB_SETTINGS": {
+    "host": "db", // service name from docker-compose.yml
+    "port": 5432, // service port from docker-compose.yml
+    ...
+  },
+```
+
+#### Build and run container
+
 ```bash
-docker-compose -f docker-compose.yml up --build
+docker-compose -f docker-compose.yml build
+```
+
+```bash
+docker-compose -f docker-compose.yml exec db sh
+
+createdb nestjs_example_$ENV -U postgres
+```
+
+```bash
+docker-compose -f docker-compose.yml up
 ```
