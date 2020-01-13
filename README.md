@@ -63,14 +63,18 @@ docker network create nestjs_example_network
 #### Build and run container
 
 ```bash
-docker-compose -f docker-compose.yml build
+docker-compose -f docker-compose.yml up --build
 ```
 
+#### After creating containers, create a database
 ```bash
+
 docker-compose -f docker-compose.yml exec db sh
 
 createdb nestjs_example_$ENV -U postgres
 ```
+
+#### After restart the containers
 
 ```bash
 docker-compose -f docker-compose.yml up
