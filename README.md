@@ -50,16 +50,6 @@ npm run start:prod
 docker network create nestjs_example_network
 ```
 
-### docker
-
-```bash
-docker build -t nestjs_example .
-
-docker run -e "env=development" nestjs_example
-```
-
-### docker-compose
-
 #### Update config.json:
 
 ```json
