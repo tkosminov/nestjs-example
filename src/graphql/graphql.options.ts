@@ -11,6 +11,7 @@ import { LoggerService } from '../logger/logger.service';
 
 import { StitchingService } from './stitching/stitching.service';
 
+const appSettings = config.get<IAppSettings>('APP_SETTINGS');
 const graphqlSettings = config.get<IGraphqlSettings>('GRAPHQL_SETTINGS');
 
 @Injectable()
@@ -23,6 +24,9 @@ export class GraphqlOptions implements GqlOptionsFactory {
       autoSchemaFile: __dirname + '/schema.graphql',
       typePaths: [__dirname + '../**/*.graphql'],
       cors: corsOption,
+      bodyParserConfig: {
+        limit: appSettings.bodyLimit,
+      },
       context: ({ req }: { req: Request }) => ({
         req,
         user: req.user,

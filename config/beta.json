@@ -1,7 +1,9 @@
 {
   "APP_SETTINGS": {
     "port": 8080,
-    "socketPort": 8081
+    "socketPort": 8081,
+    "bodyLimit": "50mb",
+    "bodyParameterLimit": 50000
   },
   "DB_SETTINGS": {
     "host": "localhost",

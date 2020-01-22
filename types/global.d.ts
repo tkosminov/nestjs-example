@@ -19,6 +19,8 @@ interface IJwtSettings {
 interface IAppSettings {
   readonly port: number;
   readonly socketPort: number;
+  readonly bodyLimit: string;
+  readonly bodyParameterLimit: number;
 }
 
 interface ICorsSettings {

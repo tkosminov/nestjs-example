@@ -4,6 +4,7 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
+import { json, urlencoded } from 'body-parser';
 import config from 'config';
 import cookieParser from 'cookie-parser';
 import { express as voyagerMiddleware } from 'graphql-voyager/middleware';
@@ -15,8 +16,12 @@ import corsOptions from './cors.option';
 const appSettings = config.get<IAppSettings>('APP_SETTINGS');
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, new ExpressAdapter());
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(), {
+    bodyParser: true,
+  });
 
+  app.use(json({ limit: appSettings.bodyLimit }));
+  app.use(urlencoded({ limit: appSettings.bodyLimit, extended: true, parameterLimit: appSettings.bodyParameterLimit }));
   app.use(helmet());
   app.use(cookieParser());
   app.use('/voyager', voyagerMiddleware({ endpointUrl: '/graphql' }));
