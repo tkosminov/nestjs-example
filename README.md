@@ -12,7 +12,7 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 ## Dependencies
 
-* [PostgresSQL 11](https://computingforgeeks.com/install-postgresql-11-on-ubuntu-18-04-ubuntu-16-04/)
+* [PostgreSQL 11](https://computingforgeeks.com/install-postgresql-11-on-ubuntu-18-04-ubuntu-16-04/)
 * [RabbitMQ](https://computingforgeeks.com/how-to-install-latest-rabbitmq-server-on-ubuntu-18-04-lts/)
 * [NodeJS 12.14.1](https://www.ubuntuupdates.org/ppa/nodejs_12.x?dist=bionic)
 * [Redis](https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-redis-on-ubuntu-18-04)
