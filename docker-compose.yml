@@ -9,6 +9,15 @@ services:
     container_name: nestjs_example-db
     restart: always
 
+  redis:
+    image: redis:5.0.7-alpine
+    expose:
+      - "6379"
+    networks:
+      - nestjs_example_network
+    container_name: nestjs_example-redis
+    restart: always
+
   beta-web:
     build:
       context: .
@@ -21,8 +30,10 @@ services:
       # - '$EXTERNAL:$INTERNAL'
     links:
       - db
+      - redis
     depends_on:
       - db
+      - redis
     networks:
       - nestjs_example_network
     container_name: nestjs_example-web

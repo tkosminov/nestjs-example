@@ -48,3 +48,10 @@ interface IAmqpSettings {
   readonly reconnectDelay: number;
   readonly prefetch: number;
 }
+
+interface IRedisSettings {
+  readonly use: boolean;
+  readonly host: string;
+  readonly port: number;
+  readonly password: string;
+}

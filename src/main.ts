@@ -12,8 +12,10 @@ import helmet from 'helmet';
 
 import { AppModule } from './app.module';
 import corsOptions from './cors.option';
+import { CustomRedisIoAdapter } from './socket/socket.adapter';
 
 const appSettings = config.get<IAppSettings>('APP_SETTINGS');
+const redisSettings = config.get<IRedisSettings>('REDIS_SETTINGS');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(), {
@@ -34,7 +36,11 @@ async function bootstrap() {
     })
   );
 
-  app.useWebSocketAdapter(new IoAdapter(app));
+  if (redisSettings.use) {
+    app.useWebSocketAdapter(new CustomRedisIoAdapter(app));
+  } else {
+    app.useWebSocketAdapter(new IoAdapter(app));
+  }
 
   const options = new DocumentBuilder()
     .setTitle('NestJS Example')

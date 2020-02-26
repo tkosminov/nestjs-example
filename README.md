@@ -15,6 +15,7 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 * [PostgresSQL 11](https://computingforgeeks.com/install-postgresql-11-on-ubuntu-18-04-ubuntu-16-04/)
 * [RabbitMQ](https://computingforgeeks.com/how-to-install-latest-rabbitmq-server-on-ubuntu-18-04-lts/)
 * [NodeJS 12.14.1](https://www.ubuntuupdates.org/ppa/nodejs_12.x?dist=bionic)
+* [Redis](https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-redis-on-ubuntu-18-04)
 
 ## Installation
 
@@ -56,6 +57,12 @@ docker network create nestjs_example_network
   "DB_SETTINGS": {
     "host": "db", // service name from docker-compose.yml
     "port": 5432, // service port from docker-compose.yml
+    ...
+  },
+  ...
+  "REDIS_SETTINGS": {
+    "host": "redis", // service name from docker-compose.yml
+    "port": 6379, // service port from docker-compose.yml
     ...
   },
 ```

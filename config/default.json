@@ -56,5 +56,11 @@
     "password": "password",
     "reconnectDelay": 10000,
     "prefetch": 10
+  },
+  "REDIS_SETTINGS": {
+    "use": true,
+    "host": "localhost",
+    "port": 6379,
+    "password": ""
   }
 }
