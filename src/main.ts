@@ -9,9 +9,11 @@ import config from 'config';
 import cookieParser from 'cookie-parser';
 import { express as voyagerMiddleware } from 'graphql-voyager/middleware';
 import helmet from 'helmet';
+import { Redis } from 'ioredis';
 
 import { AppModule } from './app.module';
 import corsOptions from './cors.option';
+import { REDIS_PUBLISHER_CLIENT, REDIS_SUBSCRIBER_CLIENT } from './redis/redis.constants';
 import { CustomRedisIoAdapter } from './socket/socket.adapter';
 
 const appSettings = config.get<IAppSettings>('APP_SETTINGS');
@@ -37,7 +39,10 @@ async function bootstrap() {
   );
 
   if (redisSettings.use) {
-    app.useWebSocketAdapter(new CustomRedisIoAdapter(app));
+    const pubClient: Redis = app.get(REDIS_PUBLISHER_CLIENT);
+    const subClient: Redis = app.get(REDIS_SUBSCRIBER_CLIENT);
+
+    app.useWebSocketAdapter(new CustomRedisIoAdapter(app, subClient, pubClient));
   } else {
     app.useWebSocketAdapter(new IoAdapter(app));
   }

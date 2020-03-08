@@ -53,5 +53,6 @@ interface IRedisSettings {
   readonly use: boolean;
   readonly host: string;
   readonly port: number;
-  readonly password: string;
+  readonly password?: string;
+  readonly key?: string;
 }

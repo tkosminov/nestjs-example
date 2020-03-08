@@ -12,6 +12,7 @@ import GraphQLModule from './graphql/graphql.module';
 import { GraphQLUploadModule } from './graphql/upload/upload.module';
 import { LoggerModule } from './logger/logger.module';
 import { OAuthModule } from './oauth/oauth.module';
+import { RedisModule } from './redis/redis.module';
 import { SocketModule } from './socket/socket.module';
 
 import { HealthcheckController } from './healthcheck/healthcheck.controller';
@@ -21,6 +22,7 @@ import { HealthcheckController } from './healthcheck/healthcheck.controller';
     LoggerModule,
     DatabaseModule,
     SocketModule,
+    RedisModule,
     // AmqpModule,
     GraphQLModule,
     GraphQLUploadModule,
