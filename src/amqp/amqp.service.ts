@@ -21,11 +21,11 @@ export class AmqpService {
   }
 
   private createChannel() {
-    amqpConnect().then(channel => {
+    amqpConnect().then((channel) => {
       this.logger.warn('Channel created');
       this.amqpChannel = channel;
 
-      this.amqpChannel.on('error', err => {
+      this.amqpChannel.on('error', (err) => {
         this.logger.error(err);
 
         setTimeout(() => {
@@ -33,7 +33,7 @@ export class AmqpService {
         }, amqpSettings.reconnectDelay);
       });
 
-      this.amqpChannel.on('close', _err => {
+      this.amqpChannel.on('close', (_err) => {
         this.logger.warn('Channel closed');
 
         setTimeout(() => {
@@ -45,10 +45,10 @@ export class AmqpService {
         .assertExchange(amqpSettings.exchange, amqpSettings.exchangeType, {
           durable: true,
         })
-        .then(res => {
+        .then((res) => {
           this.logger.warn(`AssertExchange ${res.exchange}`);
 
-          subscriptions.forEach(async sub => {
+          subscriptions.forEach(async (sub) => {
             await this.subscribeMessage(sub.options, sub.handler);
           });
         });
@@ -69,7 +69,7 @@ export class AmqpService {
 
       this.logger.warn(`bindQueue - ${options.queue}`);
 
-      await this.amqpChannel.consume(queue, async msg => {
+      await this.amqpChannel.consume(queue, async (msg) => {
         if (msg !== null) {
           const msgContent = msg.content.toString();
 

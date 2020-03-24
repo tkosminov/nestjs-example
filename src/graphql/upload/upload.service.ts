@@ -25,7 +25,7 @@ export class UploadService {
       size += stats.size;
     } else if (stats.isDirectory()) {
       // tslint:disable-next-line: no-map-without-usage
-      fs.readdirSync(filePath).map(child => {
+      fs.readdirSync(filePath).map((child) => {
         size += this.getFileOrDirSizeInBytes(`${filePath}/${child}`);
       });
     }
@@ -40,7 +40,7 @@ export class UploadService {
       fs.unlinkSync(filePath);
     } else if (stats.isDirectory()) {
       // tslint:disable-next-line: no-map-without-usage
-      fs.readdirSync(filePath).map(child => {
+      fs.readdirSync(filePath).map((child) => {
         this.deleteDirOrFile(`${filePath}/${child}`);
       });
 
@@ -83,8 +83,8 @@ export class UploadService {
 
     return new Promise((resolve, reject) =>
       stream
-        .on('error', error => reject(error))
-        .on('data', data => buffer.push(data))
+        .on('error', (error) => reject(error))
+        .on('data', (data) => buffer.push(data))
         .on('end', () => resolve(Buffer.concat(buffer)))
     );
   }

@@ -24,7 +24,7 @@ export class LoaderInterceptor implements NestInterceptor {
 
     const loaders = generateDataLoaders();
 
-    Object.keys(loaders).forEach(key => {
+    Object.keys(loaders).forEach((key) => {
       ctx[key] = loaders[key];
     });
 

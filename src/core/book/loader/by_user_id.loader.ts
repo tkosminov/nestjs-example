@@ -14,6 +14,6 @@ export class BookLoaderByUserId implements ILoader {
 
   private async findByUserId(ids: string[]) {
     const books = await getRepository(Book).find({ where: { userId: In(ids) } });
-    return ids.map(id => books.filter(b => b.userId === id));
+    return ids.map((id) => books.filter((b) => b.userId === id));
   }
 }

@@ -1,5 +1,4 @@
-import { Args, Context, Mutation, Parent, Query, ResolveProperty, Resolver } from '@nestjs/graphql';
-import { ID, Int } from 'type-graphql';
+import { Args, Context, ID, Int, Mutation, Parent, Query, ResolveProperty, Resolver } from '@nestjs/graphql';
 
 import DataLoader from 'dataloader';
 

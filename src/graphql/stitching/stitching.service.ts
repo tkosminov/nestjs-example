@@ -21,7 +21,7 @@ export class StitchingService {
   constructor(private readonly logger: LoggerService) {}
 
   public async schemas(): Promise<GraphQLSchema[] | null[]> {
-    return Promise.all(apiUrls.map(url => this.getApiSchema(url)));
+    return Promise.all(apiUrls.map((url) => this.getApiSchema(url)));
   }
 
   private async getApiSchema(apiLink: string): Promise<GraphQLSchema | null> {

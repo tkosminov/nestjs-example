@@ -8,7 +8,7 @@ import { User } from '../../oauth/user/user.entity';
 
 const create = async (msg: CreateUserDTO, logger: LoggerService) => {
   try {
-    return await getConnection().transaction(async entityManager => {
+    return await getConnection().transaction(async (entityManager) => {
       if (!msg.password) {
         return 'nack';
       }
@@ -17,15 +17,9 @@ const create = async (msg: CreateUserDTO, logger: LoggerService) => {
 
       user.password = passwordToHash(user.password);
 
-      Object.keys(user).forEach(key => !user[key] && delete user[key]);
+      Object.keys(user).forEach((key) => !user[key] && delete user[key]);
 
-      await entityManager
-        .getRepository(User)
-        .createQueryBuilder()
-        .insert()
-        .into(User)
-        .values([user])
-        .execute();
+      await entityManager.getRepository(User).createQueryBuilder().insert().into(User).values([user]).execute();
 
       return 'ack';
     });

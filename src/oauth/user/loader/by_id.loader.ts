@@ -14,6 +14,6 @@ export class UserLoaderById implements ILoader {
 
   private async findById(ids: string[]) {
     const users = await getRepository(User).find({ where: { id: In(ids) } });
-    return ids.map(id => users.find(u => u.id === id));
+    return ids.map((id) => users.find((u) => u.id === id));
   }
 }

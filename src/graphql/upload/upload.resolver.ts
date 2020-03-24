@@ -19,7 +19,7 @@ export class UploadResolver {
   @Mutation(() => [UploadPayload])
   public async multipleUpload(@Args({ name: 'files', type: () => [GraphQLUpload] }) files: FileUpload[]) {
     return await Promise.all(
-      files.map(file => {
+      files.map((file) => {
         return this.uploadProcess(file);
       })
     );

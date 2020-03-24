@@ -1,8 +1,7 @@
-import { BeforeInsert, Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 import { IsEmail, IsEmpty, IsString, MinLength } from 'class-validator';
-
-import { Field, ID, ObjectType } from 'type-graphql';
+import { BeforeInsert, Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { EntityHelper } from '../../common/helpers/module/entity.helper';
 import { passwordToHash } from '../../common/helpers/password.helper';
@@ -36,17 +35,11 @@ export class User extends EntityHelper {
   @IsEmpty()
   public password: string;
 
-  @OneToMany(
-    () => RefreshToken,
-    refreshToken => refreshToken.user
-  )
+  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
   public refreshTokens: RefreshToken[];
 
   @Field(() => [Book], { nullable: true })
-  @OneToMany(
-    () => Book,
-    book => book.user
-  )
+  @OneToMany(() => Book, (book) => book.user)
   public books: Book[];
 
   @BeforeInsert()

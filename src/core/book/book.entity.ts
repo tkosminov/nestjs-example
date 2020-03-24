@@ -2,7 +2,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } 
 
 import { IsString, IsUUID, MinLength } from 'class-validator';
 
-import { Field, ID, ObjectType } from 'type-graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 import { EntityHelper } from '../../common/helpers/module/entity.helper';
 
