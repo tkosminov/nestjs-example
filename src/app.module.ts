@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
-import { OAuthMiddleware } from './common/middlewares/ouath.middleware';
+import { OAuthMiddleware } from './common/middlewares/oauth.middleware';
 
 import { LoaderProvider } from './graphql/loader/loader.prodiver';
 

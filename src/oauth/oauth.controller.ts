@@ -42,16 +42,16 @@ export class OAuthController {
       switch (req.query.grand_type) {
         case 'password':
           return await this.oauthService.signInByPassword({
-            email: req.query.username,
-            password: req.query.password,
+            email: req.query.username as string,
+            password: req.query.password as string,
           });
         case 'refresh_token':
           return await this.oauthService.signInByRefreshToken({
-            refreshToken: req.query.refresh_token,
+            refreshToken: req.query.refresh_token as string,
           });
         case 'authorization_code':
           return await this.oauthService.signInByAuthorizationCode({
-            authorizationCode: req.query.code,
+            authorizationCode: req.query.code as string,
           });
       }
     }
