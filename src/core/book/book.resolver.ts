@@ -2,7 +2,7 @@ import { Args, Context, ID, Int, Mutation, Parent, Query, ResolveProperty, Resol
 
 import DataLoader from 'dataloader';
 
-import { throwACCESSDENIED } from '../../common/errors';
+import { access_denied } from '../../common/errors';
 
 import { Book } from './book.entity';
 import { BookService } from './book.service';
@@ -49,7 +49,7 @@ export class BookResolver {
     const book = await this.bookService.findOne(id);
 
     if (book.userId !== user.id) {
-      throwACCESSDENIED();
+      access_denied({ raise: true });
     }
 
     return await this.bookService.update(id, data);
@@ -60,7 +60,7 @@ export class BookResolver {
     const book = await this.bookService.findOne(id);
 
     if (book.userId !== user.id) {
-      throwACCESSDENIED();
+      access_denied({ raise: true });
     }
 
     return await this.bookService.delete(id);

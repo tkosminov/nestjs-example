@@ -3,7 +3,7 @@ import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import { Request } from 'express';
 
-import { throwBADREQUEST } from '../common/errors';
+import { bad_request } from '../common/errors';
 
 import { OAuthService } from './oauth.service';
 
@@ -56,6 +56,6 @@ export class OAuthController {
       }
     }
 
-    throwBADREQUEST();
+    bad_request({ raise: true });
   }
 }

@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 
 import { UserService } from '../../oauth/user/user.service';
 
-import { throwJWTEXPIRED, throwUNAUTHORIZED } from '../errors';
+import { jwt_token_expired_signature, unauthorized } from '../errors';
 import { ReqHelper } from '../helpers/req.helper';
 
 import { IPayload } from '../../oauth/interface/payload.interface';
@@ -29,7 +29,7 @@ export class OAuthMiddleware extends ReqHelper implements NestMiddleware {
       return next();
     }
 
-    throwUNAUTHORIZED();
+    unauthorized({ raise: true });
   }
 
   private async checkJWTToken(req: Request): Promise<boolean> {
@@ -42,7 +42,7 @@ export class OAuthMiddleware extends ReqHelper implements NestMiddleware {
       try {
         payload = jwt.verify(token, secretJWTKey) as IPayload;
       } catch (e) {
-        throwJWTEXPIRED();
+        jwt_token_expired_signature({ raise: true });
       }
 
       const user = await this.userService.findOne(payload.id);

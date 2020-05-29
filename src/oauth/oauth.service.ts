@@ -14,7 +14,7 @@ import { AuthorizationDTO } from './dto/authorization.dto';
 import { PasswordDTO } from './dto/password.dto';
 import { RefreshDTO } from './dto/refresh.dto';
 
-import { throwREFRESHEXPIRED, throwUNAUTHORIZED } from '../common/errors';
+import { refresh_token_expired_signature, unauthorized } from '../common/errors';
 import { checkPassword } from '../common/helpers/password.helper';
 
 const jwtSettings = config.get<IJwtSettings>('JWT_SETTINGS');
@@ -29,11 +29,11 @@ export class OAuthService {
     });
 
     if (!user) {
-      throwUNAUTHORIZED();
+      unauthorized({ raise: true });
     }
 
     if (!checkPassword(user.password, userCredentials.password)) {
-      throwUNAUTHORIZED();
+      unauthorized({ raise: true });
     }
 
     const refreshToken = await this.refreshTokenService.newModel({ user });
@@ -47,7 +47,7 @@ export class OAuthService {
     });
 
     if (!user) {
-      throwUNAUTHORIZED();
+      unauthorized({ raise: true });
     }
 
     const refreshToken = await this.refreshTokenService.newModel({ user });
@@ -64,7 +64,7 @@ export class OAuthService {
     );
 
     if (!oldRefreshToken || !this.checkExpiresAt(oldRefreshToken.refreshTokenExpiresAt)) {
-      throwREFRESHEXPIRED();
+      refresh_token_expired_signature({ raise: true });
     }
 
     const refreshToken = await this.refreshTokenService.newModel({ user: oldRefreshToken.user });

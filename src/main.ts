@@ -12,7 +12,7 @@ import helmet from 'helmet';
 import { Redis } from 'ioredis';
 
 import { AppModule } from './app.module';
-import corsOptions from './cors.option';
+import { corsOptionsDelegate } from './cors.option';
 import { REDIS_PUBLISHER_CLIENT, REDIS_SUBSCRIBER_CLIENT } from './redis/redis.constants';
 import { CustomRedisIoAdapter } from './socket/socket.adapter';
 
@@ -30,7 +30,7 @@ async function bootstrap() {
   app.use(cookieParser());
   app.use('/voyager', voyagerMiddleware({ endpointUrl: '/graphql' }));
 
-  app.enableCors(corsOptions);
+  app.enableCors(corsOptionsDelegate);
 
   app.useGlobalPipes(
     new ValidationPipe({

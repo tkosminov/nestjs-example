@@ -25,6 +25,7 @@
   },
   "CORS_SETTINGS": {
     "allowedOrigins": [],
+    "allowedUrls": [],
     "allowedMethods": [
       "GET",
       "POST",

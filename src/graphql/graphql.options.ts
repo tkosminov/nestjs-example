@@ -6,7 +6,7 @@ import { mergeSchemas } from 'graphql-tools';
 import config from 'config';
 import { Request } from 'express';
 
-import corsOption from '../cors.option';
+import { corsOptionsDelegate } from '../cors.option';
 import { LoggerService } from '../logger/logger.service';
 
 import { StitchingService } from './stitching/stitching.service';
@@ -23,7 +23,7 @@ export class GraphqlOptions implements GqlOptionsFactory {
       ...graphqlSettings,
       autoSchemaFile: __dirname + '/schema.graphql',
       typePaths: [__dirname + '../**/*.graphql'],
-      cors: corsOption,
+      cors: corsOptionsDelegate,
       bodyParserConfig: {
         limit: appSettings.bodyLimit,
       },

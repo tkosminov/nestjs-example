@@ -25,6 +25,7 @@ interface IAppSettings {
 
 interface ICorsSettings {
   readonly allowedOrigins: string[];
+  readonly allowedUrls: string[];
   readonly allowedMethods: string[];
   readonly allowedCredentials: boolean;
 }
