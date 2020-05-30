@@ -1,8 +1,10 @@
+// import { UseGuards } from '@nestjs/common';
 import { Args, Context, ID, Int, Mutation, Parent, Query, ResolveProperty, Resolver } from '@nestjs/graphql';
 
 import DataLoader from 'dataloader';
 
 import { access_denied } from '../../common/errors';
+// import { GqlAdminGuard } from '../../graphql/guard/admin.guard';
 
 import { Book } from './book.entity';
 import { BookService } from './book.service';
@@ -12,6 +14,7 @@ import { UpdateBookDTO } from './dto/update.dto';
 
 import { User } from '../../oauth/user/user.entity';
 
+// @UseGuards(new GqlAdminGuard())
 @Resolver(() => Book)
 export class BookResolver {
   constructor(private readonly bookService: BookService) {}

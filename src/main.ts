@@ -12,6 +12,8 @@ import helmet from 'helmet';
 import { Redis } from 'ioredis';
 
 import { AppModule } from './app.module';
+
+import { AnyExceptionFilter } from './common/filters/exception.filter';
 import { corsOptionsDelegate } from './cors.option';
 import { REDIS_PUBLISHER_CLIENT, REDIS_SUBSCRIBER_CLIENT } from './redis/redis.constants';
 import { CustomRedisIoAdapter } from './socket/socket.adapter';
@@ -46,6 +48,8 @@ async function bootstrap() {
   } else {
     app.useWebSocketAdapter(new IoAdapter(app));
   }
+
+  app.useGlobalFilters(new AnyExceptionFilter());
 
   const options = new DocumentBuilder()
     .setTitle('NestJS Example')

@@ -56,6 +56,7 @@ export class User extends EntityHelper {
     return {
       id: this.id,
       email: this.email,
+      isAdmin: this.isAdmin,
     };
   }
 }
