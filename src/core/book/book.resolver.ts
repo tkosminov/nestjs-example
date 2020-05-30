@@ -11,6 +11,7 @@ import { CreateBookDTO } from './dto/create.dto';
 import { UpdateBookDTO } from './dto/update.dto';
 
 import { User } from '../../oauth/user/user.entity';
+
 @Resolver(() => Book)
 export class BookResolver {
   constructor(private readonly bookService: BookService) {}

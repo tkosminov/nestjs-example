@@ -41,7 +41,7 @@
         const fileBlob = new Blob([file], { type: file.type })
 
         // more https://github.com/jaydenseric/graphql-multipart-request-spec
-        
+
         const query = `
           mutation($file: Upload!) {
             singleUpload(file: $file) {

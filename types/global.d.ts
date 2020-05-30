@@ -19,13 +19,16 @@ interface IJwtSettings {
 interface IAppSettings {
   readonly port: number;
   readonly socketPort: number;
+  readonly socketPingInterval: number;
+  readonly socketPinkTimeout: number;
+  readonly socketIoPath: string;
   readonly bodyLimit: string;
   readonly bodyParameterLimit: number;
 }
 
 interface ICorsSettings {
   readonly allowedOrigins: string[];
-  readonly allowedUrls: string[];
+  readonly allowedPaths: string[];
   readonly allowedMethods: string[];
   readonly allowedCredentials: boolean;
 }

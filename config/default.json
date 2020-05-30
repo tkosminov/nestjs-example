@@ -2,6 +2,9 @@
   "APP_SETTINGS": {
     "port": 8080,
     "socketPort": 8081,
+    "socketPingInterval": 3000,
+    "socketPinkTimeout": 10000,
+    "socketIoPath": "/socket.io",
     "bodyLimit": "50mb",
     "bodyParameterLimit": 50000
   },
@@ -25,7 +28,7 @@
   },
   "CORS_SETTINGS": {
     "allowedOrigins": [],
-    "allowedUrls": [],
+    "allowedPaths": [],
     "allowedMethods": [
       "GET",
       "POST",

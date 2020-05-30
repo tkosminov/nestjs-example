@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { GqlModuleOptions, GqlOptionsFactory } from '@nestjs/graphql';
-import { GraphQLError, GraphQLSchema } from 'graphql';
-import { mergeSchemas } from 'graphql-tools';
 
 import config from 'config';
 import { Request } from 'express';
+import { GraphQLError, GraphQLSchema } from 'graphql';
+import { mergeSchemas } from 'graphql-tools';
 
 import { corsOptionsDelegate } from '../cors.option';
 import { LoggerService } from '../logger/logger.service';
 
 import { StitchingService } from './stitching/stitching.service';
+
+import { User } from '../oauth/user/user.entity';
 
 const appSettings = config.get<IAppSettings>('APP_SETTINGS');
 const graphqlSettings = config.get<IGraphqlSettings>('GRAPHQL_SETTINGS');
@@ -27,7 +29,7 @@ export class GraphqlOptions implements GqlOptionsFactory {
       bodyParserConfig: {
         limit: appSettings.bodyLimit,
       },
-      context: ({ req }: { req: Request }) => ({
+      context: ({ req }: { req: Request & { user?: User } }) => ({
         req,
         user: req.user,
       }),

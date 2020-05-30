@@ -1,8 +1,7 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 import { IsString, IsUUID, MinLength } from 'class-validator';
-
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { EntityHelper } from '../../common/helpers/module/entity.helper';
 

@@ -1,11 +1,11 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { Observable } from 'rxjs';
 
-import { UserLoaderById } from '../../oauth/user/loader/by_id.loader';
+import { Observable } from 'rxjs';
 
 import { BookLoaderById } from '../../core/book/loader/by_id.loader';
 import { BookLoaderByUserId } from '../../core/book/loader/by_user_id.loader';
+import { UserLoaderById } from '../../oauth/user/loader/by_id.loader';
 
 const generateDataLoaders = () => {
   return {
@@ -17,8 +17,10 @@ const generateDataLoaders = () => {
 
 @Injectable()
 export class LoaderInterceptor implements NestInterceptor {
-  // tslint:disable-next-line: no-any
-  public intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
+  public intercept(
+    context: ExecutionContext,
+    next: CallHandler<unknown>
+  ): Observable<unknown> | Promise<Observable<unknown>> {
     const gqlExecutionContext = GqlExecutionContext.create(context);
     const ctx = gqlExecutionContext.getContext();
 

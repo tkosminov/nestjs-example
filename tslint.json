@@ -73,7 +73,7 @@
     ],
     "no-misused-new": true,
     "no-non-null-assertion": true,
-    "no-shadowed-variable": true,
+    "no-shadowed-variable": false,
     "no-string-literal": true,
     "no-string-throw": true,
     "no-switch-case-fall-through": false,
@@ -167,7 +167,7 @@
       true,
       4
     ],
-    "no-flag-args": true,
+    "no-flag-args": false,
     "no-for-each-push": true,
     "no-feature-envy": [
       false,
@@ -176,7 +176,7 @@
         "_"
       ]
     ],
-    "no-map-without-usage": true,
+    "no-map-without-usage": false,
     "no-complex-conditionals": true,
     "prefer-dry-conditionals": true,
     "no-constant-condition": true,
@@ -197,6 +197,10 @@
       }
     ],
     "valid-typeof": true,
-    "prettier": true
+    "prettier": true,
+    "linebreak-style": [
+      true,
+      "LF"
+    ]
   }
 }

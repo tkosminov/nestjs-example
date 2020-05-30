@@ -1,12 +1,12 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { GraphQLUpload } from 'graphql-upload';
+
+import { GraphQLUpload } from 'apollo-server-core';
 import { FileUpload } from 'graphql-upload';
 
 import { UploadService } from './upload.service';
 
 import { UploadPayload } from './payload/upload.payload';
 
-// tslint:disable-next-line: no-unsafe-any
 @Resolver(() => UploadPayload)
 export class UploadResolver {
   constructor(private readonly uploadService: UploadService) {}

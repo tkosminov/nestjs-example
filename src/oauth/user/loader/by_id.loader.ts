@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { getRepository, In } from 'typeorm';
 
 import DataLoader from 'dataloader';
+import { getRepository, In } from 'typeorm';
+
 import { ILoader } from '../../../graphql/loader/loader.interface';
 
 import { User } from '../user.entity';

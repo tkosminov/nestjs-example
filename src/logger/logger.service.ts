@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+
 import config from 'config';
 
 enum ELogLevel {
@@ -16,26 +17,25 @@ export class LoggerService extends Logger {
     super(_context);
   }
 
-  // tslint:disable-next-line: no-any
-  public log(message: any, context?: string) {
+  public log(message: unknown, context?: string) {
     if (this.isValidLevel(ELogLevel.debug)) {
       Logger.log(JSON.stringify(message), context || this._context);
     }
   }
-  // tslint:disable-next-line: no-any
-  public info(message: any, context?: string) {
+
+  public info(message: unknown, context?: string) {
     if (this.isValidLevel(ELogLevel.info)) {
       Logger.log(JSON.stringify(message), context || this._context);
     }
   }
-  // tslint:disable-next-line: no-any
-  public warn(message: any, context?: string) {
+
+  public warn(message: unknown, context?: string) {
     if (this.isValidLevel(ELogLevel.warn)) {
       Logger.warn(JSON.stringify(message), context || this._context);
     }
   }
-  // tslint:disable-next-line: no-any
-  public error(message: any, trace?: string, context?: string) {
+
+  public error(message: unknown, trace?: string, context?: string) {
     if (this.isValidLevel(ELogLevel.error)) {
       Logger.error(JSON.stringify(message), trace, context || this._context);
     }

@@ -11,8 +11,8 @@ import {
 
 import { IsString, IsUUID, MinLength } from 'class-validator';
 
+import { generateToken } from '../../common/helpers';
 import { EntityHelper } from '../../common/helpers/module/entity.helper';
-import { generateToken } from '../../common/helpers/token.helper';
 
 import { User } from '../user/user.entity';
 

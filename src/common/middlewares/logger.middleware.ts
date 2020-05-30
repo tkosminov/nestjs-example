@@ -1,22 +1,21 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
+
 import config from 'config';
 import { NextFunction, Request, Response } from 'express';
 
-import { ReqHelper } from '../helpers/req.helper';
+import { getIp, getMethod, getOrigin, getReferrer, getUrl, getUserAgent } from '../helpers/req.helper';
 
 import { LoggerService } from '../../logger/logger.service';
 
 @Injectable()
-export class LoggerMiddleware extends ReqHelper implements NestMiddleware {
+export class LoggerMiddleware implements NestMiddleware {
   private readonly settings: ILogSettings = config.get('LOGGER_SETTINGS');
 
-  constructor(private readonly logger: LoggerService) {
-    super();
-  }
+  constructor(private readonly logger: LoggerService) {}
 
   public use(req: Request, res: Response, next: NextFunction) {
     const operation: string = req.body && req.body.operationName ? req.body.operationName : '';
-    const action: string = this.getUrl(req).split('/')[1];
+    const action: string = getUrl(req).split('/')[1];
 
     if (this.settings.silence.includes(action) || this.settings.silence.includes(operation)) {
       return next();
@@ -36,11 +35,11 @@ export class LoggerMiddleware extends ReqHelper implements NestMiddleware {
       const diff = process.hrtime(startTime);
 
       const message = {
-        url: `${this.getMethod(req)} ${this.getUrl(req)}`,
-        referrer: this.getReferrer(req),
-        origin: this.getOrigin(req) || '-',
-        userAgent: this.getUserAgent(req),
-        remoteAddress: this.getIp(req),
+        url: `${getMethod(req)} ${getUrl(req)}`,
+        referrer: getReferrer(req),
+        origin: getOrigin(req) || '-',
+        userAgent: getUserAgent(req),
+        remoteAddress: getIp(req),
         statusCode: res.statusCode,
         statusMessage: res.statusMessage,
         requestRunTime: `${(diff[0] * 1e3 + diff[1] * 1e-6).toFixed(4)} ms`,
@@ -52,8 +51,7 @@ export class LoggerMiddleware extends ReqHelper implements NestMiddleware {
     return next();
   }
 
-  // tslint:disable-next-line: no-any
-  private logMethodByStatus(message: any, stack: string, statusCode: number = 500) {
+  private logMethodByStatus(message: unknown, stack: string, statusCode: number = 500) {
     const prefix = 'LoggerMiddleware';
     if (statusCode < 300) {
       return this.logger.info(message, prefix);

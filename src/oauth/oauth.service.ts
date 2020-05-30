@@ -28,11 +28,7 @@ export class OAuthService {
       email: userCredentials.email,
     });
 
-    if (!user) {
-      unauthorized({ raise: true });
-    }
-
-    if (!checkPassword(user.password, userCredentials.password)) {
+    if (!user || !checkPassword(user.password, userCredentials.password)) {
       unauthorized({ raise: true });
     }
 
@@ -94,8 +90,8 @@ export class OAuthService {
     return new Date(expiresAt).toISOString() > new Date().toISOString();
   }
 
-  public async verifyToken(token: string) {
-    return (await jwt.verify(token, jwtSettings.secretKey)) as IPayload;
+  public verifyToken(token: string) {
+    return jwt.verify(token, jwtSettings.secretKey) as IPayload;
   }
 
   public async validateUser(payload: IPayload) {

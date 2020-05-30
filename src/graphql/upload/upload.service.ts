@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { FileUpload } from 'graphql-upload';
-
 import { execFile } from 'child_process';
 import fs from 'fs';
+import { FileUpload } from 'graphql-upload';
 import hasha from 'hasha';
 import path from 'path';
 import { Readable } from 'stream';
@@ -24,7 +23,6 @@ export class UploadService {
     if (stats.isFile()) {
       size += stats.size;
     } else if (stats.isDirectory()) {
-      // tslint:disable-next-line: no-map-without-usage
       fs.readdirSync(filePath).map((child) => {
         size += this.getFileOrDirSizeInBytes(`${filePath}/${child}`);
       });
@@ -39,7 +37,6 @@ export class UploadService {
     if (stats.isFile()) {
       fs.unlinkSync(filePath);
     } else if (stats.isDirectory()) {
-      // tslint:disable-next-line: no-map-without-usage
       fs.readdirSync(filePath).map((child) => {
         this.deleteDirOrFile(`${filePath}/${child}`);
       });
@@ -50,8 +47,7 @@ export class UploadService {
     return;
   }
 
-  // tslint:disable-next-line: no-any
-  private async saveFile(filePath: string, file: Buffer | any): Promise<void> {
+  private async saveFile(filePath: string, file: Buffer | unknown): Promise<void> {
     return new Promise((resolve, reject) => {
       fs.mkdir(path.dirname(filePath), { recursive: true }, (errorMkdir: Error) => {
         if (errorMkdir) {
@@ -89,9 +85,9 @@ export class UploadService {
     );
   }
 
-  // tslint:disable-next-line: no-flag-args
   public async storeFileByFs(file: FileUpload): Promise<IFileInFs> {
-    const fileStream = file.createReadStream();
+    const fileUpload = await file;
+    const fileStream = fileUpload.createReadStream();
 
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir);
@@ -100,7 +96,7 @@ export class UploadService {
     const buffer = await this.streamToBuffer(fileStream);
     const hashSum = hasha(buffer, { algorithm: 'sha256' });
 
-    const fileName = slugify(file.filename);
+    const fileName = slugify(fileUpload.filename);
     const fullPath = path.resolve(uploadDir, hashSum, fileName);
     const fileDir = path.resolve(uploadDir, hashSum);
 
@@ -113,12 +109,12 @@ export class UploadService {
     const fileSize = this.getFileOrDirSizeInBytes(path.dirname(fullPath));
 
     return {
-      originName: file.filename,
+      originName: fileUpload.filename,
       fileName,
       fullPath,
       filePath: `/uploads/${hashSum}/${fileName}`,
       fileSize,
-      fileMimetype: file.mimetype,
+      fileMimetype: fileUpload.mimetype,
       hashSum,
     };
   }

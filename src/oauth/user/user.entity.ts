@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
-import { IsEmail, IsEmpty, IsString, MinLength } from 'class-validator';
+import { IsBoolean, IsEmail, IsEmpty, IsString, MinLength } from 'class-validator';
 import { BeforeInsert, Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { EntityHelper } from '../../common/helpers/module/entity.helper';
@@ -31,15 +31,20 @@ export class User extends EntityHelper {
   @IsEmail()
   public email: string;
 
+  @Field()
+  @Column('boolean', { default: () => 'false' })
+  @IsBoolean()
+  public isAdmin: boolean;
+
   @Column()
   @IsEmpty()
   public password: string;
 
-  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
+  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, { onDelete: 'CASCADE' })
   public refreshTokens: RefreshToken[];
 
   @Field(() => [Book], { nullable: true })
-  @OneToMany(() => Book, (book) => book.user)
+  @OneToMany(() => Book, (book) => book.user, { onDelete: 'CASCADE' })
   public books: Book[];
 
   @BeforeInsert()

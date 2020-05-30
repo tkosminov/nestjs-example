@@ -9,7 +9,11 @@ import { IClientQuery } from './socket.interface';
 
 const appSettings = config.get<IAppSettings>('APP_SETTINGS');
 
-@WebSocketGateway(appSettings.socketPort)
+@WebSocketGateway(appSettings.socketPort, {
+  pingInterval: appSettings.socketPingInterval,
+  pingTimeout: appSettings.socketPinkTimeout,
+  path: appSettings.socketIoPath,
+})
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   public server: io.Server;

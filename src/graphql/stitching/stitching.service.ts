@@ -1,16 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { GraphQLSchema } from 'graphql';
-import { introspectSchema, makeRemoteExecutableSchema } from 'graphql-tools';
-import fetch from 'isomorphic-unfetch';
-
 import { ApolloLink } from 'apollo-link';
 import { setContext } from 'apollo-link-context';
 import { HttpLink } from 'apollo-link-http';
 import { RetryLink } from 'apollo-link-retry';
 import TimeoutLink from 'apollo-link-timeout';
-
 import config from 'config';
+import { GraphQLSchema } from 'graphql';
+import { introspectSchema, makeRemoteExecutableSchema } from 'graphql-tools';
+import fetch from 'isomorphic-unfetch';
 
 import { LoggerService } from '../../logger/logger.service';
 

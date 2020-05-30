@@ -59,8 +59,7 @@ export class AmqpService {
 
   private async subscribeMessage(
     options: IAmqpOptions,
-    // tslint:disable-next-line: no-any
-    handler: (msg: any, logger?: LoggerService) => Promise<TAmqpResponse>
+    handler: (msg: unknown, logger?: LoggerService) => Promise<TAmqpResponse>
   ) {
     try {
       const { queue } = await this.amqpChannel.assertQueue(options.queue || '');

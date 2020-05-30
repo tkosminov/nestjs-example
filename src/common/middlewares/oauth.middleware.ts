@@ -1,65 +1,66 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import { NextFunction, Request, Response } from 'express';
 
 import config from 'config';
-import jwt from 'jsonwebtoken';
+import { NextFunction, Request, Response } from 'express';
 
+import { access_denied, jwt_token_expired_signature } from '../errors';
+import { getAction } from '../helpers/req.helper';
+
+import { LoggerService } from '../../logger/logger.service';
+import { OAuthService } from '../../oauth/oauth.service';
 import { UserService } from '../../oauth/user/user.service';
 
-import { jwt_token_expired_signature, unauthorized } from '../errors';
-import { ReqHelper } from '../helpers/req.helper';
-
 import { IPayload } from '../../oauth/interface/payload.interface';
+import { User } from '../../oauth/user/user.entity';
 
-const secretJWTKey = config.get<IJwtSettings>('JWT_SETTINGS').secretKey;
 const actionBypass = config.get<string[]>('ACTION_BYPASS');
 
 @Injectable()
-export class OAuthMiddleware extends ReqHelper implements NestMiddleware {
-  constructor(private readonly userService: UserService) {
-    super();
-  }
+export class OAuthMiddleware implements NestMiddleware {
+  constructor(
+    private readonly userService: UserService,
+    private readonly oauthService: OAuthService,
+    private readonly logger: LoggerService
+  ) {}
 
-  public async use(req: Request, _res: Response, next: NextFunction) {
-    if (await this.checkJWTToken(req)) {
-      return next();
-    }
+  public async use(req: Request & { user?: IPayload }, _res: Response, next: NextFunction) {
+    try {
+      let authorizationCode = req.headers['X-Authorization'] || req.headers['x-authorization'];
+      const jwtToken: string = req.headers.authorization || (req.cookies as { JWT: string }).JWT;
 
-    if (await this.checkAuthBypass(req)) {
-      return next();
-    }
+      let user: User;
 
-    unauthorized({ raise: true });
-  }
+      if (authorizationCode && !jwtToken) {
+        if (typeof authorizationCode === 'object') {
+          authorizationCode = authorizationCode[0];
+        }
 
-  private async checkJWTToken(req: Request): Promise<boolean> {
-    const token: string = req.headers.authorization || req.cookies.JWT;
+        user = await this.userService.findOneBy({ authorizationCode });
+      } else if (jwtToken && !authorizationCode) {
+        const decodedToken = this.oauthService.verifyToken(jwtToken);
 
-    if (token) {
-      let payload: IPayload;
-
-      // tslint:disable-next-line: try-catch-first
-      try {
-        payload = jwt.verify(token, secretJWTKey) as IPayload;
-      } catch (e) {
-        jwt_token_expired_signature({ raise: true });
+        user = await this.userService.findOne(decodedToken.id);
       }
-
-      const user = await this.userService.findOne(payload.id);
 
       if (user) {
-        req.user = user;
+        req.user = user.jwtPayload();
 
-        return true;
+        return next();
       }
-    }
 
-    return false;
+      if (await this.checkAuthBypass(req)) {
+        return next();
+      }
+
+      return next(access_denied());
+    } catch (error) {
+      this.logger.error(error.message, error.stack, 'AuthMiddleware');
+      return next(jwt_token_expired_signature());
+    }
   }
 
   private async checkAuthBypass(req: Request): Promise<boolean> {
-    const currentAction = this.getUrl(req).split('/')[1];
-    const bypass = actionBypass.indexOf(currentAction);
+    const bypass = actionBypass.indexOf(getAction(req));
 
     if (bypass !== -1) {
       return true;
