@@ -42,7 +42,7 @@
     "apollo-link-http": "^1.5.17",
     "apollo-link-retry": "^2.2.16",
     "apollo-link-timeout": "^1.4.0",
-    "apollo-server-express": "^2.14.1",
+    "apollo-server-express": "^2.14.2",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.11.1",
