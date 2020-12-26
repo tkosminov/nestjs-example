@@ -13,9 +13,9 @@ export function getOrmConfig(): TypeOrmModuleOptions {
       database: `${settings.database}_${process.env.NODE_ENV}`,
       entities: [__dirname + '../../**/*.entity{.ts,.js}'],
       migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
-      migrationsRun: true,
+      migrationsRun: false,
       maxQueryExecutionTime: 0.1 /** To log request runtime */,
-      synchronize: true,
+      synchronize: false,
       cli: {
         migrationsDir: __dirname + '/migrations/**/*{.ts,.js}',
       },

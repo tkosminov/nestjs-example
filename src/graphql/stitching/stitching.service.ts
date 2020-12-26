@@ -18,7 +18,7 @@ const apiUrls: string[] = config.get('GRAPHQL_API_URLS');
 export class StitchingService {
   constructor(private readonly logger: LoggerService) {}
 
-  public async schemas(): Promise<GraphQLSchema[] | null[]> {
+  public async schemas(): Promise<Array<GraphQLSchema | null>> {
     return Promise.all(apiUrls.map((url) => this.getApiSchema(url)));
   }
 

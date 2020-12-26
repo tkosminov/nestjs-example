@@ -47,7 +47,7 @@ export class UploadService {
     return;
   }
 
-  private async saveFile(filePath: string, file: Buffer | unknown): Promise<void> {
+  private async saveFile(filePath: string, file: NodeJS.ArrayBufferView): Promise<void> {
     return new Promise((resolve, reject) => {
       fs.mkdir(path.dirname(filePath), { recursive: true }, (errorMkdir: Error) => {
         if (errorMkdir) {

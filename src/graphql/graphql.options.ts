@@ -24,7 +24,6 @@ export class GraphqlOptions implements GqlOptionsFactory {
     return {
       ...graphqlSettings,
       autoSchemaFile: __dirname + '/schema.graphql',
-      typePaths: [__dirname + '../**/*.graphql'],
       cors: corsOptionsDelegate,
       bodyParserConfig: {
         limit: appSettings.bodyLimit,

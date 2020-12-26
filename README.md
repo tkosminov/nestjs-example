@@ -23,7 +23,40 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 npm i
 ```
 
+## DB Settings
+
+#### Create DB
+
+```bash
+sudo -i -u postgres
+
+createdb nestjs_example_${env}
+```
+
+#### Create new migration
+
+```bash
+npm run db:migration:create -- ${migration_name}
+```
+
+#### Run migration
+
+```bash
+NODE_ENV=${env} npm run db:migration:run
+```
+
+| Note: you need to specify `env` only for `development`
+
+#### Sync db schema
+
+```bash
+NODE_ENV=${env} npm run db:schema:sync
+```
+
+| Note: you need to specify `env` only for `development`
+
 ## Running the app
+
 
 ### development
 
@@ -74,11 +107,21 @@ docker-compose -f docker-compose.yml up --build
 ```
 
 #### After creating containers, create a database
+
 ```bash
 
 docker-compose -f docker-compose.yml exec db sh
 
 createdb nestjs_example_$ENV -U postgres
+```
+
+#### After create database, run db:schema:sync
+
+```bash
+
+docker-compose -f docker-compose.yml exec beta-web sh
+
+npm run db:schema:sync
 ```
 
 #### After restart the containers
