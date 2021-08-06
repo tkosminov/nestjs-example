@@ -14,6 +14,7 @@ interface ILogSettings {
 interface IJwtSettings {
   readonly secretKey: string;
   readonly expiresIn: number;
+  readonly algorithms: string[];
 }
 
 interface IAppSettings {
@@ -28,6 +29,7 @@ interface IAppSettings {
 
 interface ICorsSettings {
   readonly allowedOrigins: string[];
+  readonly allowedUrls: string[];
   readonly allowedPaths: string[];
   readonly allowedMethods: string[];
   readonly allowedCredentials: boolean;

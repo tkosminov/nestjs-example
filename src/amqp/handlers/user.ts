@@ -19,7 +19,13 @@ const create = async (msg: CreateUserDTO, logger: LoggerService) => {
 
       Object.keys(user).forEach((key) => !user[key] && delete user[key]);
 
-      await entityManager.getRepository(User).createQueryBuilder().insert().into(User).values([user]).execute();
+      await entityManager
+        .getRepository(User)
+        .createQueryBuilder()
+        .insert()
+        .into(User)
+        .values([user])
+        .execute();
 
       return 'ack';
     });

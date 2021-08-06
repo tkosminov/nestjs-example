@@ -6,7 +6,7 @@
     "socketPinkTimeout": 10000,
     "socketIoPath": "/socket.io",
     "bodyLimit": "50mb",
-    "bodyParameterLimit": 50000
+    "bodyParameterLimit": 50000000
   },
   "DB_SETTINGS": {
     "host": "localhost",
@@ -24,10 +24,12 @@
   },
   "JWT_SETTINGS": {
     "secretKey": "key",
-    "expiresIn": 20
+    "expiresIn": 20,
+    "algorithms": ["HS256"]
   },
   "CORS_SETTINGS": {
     "allowedOrigins": [],
+    "allowedUrls": [],
     "allowedPaths": [],
     "allowedMethods": [
       "GET",

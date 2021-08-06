@@ -9,7 +9,10 @@ import { RefreshToken } from './refresh_token.entity';
 
 @Injectable()
 export class RefreshTokenService extends ServiceHelper<RefreshToken> {
-  constructor(@InjectRepository(RefreshToken) refreshTokenRepository: Repository<RefreshToken>) {
+  constructor(
+    @InjectRepository(RefreshToken)
+    refreshTokenRepository: Repository<RefreshToken>,
+  ) {
     super(refreshTokenRepository);
   }
 }

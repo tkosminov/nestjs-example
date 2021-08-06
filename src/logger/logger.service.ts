@@ -11,7 +11,8 @@ enum ELogLevel {
 
 @Injectable()
 export class LoggerService extends Logger {
-  private readonly _currentLevel: ELogLevel = ELogLevel[config.get<ILogSettings>('LOGGER_SETTINGS').level];
+  private readonly _currentLevel: ELogLevel =
+    ELogLevel[config.get<ILogSettings>('LOGGER_SETTINGS').level];
 
   constructor(private readonly _context?: string) {
     super(_context);

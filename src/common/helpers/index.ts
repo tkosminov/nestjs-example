@@ -16,9 +16,10 @@ export const convertToHex = (str: string) => {
   return hex;
 };
 
-export const generateToken = (length: number = 64) => {
+export const generateToken = (length = 64) => {
   let text = '';
-  const possible = '0123456789QAZWSXEDCRFVTGBYHNUJMIKOLPqazwsxedcrfvtgbyhnujmikolp';
+  const possible =
+    '0123456789QAZWSXEDCRFVTGBYHNUJMIKOLPqazwsxedcrfvtgbyhnujmikolp';
 
   for (let i = 0; i < length; i++) {
     text += possible.charAt(Math.floor(Math.random() * possible.length));

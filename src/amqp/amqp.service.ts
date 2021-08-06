@@ -59,12 +59,16 @@ export class AmqpService {
 
   private async subscribeMessage(
     options: IAmqpOptions,
-    handler: (msg: unknown, logger?: LoggerService) => Promise<TAmqpResponse>
+    handler: (msg: unknown, logger?: LoggerService) => Promise<TAmqpResponse>,
   ) {
     try {
       const { queue } = await this.amqpChannel.assertQueue(options.queue || '');
 
-      await this.amqpChannel.bindQueue(queue, options.exchange, options.routingKey);
+      await this.amqpChannel.bindQueue(
+        queue,
+        options.exchange,
+        options.routingKey,
+      );
 
       this.logger.warn(`bindQueue - ${options.queue}`);
 
@@ -93,7 +97,11 @@ export class AmqpService {
   public async sendMessage<T>(msg: T, routingKey: string) {
     try {
       if (this.amqpChannel) {
-        this.amqpChannel.publish(amqpSettings.exchange, routingKey, Buffer.from(JSON.stringify(msg)));
+        this.amqpChannel.publish(
+          amqpSettings.exchange,
+          routingKey,
+          Buffer.from(JSON.stringify(msg)),
+        );
       }
     } catch (error) {
       this.logger.error(error.message, error.stack);

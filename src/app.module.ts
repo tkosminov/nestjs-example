@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { OAuthMiddleware } from './common/middlewares/oauth.middleware';
@@ -34,6 +39,18 @@ import { HealthcheckController } from './healthcheck/healthcheck.controller';
 })
 export class AppModule implements NestModule {
   public configure(consumer: MiddlewareConsumer): void | MiddlewareConsumer {
-    consumer.apply(OAuthMiddleware, LoggerMiddleware).forRoutes('*');
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+
+    consumer
+      .apply(OAuthMiddleware)
+      .exclude(
+        { path: 'oauth', method: RequestMethod.ALL },
+        { path: 'healthz', method: RequestMethod.ALL },
+        { path: 'swagger', method: RequestMethod.ALL },
+      )
+      .forRoutes(
+        { path: 'graphql', method: RequestMethod.POST },
+        { path: 'graphql', method: RequestMethod.OPTIONS },
+      );
   }
 }

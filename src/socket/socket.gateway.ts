@@ -1,4 +1,9 @@
-import { OnGatewayConnection, OnGatewayDisconnect, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import {
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
 
 import config from 'config';
 import io from 'socket.io';
@@ -21,7 +26,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly logger: LoggerService) {}
 
   private getClientQuery(client: io.Socket): IClientQuery {
-    return client.handshake.query as IClientQuery;
+    return client.handshake.query as unknown as IClientQuery;
   }
 
   public async handleConnection(client: io.Socket) {

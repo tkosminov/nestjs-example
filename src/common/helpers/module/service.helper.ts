@@ -40,7 +40,11 @@ export class ServiceHelper<T> {
     return await this.save(result, options);
   }
 
-  public async update(id: id, partial: QueryDeepPartialEntity<T>, options: FindOneOptions<T> = {}) {
+  public async update(
+    id: id,
+    partial: QueryDeepPartialEntity<T>,
+    options: FindOneOptions<T> = {},
+  ) {
     await this.repository.update(id, partial);
     return this.findOne(id, options);
   }

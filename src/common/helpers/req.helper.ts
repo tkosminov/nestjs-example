@@ -4,6 +4,16 @@ export function getIp(req: Request): string {
   return req.ip || (req.connection && req.connection.remoteAddress) || '-';
 }
 
+export function getForwardedIp(req: Request): string {
+  let ips = req.get('X-Forwarded-For');
+
+  if (ips?.length) {
+    ips = ips.split(', ')[0];
+  }
+
+  return ips || '-';
+}
+
 export function getUrl(req: Request): string {
   return req.originalUrl || req.url || req.baseUrl || '-';
 }

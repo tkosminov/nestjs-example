@@ -3,7 +3,14 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 import config from 'config';
 import { NextFunction, Request, Response } from 'express';
 
-import { getIp, getMethod, getOrigin, getReferrer, getUrl, getUserAgent } from '../helpers/req.helper';
+import {
+  getIp,
+  getMethod,
+  getOrigin,
+  getReferrer,
+  getUrl,
+  getUserAgent,
+} from '../helpers/req.helper';
 
 import { LoggerService } from '../../logger/logger.service';
 
@@ -14,10 +21,14 @@ export class LoggerMiddleware implements NestMiddleware {
   constructor(private readonly logger: LoggerService) {}
 
   public use(req: Request, res: Response, next: NextFunction) {
-    const operation: string = req.body && req.body.operationName ? req.body.operationName : '';
+    const operation: string =
+      req.body && req.body.operationName ? req.body.operationName : '';
     const action: string = getUrl(req).split('/')[1];
 
-    if (this.settings.silence.includes(action) || this.settings.silence.includes(operation)) {
+    if (
+      this.settings.silence.includes(action) ||
+      this.settings.silence.includes(operation)
+    ) {
       return next();
     }
 
@@ -51,7 +62,7 @@ export class LoggerMiddleware implements NestMiddleware {
     return next();
   }
 
-  private logMethodByStatus(message: unknown, stack: string, statusCode: number = 500) {
+  private logMethodByStatus(message: unknown, stack: string, statusCode = 500) {
     const prefix = 'LoggerMiddleware';
     if (statusCode < 300) {
       return this.logger.info(message, prefix);

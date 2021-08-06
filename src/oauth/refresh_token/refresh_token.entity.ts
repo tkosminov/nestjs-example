@@ -48,6 +48,8 @@ export class RefreshToken extends EntityHelper {
   @BeforeUpdate()
   protected generateAllTokens() {
     this.refreshToken = generateToken();
-    this.refreshTokenExpiresAt = new Date(new Date().setDate(new Date().getDate() + 7));
+    this.refreshTokenExpiresAt = new Date(
+      new Date().setDate(new Date().getDate() + 7),
+    );
   }
 }

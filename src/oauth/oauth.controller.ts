@@ -15,7 +15,10 @@ export class OAuthController {
   @ApiOperation({
     summary: 'Sign in',
   })
-  @ApiQuery({ name: 'grand_type', enum: ['password', 'refresh_token', 'authorization_code'] })
+  @ApiQuery({
+    name: 'grand_type',
+    enum: ['password', 'refresh_token', 'authorization_code'],
+  })
   @ApiQuery({
     name: 'username',
     description: 'Email. If grand_type = password',

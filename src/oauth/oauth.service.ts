@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import config from 'config';
-import jwt from 'jsonwebtoken';
+import { Algorithm, verify, sign } from 'jsonwebtoken';
 
 import { RefreshToken } from './refresh_token/refresh_token.entity';
 
@@ -14,14 +14,20 @@ import { AuthorizationDTO } from './dto/authorization.dto';
 import { PasswordDTO } from './dto/password.dto';
 import { RefreshDTO } from './dto/refresh.dto';
 
-import { refresh_token_expired_signature, unauthorized } from '../common/errors';
+import {
+  refresh_token_expired_signature,
+  unauthorized,
+} from '../common/errors';
 import { checkPassword } from '../common/helpers/password.helper';
 
 const jwtSettings = config.get<IJwtSettings>('JWT_SETTINGS');
 
 @Injectable()
 export class OAuthService {
-  constructor(private readonly userService: UserService, private readonly refreshTokenService: RefreshTokenService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly refreshTokenService: RefreshTokenService,
+  ) {}
 
   public async signInByPassword(userCredentials: PasswordDTO) {
     const user = await this.userService.findOneBy({
@@ -56,14 +62,19 @@ export class OAuthService {
       {
         refreshToken: authCredentials.refreshToken,
       },
-      ['user']
+      ['user'],
     );
 
-    if (!oldRefreshToken || !this.checkExpiresAt(oldRefreshToken.refreshTokenExpiresAt)) {
+    if (
+      !oldRefreshToken ||
+      !this.checkExpiresAt(oldRefreshToken.refreshTokenExpiresAt)
+    ) {
       refresh_token_expired_signature({ raise: true });
     }
 
-    const refreshToken = await this.refreshTokenService.newModel({ user: oldRefreshToken.user });
+    const refreshToken = await this.refreshTokenService.newModel({
+      user: oldRefreshToken.user,
+    });
 
     await this.refreshTokenService.delete(oldRefreshToken.id);
 
@@ -71,16 +82,24 @@ export class OAuthService {
   }
 
   private async createJWT(refreshToken: RefreshToken) {
-    const updatedRefreshToken = await this.refreshTokenService.save(refreshToken);
+    const updatedRefreshToken = await this.refreshTokenService.save(
+      refreshToken,
+    );
 
-    const jwtToken = jwt.sign(updatedRefreshToken.user.jwtPayload(), jwtSettings.secretKey, {
-      expiresIn: `${jwtSettings.expiresIn}m`,
-    });
+    const jwtToken = sign(
+      updatedRefreshToken.user.jwtPayload(),
+      jwtSettings.secretKey,
+      {
+        expiresIn: `${jwtSettings.expiresIn}m`,
+      },
+    );
 
     return {
       token_type: 'jwt',
       jwt_token: jwtToken,
-      expires_in: new Date(new Date().setMinutes(new Date().getMinutes() + jwtSettings.expiresIn)).toISOString(),
+      expires_in: new Date(
+        new Date().setMinutes(new Date().getMinutes() + jwtSettings.expiresIn),
+      ).toISOString(),
       refresh_token: updatedRefreshToken.refreshToken,
       refresh_token_expires_at: updatedRefreshToken.refreshTokenExpiresAt,
     };
@@ -91,7 +110,9 @@ export class OAuthService {
   }
 
   public verifyToken(token: string) {
-    return jwt.verify(token, jwtSettings.secretKey) as IPayload;
+    return verify(token, jwtSettings.secretKey, {
+      algorithms: jwtSettings.algorithms as Algorithm[],
+    }) as IPayload;
   }
 
   public async validateUser(payload: IPayload) {

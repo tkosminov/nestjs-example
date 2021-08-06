@@ -1,5 +1,15 @@
 // import { UseGuards } from '@nestjs/common';
-import { Args, Context, ID, Int, Mutation, Parent, Query, ResolveProperty, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  ID,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 
 import DataLoader from 'dataloader';
 
@@ -22,7 +32,7 @@ export class BookResolver {
   @Query(() => [Book])
   public async books(
     @Args({ name: 'page', type: () => Int }) page: number,
-    @Args({ name: 'per_page', type: () => Int }) take: number
+    @Args({ name: 'per_page', type: () => Int }) take: number,
   ) {
     if (take < 1) {
       take = 10;
@@ -40,7 +50,10 @@ export class BookResolver {
   }
 
   @Mutation(() => Book)
-  public async bookCreate(@Args('data') data: CreateBookDTO, @Context('user') user: User) {
+  public async bookCreate(
+    @Args('data') data: CreateBookDTO,
+    @Context('user') user: User,
+  ) {
     return await this.bookService.create({ ...data, userId: user.id });
   }
 
@@ -48,7 +61,7 @@ export class BookResolver {
   public async bookUpdate(
     @Args({ name: 'id', type: () => ID }) id: string,
     @Args('data') data: UpdateBookDTO,
-    @Context('user') user: User
+    @Context('user') user: User,
   ) {
     const book = await this.bookService.findOne(id);
 
@@ -60,7 +73,10 @@ export class BookResolver {
   }
 
   @Mutation(() => Book)
-  public async bookDelete(@Args({ name: 'id', type: () => ID }) id: string, @Context('user') user: User) {
+  public async bookDelete(
+    @Args({ name: 'id', type: () => ID }) id: string,
+    @Context('user') user: User,
+  ) {
     const book = await this.bookService.findOne(id);
 
     if (book.userId !== user.id) {
@@ -70,8 +86,11 @@ export class BookResolver {
     return await this.bookService.delete(id);
   }
 
-  @ResolveProperty()
-  public async user(@Parent() book: Book, @Context('UserLoaderById') loader: DataLoader<string, User>) {
+  @ResolveField()
+  public async user(
+    @Parent() book: Book,
+    @Context('UserLoaderById') loader: DataLoader<string, User>,
+  ) {
     return await loader.load(book.userId);
   }
 }

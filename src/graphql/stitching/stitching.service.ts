@@ -1,79 +1,73 @@
+import { AsyncExecutor } from '@graphql-tools/utils';
+import { introspectSchema, wrapSchema } from '@graphql-tools/wrap';
 import { Injectable } from '@nestjs/common';
 
-import { ApolloLink } from 'apollo-link';
-import { setContext } from 'apollo-link-context';
-import { HttpLink } from 'apollo-link-http';
-import { RetryLink } from 'apollo-link-retry';
-import TimeoutLink from 'apollo-link-timeout';
 import config from 'config';
-import { GraphQLSchema } from 'graphql';
-import { introspectSchema, makeRemoteExecutableSchema } from 'graphql-tools';
-import fetch from 'isomorphic-unfetch';
+import { fetch } from 'cross-fetch';
+import { GraphQLSchema, print } from 'graphql';
 
+import { getForwardedIp, getIp } from '../../common/helpers/req.helper';
 import { LoggerService } from '../../logger/logger.service';
 
-const apiUrls: string[] = config.get('GRAPHQL_API_URLS');
+const api_urls = config.get<string[]>('GRAPHQL_API_URLS');
 
 @Injectable()
 export class StitchingService {
   constructor(private readonly logger: LoggerService) {}
 
   public async schemas(): Promise<Array<GraphQLSchema | null>> {
-    return Promise.all(apiUrls.map((url) => this.getApiSchema(url)));
+    return Promise.all(
+      Object.values(api_urls).map((url) => this.getApiSchema(url)),
+    );
   }
 
-  private async getApiSchema(apiLink: string): Promise<GraphQLSchema | null> {
+  private async getApiSchema(api_link: string): Promise<GraphQLSchema | null> {
+    this.logger.info(`Parse ${api_link}`);
+
     try {
-      const httpLink = new HttpLink({
-        uri: apiLink,
-        fetch,
+      const executor: AsyncExecutor = async ({
+        document,
+        variables,
+        context,
+      }) => {
+        this.logger.info(`Request to ${api_link}`);
+
+        const query = print(document);
+
+        let currentUser = '{}';
+        let remoteAddress = '-';
+        let forwardedAddress = '-';
+
+        if (context?.req) {
+          currentUser = JSON.stringify(context.req.user || {});
+          remoteAddress = getIp(context.req);
+          forwardedAddress = getForwardedIp(context.req);
+        }
+
+        const fetch_result = await fetch(api_link, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            currentUser,
+            remoteAddress,
+            forwardedAddress,
+          },
+          body: JSON.stringify({ query, variables }),
+        });
+
+        return fetch_result.json();
+      };
+
+      const schema = wrapSchema({
+        schema: await introspectSchema(executor),
+        executor,
       });
 
-      const timeoutLink = this.timeoutLink().concat(httpLink);
-      const retryLink = this.retryLink().concat(timeoutLink);
-      const link = this.contextLink().concat(retryLink);
-
-      const coreIntrospect = await introspectSchema(link);
-
-      return makeRemoteExecutableSchema({
-        schema: coreIntrospect,
-        link,
-      });
+      return schema;
     } catch (error) {
       this.logger.error(error);
+
       return null;
     }
-  }
-
-  private timeoutLink(): TimeoutLink {
-    return new TimeoutLink(60000); // 60s
-  }
-
-  private retryLink(): RetryLink {
-    return new RetryLink({
-      attempts: {
-        max: 0,
-        retryIf: (error, _operation) => !!error,
-      },
-    });
-  }
-
-  private contextLink(): ApolloLink {
-    return setContext((_req, previousContext) => {
-      let currentUser = '{}';
-
-      if (Object.keys(previousContext).length) {
-        const user = previousContext.graphqlContext.req.user;
-        if (user) {
-          currentUser = JSON.stringify(user);
-        }
-      }
-
-      return {
-        headers: {
-          currentUser,
-        },
-      };
-    });
   }
 }

@@ -1,4 +1,14 @@
-import { Args, Context, ID, Int, Mutation, Parent, Query, ResolveProperty, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  ID,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 
 import DataLoader from 'dataloader';
 
@@ -17,7 +27,7 @@ export class UserResolver {
   @Query(() => [User])
   public async users(
     @Args({ name: 'page', type: () => Int }) page: number,
-    @Args({ name: 'per_page', type: () => Int }) take: number
+    @Args({ name: 'per_page', type: () => Int }) take: number,
   ) {
     if (take < 1) {
       take = 10;
@@ -40,12 +50,18 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  public async userUpdate(@Args({ name: 'id', type: () => ID }) id: string, @Args('data') data: UpdateUserDTO) {
+  public async userUpdate(
+    @Args({ name: 'id', type: () => ID }) id: string,
+    @Args('data') data: UpdateUserDTO,
+  ) {
     return await this.userService.update(id, data);
   }
 
-  @ResolveProperty()
-  public async books(@Parent() user: User, @Context('BookLoaderByUserId') loader: DataLoader<string, Book[]>) {
+  @ResolveField()
+  public async books(
+    @Parent() user: User,
+    @Context('BookLoaderByUserId') loader: DataLoader<string, Book[]>,
+  ) {
     return await loader.load(user.id);
   }
 }

@@ -1,8 +1,8 @@
+import { FileUpload } from '@apollographql/graphql-upload-8-fork';
 import { Injectable } from '@nestjs/common';
 
 import { execFile } from 'child_process';
 import fs from 'fs';
-import { FileUpload } from 'graphql-upload';
 import hasha from 'hasha';
 import path from 'path';
 import { Readable } from 'stream';
@@ -47,30 +47,45 @@ export class UploadService {
     return;
   }
 
-  private async saveFile(filePath: string, file: NodeJS.ArrayBufferView): Promise<void> {
+  private async saveFile(
+    filePath: string,
+    file: NodeJS.ArrayBufferView,
+  ): Promise<void> {
     return new Promise((resolve, reject) => {
-      fs.mkdir(path.dirname(filePath), { recursive: true }, (errorMkdir: Error) => {
-        if (errorMkdir) {
-          reject(errorMkdir);
-        }
-        fs.writeFile(filePath, file, (errorWrite: Error) => {
-          if (errorWrite) {
-            reject(errorWrite);
+      fs.mkdir(
+        path.dirname(filePath),
+        { recursive: true },
+        (errorMkdir: Error) => {
+          if (errorMkdir) {
+            reject(errorMkdir);
           }
-          resolve();
-        });
-      });
+          fs.writeFile(filePath, file, (errorWrite: Error) => {
+            if (errorWrite) {
+              reject(errorWrite);
+            }
+            resolve();
+          });
+        },
+      );
     });
   }
 
-  public async execCommand(command: string, args: string[]): Promise<IExecCommand> {
+  public async execCommand(
+    command: string,
+    args: string[],
+  ): Promise<IExecCommand> {
     return new Promise((resolve, reject) => {
-      execFile(command, args, { encoding: 'buffer' }, (err: Error, stdout: Buffer, stderr: Buffer) => {
-        if (err) {
-          reject(err);
-        }
-        return resolve({ stdout, stderr });
-      });
+      execFile(
+        command,
+        args,
+        { encoding: 'buffer' },
+        (err: Error, stdout: Buffer, stderr: Buffer) => {
+          if (err) {
+            reject(err);
+          }
+          return resolve({ stdout, stderr });
+        },
+      );
     });
   }
 
@@ -81,12 +96,11 @@ export class UploadService {
       stream
         .on('error', (error) => reject(error))
         .on('data', (data) => buffer.push(data))
-        .on('end', () => resolve(Buffer.concat(buffer)))
+        .on('end', () => resolve(Buffer.concat(buffer))),
     );
   }
 
-  public async storeFileByFs(file: FileUpload): Promise<IFileInFs> {
-    const fileUpload = await file;
+  public async storeFileByFs(fileUpload: FileUpload): Promise<IFileInFs> {
     const fileStream = fileUpload.createReadStream();
 
     if (!fs.existsSync(uploadDir)) {

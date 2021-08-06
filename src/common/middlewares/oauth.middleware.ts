@@ -20,13 +20,19 @@ export class OAuthMiddleware implements NestMiddleware {
   constructor(
     private readonly userService: UserService,
     private readonly oauthService: OAuthService,
-    private readonly logger: LoggerService
+    private readonly logger: LoggerService,
   ) {}
 
-  public async use(req: Request & { user?: IPayload }, _res: Response, next: NextFunction) {
+  public async use(
+    req: Request & { user?: IPayload },
+    _res: Response,
+    next: NextFunction,
+  ) {
     try {
-      let authorizationCode = req.headers['X-Authorization'] || req.headers['x-authorization'];
-      const jwtToken: string = req.headers.authorization || (req.cookies as { JWT: string }).JWT;
+      let authorizationCode =
+        req.headers['X-Authorization'] || req.headers['x-authorization'];
+      const jwtToken: string =
+        req.headers.authorization || (req.cookies as { JWT: string }).JWT;
 
       let user: User;
 
