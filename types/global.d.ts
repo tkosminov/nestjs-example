@@ -42,17 +42,14 @@ interface IGraphqlSettings {
   readonly installSubscriptionHandlers: boolean;
 }
 
-interface IAmqpSettings {
+interface IRabbitMQSettings {
   readonly exchange: string;
-  readonly exchangeType: string;
   readonly name: string;
   readonly host: string;
   readonly vhost: string;
   readonly port: number;
   readonly username: string;
   readonly password: string;
-  readonly reconnectDelay: number;
-  readonly prefetch: number;
 }
 
 interface IRedisSettings {

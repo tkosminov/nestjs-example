@@ -15,6 +15,21 @@
     "password": "postgres",
     "database": "nestjs_example"
   },
+  "RABBITMQ_SETTINGS": {
+    "exchange": "ts3_webinar_back",
+    "name": "rabbitmq",
+    "host": "localhost",
+    "vhost": "vhost",
+    "port": 5672,
+    "username": "admin",
+    "password": "password"
+  },
+  "REDIS_SETTINGS": {
+    "use": true,
+    "host": "localhost",
+    "port": 6379,
+    "password": ""
+  },
   "LOGGER_SETTINGS": {
     "level": "info",
     "silence": [
@@ -49,23 +64,5 @@
     "healthz",
     "oauth",
     "graphql"
-  ],
-  "AMQP_SETTINGS": {
-    "exchange": "nestjs_example_service",
-    "exchangeType": "direct",
-    "name": "rabbitmq",
-    "host": "localhost",
-    "vhost": "vhost",
-    "port": 5672,
-    "username": "admin",
-    "password": "password",
-    "reconnectDelay": 10000,
-    "prefetch": 10
-  },
-  "REDIS_SETTINGS": {
-    "use": true,
-    "host": "localhost",
-    "port": 6379,
-    "password": ""
-  }
+  ]  
 }

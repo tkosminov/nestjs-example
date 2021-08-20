@@ -46,6 +46,7 @@
     "@nestjs/testing": "^8.0.6",
     "@nestjs/typeorm": "^8.0.2",
     "@nestjs/websockets": "^8.0.6",
+    "amqp-connection-manager": "^3.2.2",
     "amqplib": "^0.8.0",
     "apollo-server-express": "^2.25.2",
     "bcryptjs": "^2.4.3",
@@ -68,9 +69,11 @@
     "socket.io-redis": "^6.1.1",
     "swagger-ui-express": "^4.1.6",
     "transliteration": "^2.2.0",
-    "typeorm": "^0.2.36"
+    "typeorm": "^0.2.36",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/amqp-connection-manager": "^2.0.12",
     "@types/amqplib": "^0.8.1",
     "@types/bcryptjs": "^2.4.2",
     "@types/config": "0.0.39",
@@ -85,6 +88,7 @@
     "@types/socket.io": "^3.0.2",
     "@types/socket.io-redis": "^3.0.0",
     "@types/supertest": "^2.0.11",
+    "@types/uuid": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^4.19.0",
     "@typescript-eslint/parser": "^4.29.0",
     "eslint": "^7.32.0",
