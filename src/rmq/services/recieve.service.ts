@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { LoggerService } from '../../logger/logger.service';
 
 import { TRMQResponse } from '../rmq.constants';
-import { RMQSubscribtion } from '../rmq.decorators';
+import { RMQSubscription } from '../rmq.decorators';
 import { RmqService } from '../rmq.service';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class RmqRecieveService {
     public readonly rmqService: RmqService,
   ) {}
 
-  @RMQSubscribtion({
+  @RMQSubscription({
     exchange: `example`,
     routingKey: 'example_routing_key',
     queue: `example_queue`,
