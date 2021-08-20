@@ -16,7 +16,7 @@
     "database": "nestjs_example"
   },
   "RABBITMQ_SETTINGS": {
-    "exchange": "ts3_webinar_back",
+    "exchange": "nestjs_example_service",
     "name": "rabbitmq",
     "host": "localhost",
     "vhost": "vhost",
