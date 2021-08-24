@@ -187,7 +187,7 @@ export class RmqService implements OnModuleInit {
           const response: TRMQResponse =
             await handler.discoveredMethod.parentClass[
               handler.discoveredMethod.methodName
-            ](msg_content);
+            ](JSON.parse(msg_content));
 
           if (response === 'nack') {
             channel.nack(msg, false, false);
