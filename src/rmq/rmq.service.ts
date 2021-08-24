@@ -20,7 +20,7 @@ import {
   ERROR_EVENT,
   DISCONNECT_EVENT,
   CONNECT_EVENT,
-  IRouteOptions,
+  IRMQHandler,
   TRMQResponse,
 } from './rmq.constants';
 import { RmqExplorer } from './rmq.explorer';
@@ -74,7 +74,7 @@ export class RmqService implements OnModuleInit {
     const handlers = this.rmqExplorerService.handlers;
 
     for (const handler of handlers) {
-      await this.createQueue(handler.meta, handler.discoveredMethod.handler);
+      await this.createQueue(handler);
     }
 
     this.logger.info('RMQModule dependencies initialized');
@@ -166,24 +166,28 @@ export class RmqService implements OnModuleInit {
     );
   }
 
-  public async createQueue(
-    options: IRouteOptions,
-    fn: (msg: unknown) => Promise<TRMQResponse>,
-  ) {
+  public async createQueue(handler: IRMQHandler) {
     await this.subscription_channel.addSetup(
       async (channel: ConfirmChannel) => {
-        const { queue } = await channel.assertQueue(options.queue);
+        const { queue } = await channel.assertQueue(handler.meta.queue);
 
-        await channel.bindQueue(queue, options.exchange, options.routingKey);
+        await channel.bindQueue(
+          queue,
+          handler.meta.exchange,
+          handler.meta.routingKey,
+        );
 
-        this.logger.info(`bindQueue - ${options.routingKey}`);
+        this.logger.info(`bindQueue - ${handler.meta.routingKey}`);
 
         await channel.consume(queue, async (msg) => {
-          this.logger.info(`consume - ${options.routingKey}`);
+          this.logger.info(`consume - ${handler.meta.routingKey}`);
 
           const msg_content = msg.content.toString();
 
-          const response = await fn(JSON.parse(msg_content));
+          const response: TRMQResponse =
+            await handler.discoveredMethod.parentClass[
+              handler.discoveredMethod.methodName
+            ](msg_content);
 
           if (response === 'nack') {
             channel.nack(msg, false, false);
