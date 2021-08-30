@@ -1,18 +1,33 @@
 import { Injectable } from '@nestjs/common';
-import { DiscoveryService } from '@nestjs/core';
+import { DiscoveryService, Reflector } from '@nestjs/core';
+import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 
-import { IRMQHandler, RMQ_ROUTES_OPTIONS } from './rmq.constants';
+import {
+  IRMQHandler,
+  RMQ_PROVIDER_OPTIONS,
+  RMQ_ROUTES_OPTIONS,
+} from './rmq.constants';
 
 @Injectable()
 export class RmqExplorer {
   constructor(
     private readonly discoveryService: DiscoveryService,
     private readonly metadataScannerService: MetadataScanner,
+    private readonly reflector: Reflector,
   ) {}
 
   public get handlers() {
-    const providers = this.discoveryService.getProviders();
+    const providers = this.discoveryService
+      .getProviders()
+      .filter((wrapper: InstanceWrapper) => {
+        if (!wrapper?.metatype) {
+          return false;
+        }
+
+        return !!this.reflector.get(RMQ_PROVIDER_OPTIONS, wrapper.metatype);
+      });
+
     const handlers: IRMQHandler[] = [];
 
     providers.forEach((provider) => {

@@ -3,9 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { LoggerService } from '../../logger/logger.service';
 
 import { TRMQResponse } from '../rmq.constants';
-import { RMQSubscription } from '../rmq.decorators';
+import { RMQProvider, RMQSubscription } from '../rmq.decorators';
 import { RmqService } from '../rmq.service';
 
+@RMQProvider()
 @Injectable()
 export class RmqRecieveService {
   constructor(

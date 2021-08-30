@@ -1,4 +1,5 @@
 export const RMQ_MODULE_OPTIONS = 'RMQ_MODULE_OPTIONS';
+export const RMQ_PROVIDER_OPTIONS = 'RMQ_PROVIDER_OPTIONS';
 export const RMQ_ROUTES_OPTIONS = 'RMQ_ROUTES_OPTIONS';
 export const RMQ_REPLY_QUEUE = 'amq.rabbitmq.reply-to';
 
