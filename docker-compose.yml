@@ -1,22 +1,22 @@
 version: '3'
 services:
   db:
-    image: postgres:11-alpine
+    image: postgres:13-alpine
     expose:
       - "5432"
     networks:
       - nestjs_example_network
     container_name: nestjs_example-db
-    restart: always
+    restart: on-failure
 
   redis:
-    image: redis:5.0.7-alpine
+    image: redis:7-alpine
     expose:
       - "6379"
     networks:
       - nestjs_example_network
     container_name: nestjs_example-redis
-    restart: always
+    restart: on-failure
 
   beta-web:
     build:

@@ -2,11 +2,7 @@ import EventEmitter from 'events';
 
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 
-import {
-  connect,
-  AmqpConnectionManager,
-  ChannelWrapper,
-} from 'amqp-connection-manager';
+import { connect, AmqpConnectionManager, ChannelWrapper } from 'amqp-connection-manager';
 import { Channel, Message, Connection, ConfirmChannel } from 'amqplib';
 import { v4 } from 'uuid';
 
@@ -36,7 +32,7 @@ export class RmqService implements OnModuleInit {
   constructor(
     @Inject(RMQ_MODULE_OPTIONS) private readonly options: IRMQModuleOptions,
     private readonly rmqExplorerService: RmqExplorer,
-    private readonly logger: LoggerService,
+    private readonly logger: LoggerService
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
@@ -66,10 +62,7 @@ export class RmqService implements OnModuleInit {
       this.close();
     });
 
-    await Promise.all([
-      this.createSubscriptionChannel(),
-      this.createClientChannel(),
-    ]);
+    await Promise.all([this.createSubscriptionChannel(), this.createClientChannel()]);
 
     const handlers = this.rmqExplorerService.handlers;
 
@@ -98,19 +91,12 @@ export class RmqService implements OnModuleInit {
     this.subscription_channel = this.server.createChannel({
       json: false,
       setup: async (channel: Channel) => {
-        await channel.assertExchange(
-          this.options.exchange.name,
-          this.options.exchange.type,
-          {
-            durable: this.options.exchange.durable,
-            arguments: this.options.exchange.arguments,
-          },
-        );
+        await channel.assertExchange(this.options.exchange.name, this.options.exchange.type, {
+          durable: this.options.exchange.durable,
+          arguments: this.options.exchange.arguments,
+        });
 
-        await channel.prefetch(
-          this.options.prefetchCount ?? 0,
-          this.options.isGlobalPrefetchCount ?? false,
-        );
+        await channel.prefetch(this.options.prefetchCount ?? 0, this.options.isGlobalPrefetchCount ?? false);
       },
     });
   }
@@ -126,7 +112,7 @@ export class RmqService implements OnModuleInit {
           },
           {
             noAck: true,
-          },
+          }
         );
       },
     });
@@ -154,48 +140,36 @@ export class RmqService implements OnModuleInit {
   }
 
   public async send<T>(routing_key: string, message: T) {
-    await this.client_channel.publish(
-      this.options.exchange.name,
-      routing_key,
-      Buffer.from(JSON.stringify(message)),
-      {
-        replyTo: RMQ_REPLY_QUEUE,
-        timestamp: new Date().getTime(),
-        correlationId: v4(),
-      },
-    );
+    await this.client_channel.publish(this.options.exchange.name, routing_key, Buffer.from(JSON.stringify(message)), {
+      replyTo: RMQ_REPLY_QUEUE,
+      timestamp: new Date().getTime(),
+      correlationId: v4(),
+    });
   }
 
   public async createQueue(handler: IRMQHandler) {
-    await this.subscription_channel.addSetup(
-      async (channel: ConfirmChannel) => {
-        const { queue } = await channel.assertQueue(handler.meta.queue);
+    await this.subscription_channel.addSetup(async (channel: ConfirmChannel) => {
+      const { queue } = await channel.assertQueue(handler.meta.queue);
 
-        await channel.bindQueue(
-          queue,
-          handler.meta.exchange,
-          handler.meta.routingKey,
+      await channel.bindQueue(queue, handler.meta.exchange, handler.meta.routingKey);
+
+      this.logger.info(`bindQueue - ${handler.meta.routingKey}`);
+
+      await channel.consume(queue, async (msg) => {
+        this.logger.info(`consume - ${handler.meta.routingKey}`);
+
+        const msg_content = msg.content.toString();
+
+        const response: TRMQResponse = await handler.discoveredMethod.parentClass[handler.discoveredMethod.methodName](
+          JSON.parse(msg_content)
         );
 
-        this.logger.info(`bindQueue - ${handler.meta.routingKey}`);
-
-        await channel.consume(queue, async (msg) => {
-          this.logger.info(`consume - ${handler.meta.routingKey}`);
-
-          const msg_content = msg.content.toString();
-
-          const response: TRMQResponse =
-            await handler.discoveredMethod.parentClass[
-              handler.discoveredMethod.methodName
-            ](JSON.parse(msg_content));
-
-          if (response === 'nack') {
-            channel.nack(msg, false, false);
-          } else {
-            channel.ack(msg, false);
-          }
-        });
-      },
-    );
+        if (response === 'nack') {
+          channel.nack(msg, false, false);
+        } else {
+          channel.ack(msg, false);
+        }
+      });
+    });
   }
 }

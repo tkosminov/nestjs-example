@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 
 import { BookModule } from './book/book.module';
+import { SectionModule } from './section/section.module';
 
 @Module({
-  imports: [BookModule],
+  imports: [BookModule, SectionModule],
   providers: [],
-  exports: [BookModule],
+  exports: [BookModule, SectionModule],
 })
 export class CoreModule {}

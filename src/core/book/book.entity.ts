@@ -1,41 +1,45 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { ID } from '@nestjs/graphql';
 
-import { IsString, IsUUID, MinLength } from 'class-validator';
-import {
-  Column,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Index, OneToMany } from 'typeorm';
+import { Field, ObjectType, Column, Entity, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'nestjs-graphql-easy';
 
-import { EntityHelper } from '../../common/helpers/module/entity.helper';
-
-import { User } from '../../oauth/user/user.entity';
+import { Section } from '../section/section.entity';
 
 @ObjectType()
 @Entity()
-export class Book extends EntityHelper {
-  @Field(() => ID)
+export class Book {
+  @Field(() => ID, { filterable: true, sortable: true })
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
-  @Field()
+  @Field(() => Date)
+  @CreateDateColumn({
+    type: 'timestamp without time zone',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  public created_at: Date;
+
+  @Field(() => Date)
+  @UpdateDateColumn({
+    type: 'timestamp without time zone',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  public updated_at: Date;
+
+  @Field(() => String)
   @Column()
-  @Index()
-  @IsString()
-  @MinLength(4)
   public title: string;
 
-  @Field(() => ID)
+  @Index()
+  @Field(() => Boolean, { filterable: true })
+  @Column('boolean', { nullable: false, default: () => 'false' })
+  public is_private: boolean;
+
+  @Field(() => ID, { filterable: true, sortable: true })
   @Index()
   @Column('uuid', { nullable: false })
-  @IsUUID()
-  public userId: string;
+  public author_id: string;
 
-  @Field(() => User)
-  @ManyToOne(() => User, { nullable: false })
-  @JoinColumn({ name: 'userId' })
-  public user: User;
+  @OneToMany(() => Section, (section) => section.book, { onDelete: 'CASCADE' })
+  public sections: Section[];
 }

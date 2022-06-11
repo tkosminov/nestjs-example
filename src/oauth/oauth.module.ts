@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 
+import { RefreshTokenModule } from './refresh-token/refresh-token.module';
+import { UserModule } from './user/user.module';
 import { OAuthController } from './oauth.controller';
 import { OAuthService } from './oauth.service';
-
-import { RefreshTokenModule } from './refresh_token/refresh_token.module';
-import { UserModule } from './user/user.module';
+import { RecoveryKeyModule } from './recovery-key/recovery-key.module';
 
 @Module({
-  imports: [RefreshTokenModule, UserModule],
+  imports: [UserModule, RefreshTokenModule, RecoveryKeyModule],
   providers: [OAuthService],
   controllers: [OAuthController],
-  exports: [RefreshTokenModule, UserModule, OAuthService],
+  exports: [UserModule, RefreshTokenModule, RecoveryKeyModule],
 })
 export class OAuthModule {}

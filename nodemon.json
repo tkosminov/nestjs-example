@@ -1,6 +1,8 @@
 {
   "watch": [
-    "src"
+    "src",
+    "config",
+    "types"
   ],
   "env": {
     "NODE_ENV": "development"

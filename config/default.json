@@ -1,19 +1,54 @@
 {
   "APP_SETTINGS": {
     "port": 8080,
-    "socketPort": 8081,
-    "socketPingInterval": 3000,
-    "socketPinkTimeout": 10000,
-    "socketIoPath": "/socket.io",
     "bodyLimit": "50mb",
-    "bodyParameterLimit": 50000000
+    "bodyParameterLimit": 50000
+  },
+  "CORS_SETTINGS": {
+    "allowedOrigins": [],
+    "allowedUrls": [],
+    "allowedMethods": [
+      "GET",
+      "POST",
+      "PUT",
+      "PATCH",
+      "DELETE",
+      "OPTIONS"
+    ],
+    "allowedCredentials": false,
+    "allowedHeaders": []
+  },
+  "LOGGER_SETTINGS": {
+    "level": "info",
+    "silence": [
+      "healthz"
+    ]
   },
   "DB_SETTINGS": {
     "host": "localhost",
     "port": 5432,
     "username": "postgres",
     "password": "postgres",
-    "database": "nestjs_example"
+    "database": "nestjs_example",
+    "logging": "all",
+    "synchronize": true
+  },
+  "JWT_SETTINGS": {
+    "secretKey": "secret_key",
+    "algorithm": "HS512",
+    "tokenExpiresIn": 20,
+    "refreshTokenExpiresIn": 7
+  },
+  "REDIS_SETTINGS": {
+    "host": "localhost",
+    "port": 6379,
+    "key": "nestjs_example"
+  },
+  "WSS_SETTINGS": {
+    "port": 8081,
+    "pingInterval": 3000,
+    "pingTimeout": 10000,
+    "path": "/socket.io"
   },
   "RABBITMQ_SETTINGS": {
     "exchange": "nestjs_example_service",
@@ -24,45 +59,18 @@
     "username": "admin",
     "password": "password"
   },
-  "REDIS_SETTINGS": {
-    "use": true,
-    "host": "localhost",
-    "port": 6379,
-    "password": ""
-  },
-  "LOGGER_SETTINGS": {
-    "level": "info",
-    "silence": [
-      "healthz",
-      "IntrospectionQuery"
-    ]
-  },
-  "JWT_SETTINGS": {
-    "secretKey": "key",
-    "expiresIn": 20,
-    "algorithms": ["HS256"]
-  },
-  "CORS_SETTINGS": {
-    "allowedOrigins": [],
-    "allowedUrls": [],
-    "allowedPaths": [],
-    "allowedMethods": [
-      "GET",
-      "POST",
-      "OPTIONS"
-    ],
-    "allowedCredentials": true
-  },
   "GRAPHQL_SETTINGS": {
     "playground": true,
     "debug": true,
     "introspection": true,
     "installSubscriptionHandlers": true
   },
-  "GRAPHQL_API_URLS": [],
-  "ACTION_BYPASS": [
-    "healthz",
-    "oauth",
-    "graphql"
-  ]  
+  "GRAPHQL_APIS": {
+    "api_1": "http://localhost:8090/graphql",
+    "api_2": "http://localhost:8091/graphql"
+  },
+  "GRAPHQL_GUARD": {
+    "username": "admin",
+    "password": "password"
+  }
 }

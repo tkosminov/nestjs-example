@@ -13,7 +13,6 @@
 <body>
   <div class="app">
     <div class="app__main" style="border: 1px solid black;">
-      <h3>Upload Form</h3>
       <form method="post" enctype="multipart/form-data">
         <div>
           <label for="profile_pic">Choose file to upload</label>
@@ -25,8 +24,8 @@
       </form>
     </div>
     <div class="app__main" style="border: 1px solid black;">
-      <h3>Upload Result</h3>
-      <div id="resultJSON"></div>
+      <div>Result:</div>
+      <div id="result"></div>
     </div>
   </div>
 
@@ -38,35 +37,17 @@
         const fileLists = event.target[0].files;
         const file = event.target[0].files[0];
 
-        const fileBlob = new Blob([file], { type: file.type })
-
-        // more https://github.com/jaydenseric/graphql-multipart-request-spec
-
-        const query = `
-          mutation($file: Upload!) {
-            singleUpload(file: $file) {
-              url
-            }
-          }
-        `;
-        const variables = { file };
-
         const formData = new FormData()
-        const operations = JSON.stringify({ query, variables })
-        const map = JSON.stringify({ "0": ["variables.file"] })
-
-        formData.append('operations', operations)
-        formData.append('map', map)
-        formData.append('0', file)
+        formData.append('file', file)
 
          $.ajax({
-          url: 'http://localhost:8080/graphql',
+          url: 'http://localhost:8080/upload',
           data: formData,
           processData: false,
           contentType: false,
           type: 'POST',
-          success: ({ data: res }) => {
-            $('#resultJSON').html(JSON.stringify(res))
+          success: (res) => {
+            $('#result').html(JSON.stringify(res))
           }
         });
       })

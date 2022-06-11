@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Schema Reload Test</title>
+
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+
+<body>
+  <div class="app">
+    <div class="app__main" style="border: 1px solid black;">
+      <form method="post" enctype="multipart/form-data">
+        <div>
+          <button>Submit</button>
+        </div>
+      </form>
+    </div>
+    <div class="app__main" style="border: 1px solid black;">
+      <div>Result:</div>
+      <div id="result"></div>
+    </div>
+  </div>
+
+  <script>
+    $(function() {
+      $('form').on('submit', (event) => {
+        event.preventDefault();
+
+        $.ajax({
+          url: 'http://localhost:8080/graphql-schema/reload',
+          processData: false,
+          contentType: false,
+          type: 'POST',
+          headers: {
+            'Authorization': 'Basic YWRtaW46cGFzc3dvcmQ='
+          },
+          success: (res) => {
+            $('#result').html(JSON.stringify(res))
+          }
+        });
+      })
+    })
+  </script>
+</body>
+
+</html>

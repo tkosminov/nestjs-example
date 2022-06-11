@@ -3,10 +3,7 @@ import { Provider } from '@nestjs/common';
 import config from 'config';
 import IORedis, { Redis } from 'ioredis';
 
-import {
-  REDIS_PUBLISHER_CLIENT,
-  REDIS_SUBSCRIBER_CLIENT,
-} from './redis.constants';
+import { REDIS_PUBLISHER_CLIENT, REDIS_SUBSCRIBER_CLIENT } from './redis.constants';
 
 const redisSettings = config.get<IRedisSettings>('REDIS_SETTINGS');
 

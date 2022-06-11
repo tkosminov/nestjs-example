@@ -4,6 +4,6 @@
     "node_modules",
     "test",
     "**/*spec.ts",
-    "src/graphql/schema.ts",
+    "**/*/schema.ts"
   ]
 }

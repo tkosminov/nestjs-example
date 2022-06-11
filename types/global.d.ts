@@ -1,9 +1,15 @@
-interface IDBSettings {
-  readonly host: string;
+interface IAppSettings {
   readonly port: number;
-  readonly username: string;
-  readonly password: string;
-  readonly database: string;
+  readonly bodyLimit: string;
+  readonly bodyParameterLimit: number;
+}
+
+interface ICorsSettings {
+  readonly allowedOrigins: string[];
+  readonly allowedUrls: string[];
+  readonly allowedMethods: string[];
+  readonly allowedCredentials: boolean;
+  readonly allowedHeaders: string[];
 }
 
 interface ILogSettings {
@@ -13,33 +19,23 @@ interface ILogSettings {
 
 interface IJwtSettings {
   readonly secretKey: string;
-  readonly expiresIn: number;
-  readonly algorithms: string[];
+  readonly algorithm: string;
+  readonly tokenExpiresIn: number;
+  readonly refreshTokenExpiresIn: number;
 }
 
-interface IAppSettings {
+interface IRedisSettings {
+  readonly host: string;
   readonly port: number;
-  readonly socketPort: number;
-  readonly socketPingInterval: number;
-  readonly socketPinkTimeout: number;
-  readonly socketIoPath: string;
-  readonly bodyLimit: string;
-  readonly bodyParameterLimit: number;
+  readonly password?: string;
+  readonly key?: string;
 }
 
-interface ICorsSettings {
-  readonly allowedOrigins: string[];
-  readonly allowedUrls: string[];
-  readonly allowedPaths: string[];
-  readonly allowedMethods: string[];
-  readonly allowedCredentials: boolean;
-}
-
-interface IGraphqlSettings {
-  readonly playground: boolean;
-  readonly debug: boolean;
-  readonly introspection: boolean;
-  readonly installSubscriptionHandlers: boolean;
+interface IWssSettings {
+  readonly port: number;
+  readonly pingInterval: number;
+  readonly pingTimeout: number;
+  readonly path: string;
 }
 
 interface IRabbitMQSettings {
@@ -52,10 +48,18 @@ interface IRabbitMQSettings {
   readonly password: string;
 }
 
-interface IRedisSettings {
-  readonly use: boolean;
-  readonly host: string;
-  readonly port: number;
-  readonly password?: string;
-  readonly key?: string;
+interface IGraphqlSettings {
+  readonly playground: boolean;
+  readonly debug: boolean;
+  readonly introspection: boolean;
+  readonly installSubscriptionHandlers: boolean;
+}
+
+interface IGraphqlApis {
+  [service: string]: string;
+}
+
+interface IGuard {
+  readonly username: string;
+  readonly password: string;
 }

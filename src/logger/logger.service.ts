@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import config from 'config';
 
-enum ELogLevel {
+export enum ELogLevel {
   debug,
   info,
   warn,
@@ -11,38 +11,37 @@ enum ELogLevel {
 
 @Injectable()
 export class LoggerService extends Logger {
-  private readonly _currentLevel: ELogLevel =
-    ELogLevel[config.get<ILogSettings>('LOGGER_SETTINGS').level];
+  private readonly _current_level: ELogLevel = ELogLevel[config.get<ILogSettings>('LOGGER_SETTINGS').level];
 
   constructor(private readonly _context?: string) {
     super(_context);
   }
 
-  public log(message: unknown, context?: string) {
+  public log(message: unknown, context?: string | Record<string, unknown>) {
     if (this.isValidLevel(ELogLevel.debug)) {
-      Logger.log(JSON.stringify(message), context || this._context);
+      Logger.log(JSON.stringify(message), JSON.stringify(context) || this._context);
     }
   }
 
-  public info(message: unknown, context?: string) {
+  public info(message: unknown, context?: string | Record<string, unknown>) {
     if (this.isValidLevel(ELogLevel.info)) {
-      Logger.log(JSON.stringify(message), context || this._context);
+      Logger.log(JSON.stringify(message), JSON.stringify(context) || this._context);
     }
   }
 
-  public warn(message: unknown, context?: string) {
+  public warn(message: unknown, context?: string | Record<string, unknown>) {
     if (this.isValidLevel(ELogLevel.warn)) {
-      Logger.warn(JSON.stringify(message), context || this._context);
+      Logger.warn(JSON.stringify(message), JSON.stringify(context) || this._context);
     }
   }
 
-  public error(message: unknown, trace?: string, context?: string) {
+  public error(message: unknown, trace?: string, context?: string | Record<string, unknown>) {
     if (this.isValidLevel(ELogLevel.error)) {
-      Logger.error(JSON.stringify(message), trace, context || this._context);
+      Logger.error(JSON.stringify(message), trace, JSON.stringify(context) || this._context);
     }
   }
 
-  private isValidLevel(level: ELogLevel): boolean {
-    return level >= this._currentLevel;
+  public isValidLevel(level: ELogLevel): boolean {
+    return level >= this._current_level;
   }
 }

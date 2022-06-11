@@ -1,131 +1,51 @@
-# NestJS
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
 # NestJS-Example
+
+* NestJS 8
+* TypeORM 0.3
 
 ## Dependencies
 
-* [PostgreSQL 11](https://computingforgeeks.com/install-postgresql-11-on-ubuntu-18-04-ubuntu-16-04/)
-* [RabbitMQ](https://computingforgeeks.com/how-to-install-latest-rabbitmq-server-on-ubuntu-18-04-lts/)
-* [NodeJS 12.14.1](https://www.ubuntuupdates.org/ppa/nodejs_12.x?dist=bionic)
-* [Redis](https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-redis-on-ubuntu-18-04)
+* [NodeJS 16](https://nodejs.org/download/release/latest-v16.x/)
+* [Redis 7](https://redis.io/download/)
+* [PostgreSQL 13](https://www.postgresql.org/download/)
+* [RabbitMQ](https://www.rabbitmq.com/download.html)
 
 ## Installation
 
 ```bash
-npm i
+npm ci
 ```
-
-## DB Settings
-
-#### Create DB
-
-```bash
-sudo -i -u postgres
-
-createdb nestjs_example_${env}
-```
-
-#### Create new migration
-
-```bash
-npm run db:migration:create -- ${migration_name}
-```
-
-#### Run migration
-
-```bash
-NODE_ENV=${env} npm run db:migration:run
-```
-
-| Note: you need to specify `env` only for `development`
-
-#### Sync db schema
-
-```bash
-NODE_ENV=${env} npm run db:schema:sync
-```
-
-| Note: you need to specify `env` only for `development`
 
 ## Running the app
-
-
-### development
 
 ```bash
 npm run start:dev
 ```
 
-### beta
+## Databse
+
+### Create db
 
 ```bash
-npm run build
-npm run start:beta
+psql -U postgres
+
+create database development_nestjs_example;
 ```
 
-### prod
+### Create migration
 
 ```bash
-npm run build
-npm run start:prod
+NODE_ENV=development npm run db:migration:create
 ```
 
-## Running the app with docker
+### Run migration
 
 ```bash
-docker network create nestjs_example_network
+NODE_ENV=development npm run db:migration:run
 ```
 
-#### Update config.json:
-
-```json
-  "DB_SETTINGS": {
-    "host": "db", // service name from docker-compose.yml
-    "port": 5432, // service port from docker-compose.yml
-    ...
-  },
-  ...
-  "REDIS_SETTINGS": {
-    "host": "redis", // service name from docker-compose.yml
-    "port": 6379, // service port from docker-compose.yml
-    ...
-  },
-```
-
-#### Build and run container
+### Sync schema
 
 ```bash
-docker-compose -f docker-compose.yml up --build
-```
-
-#### After creating containers, create a database
-
-```bash
-
-docker-compose -f docker-compose.yml exec db sh
-
-createdb nestjs_example_$ENV -U postgres
-```
-
-#### After create database, run db:schema:sync
-
-```bash
-
-docker-compose -f docker-compose.yml exec beta-web sh
-
-npm run db:schema:sync
-```
-
-#### After restart the containers
-
-```bash
-docker-compose -f docker-compose.yml up
+NODE_ENV=development npm run db:schema:sync
 ```

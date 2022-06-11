@@ -1,8 +1,14 @@
-FROM mhart/alpine-node:12 as builder
+FROM mhart/alpine-node:13
 
 # Env
 
 ARG env
+
+ARG commit_short_sha
+ENV COMMIT_SHORT_SHA ${commit_short_sha}
+
+ARG pipeline_created_at
+ENV PIPELINE_CREATED_AT ${pipeline_created_at}
 
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
 
@@ -31,14 +37,21 @@ RUN apk add --update --no-cache --virtual runtime-deps \
 
 WORKDIR /server
 
-COPY . .
+COPY .npmrc package.json package-lock.json ./
 
-RUN HUSKY_SKIP_INSTALL=true npm install
+RUN HUSKY_SKIP_INSTALL=true npm ci
+
+COPY . .
 
 ENV NODE_ENV ${env}
 
 RUN npm run build
 
+RUN touch build_info.txt
+RUN echo "env: ${env}" >> build_info.txt
+RUN echo "commit_short_sha: ${commit_short_sha}" >> build_info.txt
+RUN echo "pipeline_created_at: ${pipeline_created_at}" >> build_info.txt
+
 EXPOSE 80
 
-CMD nginx; node ./dist/main.js
+CMD nginx; node -r ts-node/register -r tsconfig-paths/register ./dist/main.js

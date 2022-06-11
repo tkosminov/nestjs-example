@@ -1,0 +1,5 @@
+.vsconfig
+.husky
+dist
+node_modules
+test_pages

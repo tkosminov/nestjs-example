@@ -1,77 +1,72 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
-
-import {
-  IsBoolean,
-  IsEmail,
-  IsEmpty,
-  IsString,
-  MinLength,
-} from 'class-validator';
 import {
   BeforeInsert,
+  BeforeUpdate,
   Column,
+  CreateDateColumn,
   Entity,
   Index,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
-import { EntityHelper } from '../../common/helpers/module/entity.helper';
-import { passwordToHash } from '../../common/helpers/password.helper';
+import { RefreshToken } from '../refresh-token/refresh-token.entity';
+import { RecoveryKey } from '../recovery-key/recovery-key.entity';
 
-import { Book } from '../../core/book/book.entity';
-import { RefreshToken } from '../refresh_token/refresh_token.entity';
+export interface IJwtPayload {
+  id: string;
+  login: string;
+  is_blocked: boolean;
+}
 
-@ObjectType()
 @Entity()
-export class User extends EntityHelper {
-  @Field(() => ID)
+export class User {
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
-  @Column({
-    nullable: false,
-    default: () => 'MD5(random()::text)',
+  @CreateDateColumn({
+    type: 'timestamp without time zone',
+    default: () => 'CURRENT_TIMESTAMP',
   })
+  public created_at: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp without time zone',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  public updated_at: Date;
+
+  @Column({ nullable: false })
   @Index({ unique: true })
-  @IsString()
-  @MinLength(32)
-  public authorizationCode: string;
+  public login: string;
 
-  @Field()
-  @Column()
-  @Index({ unique: true })
-  @IsEmail()
-  public email: string;
-
-  @Field()
-  @Column('boolean', { default: () => 'false' })
-  @IsBoolean()
-  public isAdmin: boolean;
-
-  @Column()
-  @IsEmpty()
+  @Column({ nullable: false })
   public password: string;
 
-  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
-    onDelete: 'CASCADE',
+  @Index()
+  @Column({
+    nullable: false,
+    default: () => 'false',
   })
-  public refreshTokens: RefreshToken[];
+  public is_blocked: boolean;
 
-  @Field(() => [Book], { nullable: true })
-  @OneToMany(() => Book, (book) => book.user, { onDelete: 'CASCADE' })
-  public books: Book[];
+  @OneToMany(() => RefreshToken, (refresh_token) => refresh_token.user)
+  public refresh_tokens?: RefreshToken[];
+
+  @OneToMany(() => RecoveryKey, (recovery_key) => recovery_key.user)
+  public recovery_keys?: RecoveryKey[];
 
   @BeforeInsert()
-  protected hashedPassword() {
-    this.password = passwordToHash(this.password);
+  @BeforeUpdate()
+  protected loginToLowerCase() {
+    this.login = this.login.trim().toLowerCase();
   }
 
-  public jwtPayload() {
+  public json_for_jwt(): IJwtPayload {
     return {
       id: this.id,
-      email: this.email,
-      isAdmin: this.isAdmin,
+      login: this.login,
+      is_blocked: this.is_blocked,
     };
   }
 }

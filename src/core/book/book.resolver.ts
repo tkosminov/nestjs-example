@@ -1,96 +1,43 @@
-// import { UseGuards } from '@nestjs/common';
-import {
-  Args,
-  Context,
-  ID,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
+import { Context, GraphQLExecutionContext, Parent, Resolver } from '@nestjs/graphql';
 
-import DataLoader from 'dataloader';
+import { Query, ResolveField, ELoaderType, Loader, Filter, Order, Pagination } from 'nestjs-graphql-easy';
 
-import { access_denied } from '../../common/errors';
-// import { GqlAdminGuard } from '../../graphql/guard/admin.guard';
-
+import { Section } from '../section/section.entity';
 import { Book } from './book.entity';
-import { BookService } from './book.service';
 
-import { CreateBookDTO } from './dto/create.dto';
-import { UpdateBookDTO } from './dto/update.dto';
-
-import { User } from '../../oauth/user/user.entity';
-
-// @UseGuards(new GqlAdminGuard())
 @Resolver(() => Book)
 export class BookResolver {
-  constructor(private readonly bookService: BookService) {}
-
   @Query(() => [Book])
   public async books(
-    @Args({ name: 'page', type: () => Int }) page: number,
-    @Args({ name: 'per_page', type: () => Int }) take: number,
+    @Loader({
+      loader_type: ELoaderType.MANY,
+      field_name: 'books',
+      entity: () => Book,
+      entity_fk_key: 'id',
+    })
+    field_alias: string,
+    @Filter(() => Book) _filter: unknown,
+    @Order(() => Book) _order: unknown,
+    @Pagination() _pagination: unknown,
+    @Context() ctx: GraphQLExecutionContext
   ) {
-    if (take < 1) {
-      take = 10;
-    }
-    if (page < 0) {
-      page = 0;
-    }
-
-    return await this.bookService.findAll({ take, skip: take * page });
+    return await ctx[field_alias];
   }
 
-  @Query(() => Book)
-  public async book(@Args({ name: 'id', type: () => ID }) id: string) {
-    return await this.bookService.findOne(id);
-  }
-
-  @Mutation(() => Book)
-  public async bookCreate(
-    @Args('data') data: CreateBookDTO,
-    @Context('user') user: User,
-  ) {
-    return await this.bookService.create({ ...data, userId: user.id });
-  }
-
-  @Mutation(() => Book)
-  public async bookUpdate(
-    @Args({ name: 'id', type: () => ID }) id: string,
-    @Args('data') data: UpdateBookDTO,
-    @Context('user') user: User,
-  ) {
-    const book = await this.bookService.findOne(id);
-
-    if (book.userId !== user.id) {
-      access_denied({ raise: true });
-    }
-
-    return await this.bookService.update(id, data);
-  }
-
-  @Mutation(() => Book)
-  public async bookDelete(
-    @Args({ name: 'id', type: () => ID }) id: string,
-    @Context('user') user: User,
-  ) {
-    const book = await this.bookService.findOne(id);
-
-    if (book.userId !== user.id) {
-      access_denied({ raise: true });
-    }
-
-    return await this.bookService.delete(id);
-  }
-
-  @ResolveField()
-  public async user(
+  @ResolveField(() => [Section], { nullable: true })
+  public async sections(
     @Parent() book: Book,
-    @Context('UserLoaderById') loader: DataLoader<string, User>,
-  ) {
-    return await loader.load(book.userId);
+    @Loader({
+      loader_type: ELoaderType.ONE_TO_MANY,
+      field_name: 'sections',
+      entity: () => Section,
+      entity_fk_key: 'book_id',
+    })
+    field_alias: string,
+    @Filter(() => Section) _filter: unknown,
+    @Order(() => Section) _order: unknown,
+    @Context() ctx: GraphQLExecutionContext
+  ): Promise<Section[]> {
+    return await ctx[field_alias].load(book.id);
   }
 }

@@ -1,82 +1,72 @@
-import { graphqlUploadExpress } from '@apollographql/graphql-upload-8-fork';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import { IoAdapter } from '@nestjs/platform-socket.io';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
-import { json, urlencoded } from 'body-parser';
 import config from 'config';
 import cookieParser from 'cookie-parser';
+import express from 'express';
 import helmet from 'helmet';
+import { json, urlencoded } from 'body-parser';
 import { Redis } from 'ioredis';
 
 import { AppModule } from './app.module';
+import { cors_options_delegate } from './cors.options';
+import { HttpExceptionFilter } from './filters/exception.filter';
+import { REDIS_PUBLISHER_CLIENT, REDIS_SUBSCRIBER_CLIENT } from './redis/redis.constants';
+import { CustomRedisIoAdapter } from './wss/wss.adapter';
+import { GraphQLSchemaReloadService } from './graphql/schema-reload/schema-reload.service';
 
-import { corsOptionsDelegate } from './cors.option';
-import {
-  REDIS_PUBLISHER_CLIENT,
-  REDIS_SUBSCRIBER_CLIENT,
-} from './redis/redis.constants';
-import { CustomRedisIoAdapter } from './socket/socket.adapter';
-
-const appSettings = config.get<IAppSettings>('APP_SETTINGS');
-const redisSettings = config.get<IRedisSettings>('REDIS_SETTINGS');
+const app_settings = config.get<IAppSettings>('APP_SETTINGS');
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, new ExpressAdapter(), {
+  const server = express();
+
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
     bodyParser: true,
   });
 
-  app.use(json({ limit: appSettings.bodyLimit }));
+  app.use(json({ limit: app_settings.bodyLimit }));
+
   app.use(
     urlencoded({
-      limit: appSettings.bodyLimit,
+      limit: app_settings.bodyLimit,
       extended: true,
-      parameterLimit: appSettings.bodyParameterLimit,
-    }),
+      parameterLimit: app_settings.bodyParameterLimit,
+    })
   );
+
   app.use(
     helmet({
       contentSecurityPolicy: false,
-    }),
+    })
   );
+
   app.use(cookieParser());
-  app.enableCors(corsOptionsDelegate);
+
+  app.enableCors(cors_options_delegate);
 
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
-    }),
+    })
   );
 
-  if (redisSettings.use) {
-    const pubClient: Redis = app.get(REDIS_PUBLISHER_CLIENT);
-    const subClient: Redis = app.get(REDIS_SUBSCRIBER_CLIENT);
+  app.useGlobalFilters(new HttpExceptionFilter());
 
-    app.useWebSocketAdapter(
-      new CustomRedisIoAdapter(app, subClient, pubClient),
-    );
-  } else {
-    app.useWebSocketAdapter(new IoAdapter(app));
-  }
+  const pubClient: Redis = app.get(REDIS_PUBLISHER_CLIENT);
+  const subClient: Redis = app.get(REDIS_SUBSCRIBER_CLIENT);
 
-  app.use(
-    graphqlUploadExpress({
-      maxFileSize: appSettings.bodyParameterLimit,
-      maxFiles: 2,
-    }),
-  );
+  app.useWebSocketAdapter(new CustomRedisIoAdapter(app, subClient, pubClient));
 
-  const options = new DocumentBuilder()
-    .setTitle('NestJS Example')
-    .setDescription('NestJS Example API description')
-    .setVersion('1.0')
-    .build();
+  const options = new DocumentBuilder().setTitle('NestJS-Example').setVersion('1.0').build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('swagger', app, document);
 
-  await app.listen(appSettings.port);
+  const schema_loader_service = app.get(GraphQLSchemaReloadService);
+  schema_loader_service.applyApp(app);
+
+  await app.listen(app_settings.port);
 }
 
 bootstrap();

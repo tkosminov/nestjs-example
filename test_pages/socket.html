@@ -2,13 +2,13 @@
 <html>
 
 <head>
-  <title>Upload Test</title>
+  <title>Socket Test</title>
 
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script>
 </head>
 
 <body>
@@ -31,7 +31,11 @@
           query: {
             room_id: 1,
             user_id: Math.random(),
-          }
+          },
+          auth: {
+            token: "sdfsdf"
+          },
+          transports: ['websocket']
         });
 
         socket.on('connect', () => {

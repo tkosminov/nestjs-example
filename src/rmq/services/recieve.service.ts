@@ -9,10 +9,7 @@ import { RmqService } from '../rmq.service';
 @RMQProvider()
 @Injectable()
 export class RmqRecieveService {
-  constructor(
-    private readonly logger: LoggerService,
-    public readonly rmqService: RmqService,
-  ) {}
+  constructor(private readonly logger: LoggerService, public readonly rmqService: RmqService) {}
 
   @RMQSubscription({
     exchange: `example`,
@@ -25,7 +22,8 @@ export class RmqRecieveService {
 
       return 'ack';
     } catch (error) {
-      this.logger.error(`RmqPublishService: send - ${JSON.stringify(error)}`);
+      this.logger.error(`RmqRecieveService: example - ${JSON.stringify(error)}`);
+
       return 'nack';
     }
   }
