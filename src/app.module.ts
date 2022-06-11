@@ -32,7 +32,7 @@ export class AppModule {
         { path: 'healthz', method: RequestMethod.ALL },
         { path: 'graphql-schema/reload', method: RequestMethod.ALL },
         { path: 'graphql', method: RequestMethod.ALL }, // REMOVE THIS
-        { path: 'upload', method: RequestMethod.ALL }, // REMOVE THIS
+        { path: 'upload', method: RequestMethod.ALL } // REMOVE THIS
       )
       .forRoutes('*');
   }
