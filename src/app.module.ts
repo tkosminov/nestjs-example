@@ -11,6 +11,7 @@ import { RedisModule } from './redis/redis.module';
 import GraphQLModule from './graphql/graphql.module';
 import { CoreModule } from './core/core.module';
 import { UploadModule } from './upload/upload.module';
+// import { RouteScanModule } from './route-scan/route-scan.module';
 // import { RmqModule } from './rmq/rmq.module';
 
 @Module({
