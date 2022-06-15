@@ -2,7 +2,7 @@ import { Injectable, RequestMethod } from '@nestjs/common';
 import { DiscoveryService, Reflector } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
-import { CONTROLLER_WATERMARK, PATH_METADATA, METHOD_METADATA } from '@nestjs/common/constants'
+import { CONTROLLER_WATERMARK, PATH_METADATA, METHOD_METADATA } from '@nestjs/common/constants';
 
 @Injectable()
 export class RouteScanService {
@@ -17,7 +17,7 @@ export class RouteScanService {
       }
 
       return !!this.reflector.get(CONTROLLER_WATERMARK, wrapper.metatype);
-    })
+    });
 
     const routes = [];
 
@@ -25,7 +25,7 @@ export class RouteScanService {
       const instance = controller.instance;
       const prototype = Object.getPrototypeOf(instance);
 
-      const controller_path: string = this.reflector.get(PATH_METADATA, controller.metatype)
+      const controller_path: string = this.reflector.get(PATH_METADATA, controller.metatype);
 
       this.metadataScannerService.scanFromPrototype(instance, prototype, (name) => {
         const handler = prototype[name];
@@ -37,18 +37,18 @@ export class RouteScanService {
           if (path === '/') {
             routes.push({
               method: RequestMethod[method],
-              full_path: `/${controller_path}`
-            })
+              full_path: `/${controller_path}`,
+            });
           } else {
             routes.push({
               method: RequestMethod[method],
-              full_path: `/${controller_path}/${path}`
-            })
+              full_path: `/${controller_path}/${path}`,
+            });
           }
         }
-      })
-    })
+      });
+    });
 
-    console.log(routes)
+    console.log(routes);
   }
 }

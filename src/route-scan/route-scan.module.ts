@@ -6,9 +6,7 @@ import { RouteScanService } from './route-scan.service';
 
 @Module({
   imports: [DiscoveryModule, MetadataScanner],
-  providers: [
-    RouteScanService
-  ],
+  providers: [RouteScanService],
   exports: [],
 })
 export class RouteScanModule {}
