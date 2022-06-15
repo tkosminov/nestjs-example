@@ -33,7 +33,7 @@ export class RouteScanService {
         const path: string = Reflect.getMetadata(PATH_METADATA, handler);
         const method: RequestMethod = Reflect.getMetadata(METHOD_METADATA, handler);
 
-        if (path) {
+        if (path != null && method != null) {
           if (path === '/') {
             routes.push({
               method: RequestMethod[method],
