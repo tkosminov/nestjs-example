@@ -1,16 +1,13 @@
-FROM mhart/alpine-node:13
+FROM mhart/alpine-node:14
 
 # Env
 
 ARG env
 
 ARG commit_short_sha
-ENV COMMIT_SHORT_SHA ${commit_short_sha}
-
 ARG pipeline_created_at
-ENV PIPELINE_CREATED_AT ${pipeline_created_at}
 
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+# RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
 
 # Timezone
 
@@ -24,8 +21,6 @@ RUN apk add --update tzdata && \
 RUN apk add --update --no-cache nginx && \
                                 mkdir -p /run/nginx
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
 # Apk
 
 RUN apk add --update --no-cache --virtual runtime-deps \
@@ -37,15 +32,20 @@ RUN apk add --update --no-cache --virtual runtime-deps \
 
 WORKDIR /server
 
-COPY .npmrc package.json package-lock.json ./
+COPY package.json package-lock.json ./
 
 RUN HUSKY_SKIP_INSTALL=true npm ci
 
 COPY . .
 
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 ENV NODE_ENV ${env}
 
 RUN npm run build
+
+ENV COMMIT_SHORT_SHA ${commit_short_sha}
+ENV PIPELINE_CREATED_AT ${pipeline_created_at}
 
 RUN touch build_info.txt
 RUN echo "env: ${env}" >> build_info.txt
