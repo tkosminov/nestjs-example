@@ -1,6 +1,6 @@
 # NestJS-Example
 
-* NestJS 8
+* NestJS 9
 * TypeORM 0.3
 
 ## Dependencies
