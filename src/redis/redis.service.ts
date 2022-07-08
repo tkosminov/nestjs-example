@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { KeyType, Redis } from 'ioredis';
+import Redis, { RedisKey } from 'ioredis';
 import { Observable, Observer } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
@@ -41,43 +41,43 @@ export class RedisService {
     });
   }
 
-  public async set(key: KeyType, value: unknown, expire: number = REDIS_EXPIRE_TIME_IN_SECONDS) {
+  public async set(key: RedisKey, value: unknown, expire: number = REDIS_EXPIRE_TIME_IN_SECONDS) {
     await this.pubClient.set(key, JSON.stringify(value), 'EX', expire);
   }
 
-  public async get<T = any>(key: KeyType) {
+  public async get<T = any>(key: RedisKey) {
     const res = await this.pubClient.get(key);
 
     return (await JSON.parse(res)) as T;
   }
 
-  public async hset(key: KeyType, field: string, value: string) {
+  public async hset(key: RedisKey, field: string, value: string) {
     return await this.pubClient.hset(key, field, value);
   }
 
-  public async hdel(key: KeyType, ...fields: string[]) {
+  public async hdel(key: RedisKey, ...fields: string[]) {
     return await this.pubClient.hdel(key, ...fields);
   }
 
-  public async hget(key: KeyType, field: string) {
+  public async hget(key: RedisKey, field: string) {
     return await this.pubClient.hget(key, field);
   }
 
-  public async hgetall(key: KeyType): Promise<Record<string, string>> {
+  public async hgetall(key: RedisKey): Promise<Record<string, string>> {
     return await this.pubClient.hgetall(key);
   }
 
-  public async del(key: KeyType) {
+  public async del(key: RedisKey) {
     return await this.pubClient.del(key);
   }
 
-  public async mget(keys: KeyType[]) {
+  public async mget(keys: RedisKey[]) {
     const res = await this.pubClient.mget(keys);
 
     return res.map((data) => JSON.parse(data || null));
   }
 
-  public async mset(data: KeyType[]) {
+  public async mset(data: RedisKey[]) {
     await this.pubClient.mset(data);
   }
 }

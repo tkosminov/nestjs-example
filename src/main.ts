@@ -8,7 +8,7 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 import helmet from 'helmet';
 import { json, urlencoded } from 'body-parser';
-import { Redis } from 'ioredis';
+import Redis from 'ioredis';
 
 import { AppModule } from './app.module';
 import { cors_options_delegate } from './cors.options';

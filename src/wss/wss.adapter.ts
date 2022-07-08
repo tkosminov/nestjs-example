@@ -1,18 +1,17 @@
 import { INestApplication } from '@nestjs/common';
 import { IoAdapter } from '@nestjs/platform-socket.io';
+import { createAdapter } from '@socket.io/redis-adapter';
 
 import config from 'config';
 import { NextFunction } from 'express';
-import { Redis } from 'ioredis';
+import Redis from 'ioredis';
 import { Server, ServerOptions, Socket } from 'socket.io';
-import { createAdapter, RedisAdapterOptions } from 'socket.io-redis';
 import { verify } from 'jsonwebtoken';
 
 import { access_denied, account_blocked, jwt_token_expired_signature } from '../errors';
 import { cors_options_delegate } from '../cors.options';
 import { IJwtPayload } from '../oauth/user/user.entity';
 
-const redis_settings = config.get<IRedisSettings>('REDIS_SETTINGS');
 const jwt_settings = config.get<IJwtSettings>('JWT_SETTINGS');
 
 export class CustomRedisIoAdapter extends IoAdapter {
@@ -27,16 +26,7 @@ export class CustomRedisIoAdapter extends IoAdapter {
       allowEIO3: true,
     });
 
-    server.adapter(
-      createAdapter({
-        host: process.env.REDIS_HOST || redis_settings.host,
-        port: process.env.REDIS_PORT ? +process.env.REDIS_PORT : redis_settings.port,
-        auth_pass: process.env.REDIS_PASSWORD || redis_settings.password,
-        key: process.env.REDIS_KEY || redis_settings.key,
-        pubClient: this.pub_client,
-        subClient: this.sub_client,
-      } as Partial<RedisAdapterOptions>)
-    );
+    server.adapter(createAdapter(this.pub_client, this.sub_client));
 
     server.use((socket: Socket, next: NextFunction) => {
       try {
