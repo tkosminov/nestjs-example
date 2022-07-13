@@ -40,9 +40,9 @@ export class GraphQLSchemaReloadService {
   }
 
   private async checkApolloServer() {
-    this.logger.info('GraphQLSchemaReloadService: checkApolloServer');
-
     if (this.app) {
+      this.logger.info('GraphQLSchemaReloadService: checkApolloServer');
+
       this.apollo_server = getApolloServer(this.app);
 
       if (this.apollo_server) {
@@ -52,6 +52,8 @@ export class GraphQLSchemaReloadService {
         this.check_apollo_interval = null;
 
         this.ready = true;
+
+        this.logger.info('GraphQLSchemaReloadService: checkApolloServer: dependencies initialized');
       }
     }
   }

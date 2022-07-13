@@ -22,6 +22,14 @@ npm ci
 npm run start:dev
 ```
 
+## Repl
+
+```bash
+NODE_ENV=development npm run start:repl
+```
+
+*https://docs.nestjs.com/recipes/repl*
+
 ## Databse
 
 ### Create db

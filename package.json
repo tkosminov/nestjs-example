@@ -12,6 +12,8 @@
     "start:debug": "nodemon --config nodemon-debug.json",
     "start:dev": "nodemon",
     "start:build": "NODE_ENV=development node -r ts-node/register -r tsconfig-paths/register dist/main.js",
+    "start:repl": "ts-node --files -r tsconfig-paths/register src/repl.ts",
+    "start:build:repl": "NODE_ENV=development node -r ts-node/register -r tsconfig-paths/register dist/repl.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "lint-fix": "npm run lint -- --fix",
     "typeorm:cli": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli",
