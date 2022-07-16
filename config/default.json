@@ -1,13 +1,13 @@
 {
   "APP_SETTINGS": {
     "port": 8080,
-    "bodyLimit": "50mb",
-    "bodyParameterLimit": 50000
+    "body_limit": "50mb",
+    "body_parameter_limit": 50000
   },
   "CORS_SETTINGS": {
-    "allowedOrigins": [],
-    "allowedUrls": [],
-    "allowedMethods": [
+    "allowed_origins": [],
+    "allowed_paths": [],
+    "allowed_methods": [
       "GET",
       "POST",
       "PUT",
@@ -15,8 +15,8 @@
       "DELETE",
       "OPTIONS"
     ],
-    "allowedCredentials": false,
-    "allowedHeaders": []
+    "allowed_credentials": false,
+    "allowed_headers": []
   },
   "LOGGER_SETTINGS": {
     "level": "info",
@@ -34,10 +34,10 @@
     "synchronize": true
   },
   "JWT_SETTINGS": {
-    "secretKey": "secret_key",
+    "secret_key": "secret_key",
     "algorithm": "HS512",
-    "tokenExpiresIn": 20,
-    "refreshTokenExpiresIn": 7
+    "access_token_expires_in": 20,
+    "refresh_token_expires_in": 10080
   },
   "REDIS_SETTINGS": {
     "host": "localhost",
@@ -46,8 +46,8 @@
   },
   "WSS_SETTINGS": {
     "port": 8081,
-    "pingInterval": 3000,
-    "pingTimeout": 10000,
+    "ping_interval": 3000,
+    "ping_timeout": 10000,
     "path": "/socket.io"
   },
   "RABBITMQ_SETTINGS": {

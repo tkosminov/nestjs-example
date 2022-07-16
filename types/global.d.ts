@@ -1,15 +1,15 @@
 interface IAppSettings {
   readonly port: number;
-  readonly bodyLimit: string;
-  readonly bodyParameterLimit: number;
+  readonly body_limit: string;
+  readonly body_parameter_limit: number;
 }
 
 interface ICorsSettings {
-  readonly allowedOrigins: string[];
-  readonly allowedUrls: string[];
-  readonly allowedMethods: string[];
-  readonly allowedCredentials: boolean;
-  readonly allowedHeaders: string[];
+  readonly allowed_origins: string[];
+  readonly allowed_paths: string[];
+  readonly allowed_methods: string[];
+  readonly allowed_credentials: boolean;
+  readonly allowed_headers: string[];
 }
 
 interface ILogSettings {
@@ -18,10 +18,10 @@ interface ILogSettings {
 }
 
 interface IJwtSettings {
-  readonly secretKey: string;
+  readonly secret_key: string;
   readonly algorithm: string;
-  readonly tokenExpiresIn: number;
-  readonly refreshTokenExpiresIn: number;
+  readonly access_token_expires_in: number;
+  readonly refresh_token_expires_in: number;
 }
 
 interface IRedisSettings {
@@ -33,8 +33,8 @@ interface IRedisSettings {
 
 interface IWssSettings {
   readonly port: number;
-  readonly pingInterval: number;
-  readonly pingTimeout: number;
+  readonly ping_interval: number;
+  readonly ping_timeout: number;
   readonly path: string;
 }
 

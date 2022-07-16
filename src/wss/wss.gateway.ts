@@ -8,8 +8,8 @@ import { LoggerService } from '../logger/logger.service';
 const wss_settings = config.get<IWssSettings>('WSS_SETTINGS');
 
 @WebSocketGateway(wss_settings.port, {
-  pingInterval: wss_settings.pingInterval,
-  pingTimeout: wss_settings.pingTimeout,
+  pingInterval: wss_settings.ping_interval,
+  pingTimeout: wss_settings.ping_timeout,
   path: wss_settings.path,
 })
 export class WssGateway implements OnGatewayConnection, OnGatewayDisconnect {

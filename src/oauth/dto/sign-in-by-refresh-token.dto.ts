@@ -1,6 +1,6 @@
-import { IsUUID } from 'class-validator';
+import { IsJWT } from 'class-validator';
 
 export class SignInByRefreshTokenDTO {
-  @IsUUID()
+  @IsJWT()
   public readonly refresh_token: string;
 }

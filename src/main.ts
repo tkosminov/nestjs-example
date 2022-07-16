@@ -26,13 +26,13 @@ async function bootstrap() {
     bodyParser: true,
   });
 
-  app.use(json({ limit: app_settings.bodyLimit }));
+  app.use(json({ limit: app_settings.body_limit }));
 
   app.use(
     urlencoded({
-      limit: app_settings.bodyLimit,
+      limit: app_settings.body_limit,
       extended: true,
-      parameterLimit: app_settings.bodyParameterLimit,
+      parameterLimit: app_settings.body_parameter_limit,
     })
   );
 

@@ -8,9 +8,9 @@ import Redis from 'ioredis';
 import { Server, ServerOptions, Socket } from 'socket.io';
 import { verify } from 'jsonwebtoken';
 
-import { access_denied, account_blocked, jwt_token_expired_signature } from '../errors';
+import { access_denied, account_blocked, access_token_expired_signature, authorization_failed } from '../errors';
 import { cors_options_delegate } from '../cors.options';
-import { IJwtPayload } from '../oauth/user/user.entity';
+import { IAccessToken } from '../oauth/oauth.service';
 
 const jwt_settings = config.get<IJwtSettings>('JWT_SETTINGS');
 
@@ -32,14 +32,14 @@ export class CustomRedisIoAdapter extends IoAdapter {
       try {
         const jwt_token = socket.handshake.auth.token;
 
-        let payload: IJwtPayload;
-
         if (jwt_token) {
-          payload = verify(jwt_token, jwt_settings.secretKey) as IJwtPayload;
-        }
+          const { current_user, token_type } = verify(jwt_token, jwt_settings.secret_key) as IAccessToken;
 
-        if (payload) {
-          if (!payload.is_blocked) {
+          if (token_type !== 'access') {
+            return next(authorization_failed({}, false));
+          }
+
+          if (!current_user.is_blocked) {
             return next();
           }
 
@@ -48,7 +48,7 @@ export class CustomRedisIoAdapter extends IoAdapter {
 
         return next(access_denied({}, false));
       } catch (error) {
-        return next(jwt_token_expired_signature({}, false));
+        return next(access_token_expired_signature({}, false));
       }
     });
 

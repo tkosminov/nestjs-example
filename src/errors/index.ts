@@ -49,19 +49,19 @@ export const unauthorized = (data?: IErrData, is_http_exception = true) => {
   return err;
 };
 
-export const jwt_token_expired_signature = (data?: IErrData, is_http_exception = true) => {
+export const access_token_expired_signature = (data?: IErrData, is_http_exception = true) => {
   let err: HttpException | Error = null;
 
   if (is_http_exception) {
     err = new HttpException(
       {
         status: 403,
-        error: data?.msg || 'JWT_TOKEN_EXPIRED',
+        error: data?.msg || 'ACCESS_TOKEN_EXPIRED',
       },
       403
     );
   } else {
-    err = new Error(data?.msg || 'JWT_TOKEN_EXPIRED');
+    err = new Error(data?.msg || 'ACCESS_TOKEN_EXPIRED');
   }
 
   if (data?.raise) {

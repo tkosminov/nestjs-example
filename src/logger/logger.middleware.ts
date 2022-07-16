@@ -3,7 +3,7 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 import config from 'config';
 import { NextFunction, Request, Response } from 'express';
 
-import { getAction, getForwardedIp, getIp, getMethod, getOrigin, getReferrer, getUrl, getUserAgent } from '../helpers/req.helper';
+import { getAction, getForwardedIp, getIp, getMethod, getOrigin, getPath, getReferrer, getUserAgent } from '../helpers/req.helper';
 
 import { LoggerService } from '../logger/logger.service';
 import { LoggerStore } from '../logger/logger.store';
@@ -46,12 +46,15 @@ export class LoggerMiddleware implements NestMiddleware {
 
     res.on('finish', () => {
       const message = {
-        url: `${getMethod(req)} ${getUrl(req)}`,
+        method: getMethod(req),
+        path: getPath(req),
         referrer: getReferrer(req),
         origin: getOrigin(req),
         userAgent: getUserAgent(req),
         remoteAddress: getIp(req),
         forwardedAddress: getForwardedIp(req),
+        statusCode: res.statusCode,
+        statusMessage: res.statusMessage,
       };
 
       if (res.statusCode < 200) {

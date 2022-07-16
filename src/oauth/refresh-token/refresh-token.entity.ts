@@ -7,12 +7,6 @@ export class RefreshToken {
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
-  @Column({
-    nullable: false,
-    type: 'timestamp without time zone',
-  })
-  public expires_at: Date;
-
   @Index()
   @Column('uuid', { nullable: false })
   public user_id: string;
