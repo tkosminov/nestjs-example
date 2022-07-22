@@ -18,6 +18,7 @@
     "lint-fix": "npm run lint -- --fix",
     "typeorm:cli": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli",
     "db:migration:create": "npm run typeorm:cli -- migration:create ./src/database/migrations/created",
+    "db:migration:generate": "npm run typeorm:cli -- -d ./src/database/database-ormconfig.cli.ts migration:generate ./src/database/migrations/generated",
     "db:migration:run": "npm run typeorm:cli -- -d ./src/database/database-ormconfig.cli.ts migration:run",
     "db:schema:sync": "npm run typeorm:cli -- -d ./src/database/database-ormconfig.cli.ts schema:sync",
     "prepare": "husky install"
