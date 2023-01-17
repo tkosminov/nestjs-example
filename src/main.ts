@@ -9,6 +9,8 @@ import express from 'express';
 import helmet from 'helmet';
 import { json, urlencoded } from 'body-parser';
 import Redis from 'ioredis';
+import { DataSourceOptions } from 'typeorm';
+import { createDatabase } from 'typeorm-extension';
 
 import { AppModule } from './app.module';
 import { cors_options_delegate } from './cors.options';
@@ -16,10 +18,13 @@ import { HttpExceptionFilter } from './filters/exception.filter';
 import { REDIS_PUBLISHER_CLIENT, REDIS_SUBSCRIBER_CLIENT } from './redis/redis.constants';
 import { CustomRedisIoAdapter } from './wss/wss.adapter';
 import { GraphQLSchemaReloadService } from './graphql/schema-reload/schema-reload.service';
+import { getOrmConfig } from './database/database-ormconfig.constant';
 
 const app_settings = config.get<IAppSettings>('APP_SETTINGS');
 
 async function bootstrap() {
+  await createDatabase({ options: getOrmConfig() as DataSourceOptions, ifNotExist: true });
+
   const server = express();
 
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {

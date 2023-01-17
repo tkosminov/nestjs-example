@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AsyncExecutor } from '@graphql-tools/utils';
-import { introspectSchema, wrapSchema } from '@graphql-tools/wrap';
+import { schemaFromExecutor, wrapSchema } from '@graphql-tools/wrap';
 
 import config from 'config';
 import { fetch } from 'cross-fetch';
@@ -67,17 +67,17 @@ export class GraphQLStitchingService {
   }
 
   private async getApiSchema(api_link: string): Promise<GraphQLSchema | null> {
-    this.logger.info(`StitchingService: getApiSchema`, { api_link, query: 'introspectSchema' });
+    this.logger.info(`StitchingService: getApiSchema`, { api_link, query: 'schemaFromExecutor' });
 
     try {
       const schema = wrapSchema({
-        schema: await introspectSchema(this.createExecutor(api_link, true)),
+        schema: await schemaFromExecutor(this.createExecutor(api_link, true)),
         executor: this.createExecutor(api_link, false),
       });
 
       return schema;
     } catch (error) {
-      this.logger.error(error.message, '', { api_link, query: 'introspectSchema' });
+      this.logger.error(error.message, '', { api_link, query: 'schemaFromExecutor' });
 
       return null;
     }

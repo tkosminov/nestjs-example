@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Algorithm, sign, verify } from 'jsonwebtoken';
 import { DataSource, DeepPartial, EntityManager } from 'typeorm';
 import config from 'config';
-import { nanoid } from 'nanoid';
+import { v4 } from 'uuid';
 
 import { checkPassword, passwordToHash } from '../helpers/password.helper';
 import {
@@ -123,7 +123,7 @@ export class OAuthService {
     const refresh = await entityManager.getRepository(RefreshToken).save({ user_id: user.id });
 
     const access_token = sign({ current_user: user.json_for_jwt(), token_type: 'access' }, jwt_settings.secret_key, {
-      jwtid: nanoid(16),
+      jwtid: v4(),
       expiresIn: `${jwt_settings.access_token_expires_in}m`,
       algorithm: jwt_settings.algorithm as Algorithm,
     });
