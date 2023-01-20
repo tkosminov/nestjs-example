@@ -3,6 +3,7 @@ import { GqlOptionsFactory } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { stitchSchemas } from '@graphql-tools/stitch';
 
+import { setDataSource } from 'nestjs-graphql-easy';
 import { GraphQLError, GraphQLSchema } from 'graphql';
 import config from 'config';
 import { Request } from 'express';
@@ -19,7 +20,9 @@ const graphql_settings = config.get<IGraphqlSettings>('GRAPHQL_SETTINGS');
 export class GraphqlOptions implements GqlOptionsFactory {
   public base_schema: GraphQLSchema = null;
 
-  constructor(private readonly dataSource: DataSource, private readonly stitchingService: GraphQLStitchingService) {}
+  constructor(private readonly dataSource: DataSource, private readonly stitchingService: GraphQLStitchingService) {
+    setDataSource(this.dataSource);
+  }
 
   public async mergeSchemas() {
     const schemas: GraphQLSchema[] = [this.base_schema, ...(await this.stitchingService.schemas()).filter(Boolean)];
@@ -40,7 +43,6 @@ export class GraphqlOptions implements GqlOptionsFactory {
       context: ({ req }: { req: Request & { logger_store: LoggerStore } }) => ({
         req,
         logger_store: req.logger_store,
-        data_source: this.dataSource,
       }),
       cors: cors_options_delegate,
       bodyParserConfig: {
