@@ -1,7 +1,7 @@
 import { getApolloServer } from '@nestjs/apollo';
 import { INestApplication, Injectable } from '@nestjs/common';
+import { ApolloServer, type BaseContext } from '@apollo/server';
 
-import { ApolloServerBase } from 'apollo-server-core';
 import set from 'lodash.set';
 import { v4 } from 'uuid';
 
@@ -12,7 +12,7 @@ import { GraphqlOptions } from '../graphql.options';
 @Injectable()
 export class GraphQLSchemaReloadService {
   private app: INestApplication = null;
-  private apollo_server: ApolloServerBase = null;
+  private apollo_server: ApolloServer<BaseContext> = null;
   private graphql_options: GraphqlOptions = null;
 
   private ready = false;
