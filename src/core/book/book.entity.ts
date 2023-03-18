@@ -40,6 +40,6 @@ export class Book {
   @Column('uuid', { nullable: false })
   public author_id: string;
 
-  @OneToMany(() => Section, (section) => section.book, { onDelete: 'CASCADE' })
+  @OneToMany(() => Section, (section) => section.book)
   public sections: Section[];
 }

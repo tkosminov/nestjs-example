@@ -35,7 +35,7 @@ export class Section {
   @Column('uuid', { nullable: false })
   public book_id: string;
 
-  @ManyToOne(() => Book, { nullable: false })
+  @ManyToOne(() => Book, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'book_id' })
   public book: Book;
 }
