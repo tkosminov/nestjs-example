@@ -1,8 +1,7 @@
 {
   "watch": [
     "src",
-    "config",
-    "types"
+    "config"
   ],
   "env": {
     "NODE_ENV": "development"
@@ -11,5 +10,5 @@
   "ignore": [
     "src/**/*.spec.ts"
   ],
-  "exec": "ts-node --files -r tsconfig-paths/register src/main.ts"
+  "exec": "ts-node --files -r tsconfig-paths/register src/main.ts --unhandled-rejections=warn"
 }

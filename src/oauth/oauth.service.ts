@@ -1,24 +1,12 @@
 import { Injectable } from '@nestjs/common';
-
-import { Algorithm, sign, verify } from 'jsonwebtoken';
 import { DataSource, DeepPartial, EntityManager } from 'typeorm';
-import config from 'config';
-import { v4 } from 'uuid';
 
-import { checkPassword, passwordToHash } from '../helpers/password.helper';
-import {
-  account_blocked,
-  authorization_failed,
-  bad_request,
-  access_token_expired_signature,
-  refresh_token_expired_signature,
-} from '../errors';
-
-import { IJwtPayload, User } from './user/user.entity';
+import { JwtService } from '../jwt/jwt.service';
+import { checkPassword, passwordToHash } from '../utils/bcrypt';
+import { authorization_failed, bad_request } from '../utils/errors';
 import { RecoveryKey } from './recovery-key/recovery-key.entity';
 import { RefreshToken } from './refresh-token/refresh-token.entity';
-
-const jwt_settings = config.get<IJwtSettings>('JWT_SETTINGS');
+import { IJwtPayload, User } from './user/user.entity';
 
 export interface IJwtToken {
   iat: number;
@@ -38,80 +26,75 @@ export interface IRefreshToken extends IJwtToken {
 
 @Injectable()
 export class OAuthService {
-  constructor(private dataSource: DataSource) {}
+  constructor(
+    private readonly jwt: JwtService,
+    private readonly data_source: DataSource
+  ) {}
 
-  public async registration(login: string, password: string) {
-    return await this.dataSource.transaction(async (entityManager) => {
-      const exist_user = await entityManager.getRepository(User).findOne({ where: { login: login.trim().toLowerCase() } });
+  public async registration(username: string, password: string) {
+    return this.data_source.transaction(async (entity_manager) => {
+      const exist_user = await entity_manager.getRepository(User).findOne({ where: { username: username.trim().toLowerCase() } });
 
       if (exist_user) {
-        bad_request({ raise: true, msg: 'LOGIN_ALREADY_EXISTS' });
+        throw bad_request();
       }
 
-      const user_obj: DeepPartial<User> = {
-        login,
-        password: passwordToHash(password),
+      const user_dto: DeepPartial<User> = {
+        username: username.trim().toLowerCase(),
+        encrypted_password: passwordToHash(password),
       };
 
-      const inserted_user = await entityManager.getRepository(User).insert(user_obj);
+      const inserted_user = await entity_manager.getRepository(User).insert(user_dto);
 
-      return await this.reGenerateRecoveryKeys(entityManager, inserted_user.identifiers[0].id);
+      return this.reGenerateRecoveryKeys(entity_manager, inserted_user.identifiers[0].id);
     });
   }
 
-  public async signInByPassword(login: string, password: string) {
-    return await this.dataSource.transaction(async (entityManager) => {
-      const user = await entityManager.getRepository(User).findOne({ where: { login: login.trim().toLowerCase() } });
+  public async signInByPassword(username: string, password: string) {
+    return this.data_source.transaction(async (entity_manager) => {
+      const user = await entity_manager.getRepository(User).findOne({ where: { username: username.trim().toLowerCase() } });
 
-      if (!user || !checkPassword(user.password, password)) {
-        authorization_failed({ raise: true });
+      if (!user || !checkPassword(user.encrypted_password, password)) {
+        throw authorization_failed();
       }
 
-      if (user.is_blocked) {
-        account_blocked({ raise: true });
-      }
-
-      return await this.genereteJwt(entityManager, user);
+      return this.generateJwt(entity_manager, user);
     });
   }
 
   public async signInByRefreshToken(refresh_token: string) {
-    return await this.dataSource.transaction(async (entityManager) => {
-      const { current_user, token_type, jti } = this.verifyToken<IRefreshToken>(refresh_token, false);
+    return this.data_source.transaction(async (entity_manager) => {
+      const { current_user, token_type, jti } = this.jwt.verify<IRefreshToken>(refresh_token, false);
 
       if (!token_type || token_type !== 'refresh') {
-        authorization_failed({ raise: true });
+        throw authorization_failed();
       }
 
-      const deleted_token = await entityManager.getRepository(RefreshToken).delete({ id: jti, user_id: current_user.id });
+      const deleted_token = await entity_manager.getRepository(RefreshToken).delete({ id: jti, user_id: current_user.id });
 
       if (!deleted_token.affected) {
-        authorization_failed({ raise: true });
+        throw authorization_failed();
       }
 
-      const user = await entityManager.getRepository(User).findOne({ where: { id: current_user.id } });
+      const user = await entity_manager.getRepository(User).findOne({ where: { id: current_user.id } });
 
       if (!user) {
-        authorization_failed({ raise: true });
+        throw authorization_failed();
       }
 
-      if (user.is_blocked) {
-        account_blocked({ raise: true });
-      }
-
-      return await this.genereteJwt(entityManager, user);
+      return this.generateJwt(entity_manager, user);
     });
   }
 
   public async changePassword(recovery_key: string, new_password: string) {
-    return await this.dataSource.transaction(async (entityManager) => {
+    return await this.data_source.transaction(async (entityManager) => {
       const recovery_key_entity = await entityManager.getRepository(RecoveryKey).findOne({ where: { id: recovery_key } });
 
       if (!recovery_key_entity) {
-        authorization_failed({ raise: true });
+        throw authorization_failed();
       }
 
-      await entityManager.getRepository(User).update(recovery_key_entity.user_id, { password: passwordToHash(new_password) });
+      await entityManager.getRepository(User).update(recovery_key_entity.user_id, { encrypted_password: passwordToHash(new_password) });
 
       await entityManager.getRepository(RecoveryKey).delete(recovery_key);
 
@@ -119,54 +102,31 @@ export class OAuthService {
     });
   }
 
-  private async genereteJwt(entityManager: EntityManager, user: User) {
-    const refresh = await entityManager.getRepository(RefreshToken).save({ user_id: user.id });
+  private async generateJwt(entity_manager: EntityManager, user: User) {
+    const refresh = await entity_manager.getRepository(RefreshToken).save({ user_id: user.id });
 
-    const access_token = sign({ current_user: user.json_for_jwt(), token_type: 'access' }, jwt_settings.secret_key, {
-      jwtid: v4(),
-      expiresIn: `${jwt_settings.access_token_expires_in}m`,
-      algorithm: jwt_settings.algorithm as Algorithm,
-    });
-
-    const refresh_token = sign({ current_user: { id: user.id }, token_type: 'refresh' }, jwt_settings.secret_key, {
-      jwtid: refresh.id,
-      expiresIn: `${jwt_settings.refresh_token_expires_in}m`,
-      algorithm: jwt_settings.algorithm as Algorithm,
-    });
+    const access_token = this.jwt.generate({ current_user: user.getJwtPayload(), token_type: 'access' });
+    const refresh_token = this.jwt.generate({ current_user: user.getJwtPayload(), token_type: 'refresh' }, refresh.id);
 
     return {
       access_token,
-      access_token_expires_at: new Date(
-        new Date().setMinutes(new Date().getMinutes() + jwt_settings.access_token_expires_in)
-      ).toISOString(),
       refresh_token,
-      refresh_token_expires_at: new Date(
-        new Date().setMinutes(new Date().getMinutes() + jwt_settings.refresh_token_expires_in)
-      ).toISOString(),
     };
   }
 
-  public async reGenerateRecoveryKeys(entityManager: EntityManager, user_id: string) {
-    await entityManager.getRepository(RecoveryKey).delete({ user_id });
+  private async reGenerateRecoveryKeys(entity_manager: EntityManager, user_id: string) {
+    await entity_manager.getRepository(RecoveryKey).delete({ user_id });
 
-    const keys = [];
+    const keys: { user_id: string }[] = [];
 
     for (let i = 0; i < 5; i++) {
-      keys.push({ user_id: user_id });
+      keys.push({ user_id });
     }
 
-    return (await entityManager.getRepository(RecoveryKey).save(keys)).map((r: RecoveryKey) => r.id);
-  }
+    const recovery_keys = (await entity_manager.getRepository(RecoveryKey).save(keys)).map((r: RecoveryKey) => r.id);
 
-  public verifyToken<T>(jwt_token: string, is_access_token = true) {
-    try {
-      return verify(jwt_token, jwt_settings.secret_key) as T;
-    } catch (error) {
-      if (is_access_token) {
-        access_token_expired_signature({ raise: true });
-      } else {
-        refresh_token_expired_signature({ raise: true });
-      }
-    }
+    return {
+      recovery_keys,
+    };
   }
 }

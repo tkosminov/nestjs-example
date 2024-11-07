@@ -1,27 +1,32 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "CommonJS",
+    "target": "ESNext",
     "moduleResolution": "node",
-    "skipLibCheck": true,
+    "esModuleInterop": true,
     "declaration": true,
     "removeComments": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    
+    "composite": false,
+    "incremental": false,
+    "sourceMap": true,
+
+    "skipLibCheck": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "target": "ES2019",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "baseUrl": ".",
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+    
+    "rootDir": "./",
     "typeRoots": [
-      "node_modules/@types",
-      "types"
-    ]
+      "./node_modules/@types",
+    ],
   },
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
 }

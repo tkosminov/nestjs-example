@@ -1,85 +1,124 @@
-import { Injectable } from '@nestjs/common';
+import { SubschemaConfig } from '@graphql-tools/delegate';
+import { stitchSchemas } from '@graphql-tools/stitch';
+import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import { AsyncExecutor } from '@graphql-tools/utils';
-import { schemaFromExecutor, wrapSchema } from '@graphql-tools/wrap';
-
-import config from 'config';
-import { fetch } from 'cross-fetch';
+import { schemaFromExecutor } from '@graphql-tools/wrap';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { fetch } from '@whatwg-node/fetch';
+import { Request } from 'express';
 import { GraphQLSchema, print } from 'graphql';
 import { AbortController } from 'node-abort-controller';
+import { BehaviorSubject } from 'rxjs';
 
 import { LoggerService } from '../../logger/logger.service';
-import { getForwardedIp, getIp } from '../../helpers/req.helper';
+import { LoggerStore } from '../../logger/logger.store';
+import { IJwtPayload } from '../../oauth/user/user.entity';
+import { getForwardedIp, getIp } from '../../utils/request';
 
-const api_urls = config.get<IGraphqlApis>('GRAPHQL_APIS');
-const FETCH_TIMEOUT = 15000;
+const ABORT_TIME_OUT: number = process.env.ABORT_TIME_OUT ? +process.env.ABORT_TIME_OUT : 20000;
+const { stitchingDirectivesTransformer } = stitchingDirectives();
 
 @Injectable()
 export class GraphQLStitchingService {
-  constructor(private readonly logger: LoggerService) {}
+  private current_schema: GraphQLSchema | null = null;
+  private sub_schemas: (SubschemaConfig | GraphQLSchema)[] = [];
 
-  public async schemas(): Promise<Array<GraphQLSchema | null>> {
-    return Promise.all(Object.values(api_urls).map((url) => this.getApiSchema(url)));
+  public readonly schema$ = new BehaviorSubject<GraphQLSchema | null>(null);
+  private readonly api_urls: string[] = [];
+
+  constructor(
+    private readonly config: ConfigService,
+    private readonly logger: LoggerService
+  ) {
+    this.api_urls.push(...JSON.parse(this.config.getOrThrow<string>('GRAPHQL_API_URLS')));
   }
 
-  private createExecutor(api_link: string, with_timeout = false): AsyncExecutor {
-    return async ({ document, variables, context }) => {
+  public async reloadSchemas() {
+    this.logger.info(`GraphQLStitchingService: reloadSchemas`, { third_party_schemes: this.api_urls.length });
+
+    this.sub_schemas = this.current_schema ? [this.current_schema] : [];
+
+    if (this.api_urls.length) {
+      await Promise.all(this.api_urls.map((api_uri) => this.loadSchema(api_uri)));
+    }
+
+    this.schema$.next(
+      stitchSchemas({
+        subschemaConfigTransforms: [stitchingDirectivesTransformer],
+        subschemas: this.sub_schemas,
+      })
+    );
+  }
+
+  public setCurrentSchema(schema: GraphQLSchema) {
+    this.current_schema = schema;
+  }
+
+  private createExecutor(uri: string, abort: boolean): AsyncExecutor {
+    return async ({ document, variables, operationName, extensions, context }) => {
       const query = print(document);
 
-      let remote_address = '-';
-      let forwarded_address = '-';
-      let request_id: string = null;
+      const abort_controller: AbortController = new AbortController();
+      let time_out: NodeJS.Timeout | null = null;
 
-      if (context?.req) {
-        remote_address = getIp(context.req);
-        forwarded_address = getForwardedIp(context.req);
-        request_id = context.req.logger_store?.request_id;
-      }
-
-      const abort_controller = new AbortController();
-
-      let time_out: NodeJS.Timeout = null;
-
-      if (with_timeout) {
-        time_out = setTimeout(function () {
+      if (abort) {
+        time_out = setTimeout(() => {
           abort_controller.abort();
-        }, FETCH_TIMEOUT);
+        }, ABORT_TIME_OUT);
       }
 
-      const fetch_result = await fetch(api_link, {
+      let current_user = '{}';
+      let ip = '-';
+      let forwarded_ip = '-';
+      let request_id = '';
+
+      const req: (Request & { logger_store: LoggerStore; current_user: IJwtPayload }) | undefined = context?.req;
+
+      if (req) {
+        ip = getIp(req);
+        forwarded_ip = getForwardedIp(req);
+        current_user = JSON.stringify(req.current_user || {});
+        request_id = req.logger_store.request_id;
+      }
+
+      const fetch_result = await fetch(uri, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
-          remoteAddress: remote_address,
-          forwardedAddress: forwarded_address,
-          request_id: request_id,
+          Accept: 'application/json',
+          current_user,
+          ip,
+          'X-Forwarded-For': forwarded_ip,
+          request_id,
         },
-        body: JSON.stringify({ query, variables }),
+        body: JSON.stringify({ query, variables, operationName, extensions }),
         signal: abort_controller.signal as AbortSignal,
         keepalive: true,
       });
 
       if (time_out) {
         clearTimeout(time_out);
+        time_out = null;
       }
 
       return fetch_result.json();
     };
   }
 
-  private async getApiSchema(api_link: string): Promise<GraphQLSchema | null> {
-    this.logger.info(`StitchingService: getApiSchema`, { api_link, query: 'schemaFromExecutor' });
-
+  private async loadSchema(uri: string) {
     try {
-      const schema = wrapSchema({
-        schema: await schemaFromExecutor(this.createExecutor(api_link, true)),
-        executor: this.createExecutor(api_link, false),
-      });
+      const sub_schema: SubschemaConfig = {
+        schema: await schemaFromExecutor(this.createExecutor(uri, true)),
+        executor: this.createExecutor(uri, false),
+        batch: true,
+      };
 
-      return schema;
+      this.sub_schemas.push(sub_schema);
+
+      this.logger.info(`GraphQLStitchingService: loadSchema`, { query: 'introspectSchema', uri });
     } catch (error) {
-      this.logger.error(error.message, '', { api_link, query: 'schemaFromExecutor' });
-
-      return null;
+      this.logger.error(error, { query: 'introspectSchema', uri });
     }
   }
 }

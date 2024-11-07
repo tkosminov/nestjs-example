@@ -1,45 +1,75 @@
 version: '3'
 services:
-  db:
-    image: postgres:13-alpine
-    expose:
-      - "5432"
-    networks:
-      - nestjs_example_network
-    container_name: nestjs_example-db
-    restart: on-failure
-
-  redis:
-    image: redis:7-alpine
-    expose:
-      - "6379"
-    networks:
-      - nestjs_example_network
-    container_name: nestjs_example-redis
-    restart: on-failure
-
-  beta-web:
+  nestjs-example:
     build:
       context: .
       args:
         - env=development
-    #image: 
     ports:
       - '8080:80'
-      - '8081:80'
-      # - '$EXTERNAL:$INTERNAL'
+    environment:
+      DB_HOST: nestjs-example-db
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      REDIS_HOST: nestjs-example-redis
+      REDIS_PORT: 6379
+      RABBITMQ_HOST: nestjs-example-rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: admin
+      RABBITMQ_PASSWORD: password
+    # volumes:
+    #   - ./appdata:/server/uploads
     links:
-      - db
-      - redis
+      - nestjs-example-db
+      - nestjs-example-redis
+      - nestjs-example-rabbitmq
     depends_on:
-      - db
-      - redis
+      - nestjs-example-db
+      - nestjs-example-redis
+      - nestjs-example-rabbitmq
     networks:
-      - nestjs_example_network
-    container_name: nestjs_example-web
-    volumes:
-      - ./uploads:/server/uploads
+      - nestjs-example-network
+    container_name: nestjs-example
+    restart: on-failure
+
+  nestjs-example-db:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
+    expose:
+      - "5432"
+    # volumes:
+    #   - ./pgdata:/var/lib/postgresql/data
+    networks:
+      - nestjs-example-network
+    container_name: nestjs-example-db
+    restart: on-failure
+
+  nestjs-example-redis:
+    image: redis:7-alpine
+    expose:
+      - "6379"
+    # volumes:
+    #   - ./redisdata:/var/lib/redis
+    networks:
+      - nestjs-example-network
+    container_name: nestjs-example-redis
+    restart: on-failure
+
+  nestjs-example-rabbitmq:
+    image: rabbitmq:4.0.3-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: password
+      RABBITMQ_DEFAULT_VHOST: vhost
+    expose:
+      - "5672"
+    networks:
+      - nestjs-example-network
+    container_name: nestjs-example-rabbitmq
+    restart: on-failure
 
 networks:
-  nestjs_example_network:
+  nestjs-example-network:
     external: true

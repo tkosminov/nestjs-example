@@ -1,22 +1,21 @@
 import { Body, Controller, Post, Req } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
-
 import { Request } from 'express';
 
-import { authorization_failed } from '../errors';
-import { validateDTO } from '../helpers/validate.helper';
-
-import { OAuthService } from './oauth.service';
+import { authorization_failed } from '../utils/errors';
+import { validateDTO } from '../utils/validate';
+import { ChangePasswordDTO } from './dto/change-password.dto';
+import { RegistrationResponseDTO } from './dto/registration-response.dto';
+import { RegistrationDTO } from './dto/registration.dto';
 import { SignInByPasswordDTO } from './dto/sign-in-by-password.dto';
 import { SignInByRefreshTokenDTO } from './dto/sign-in-by-refresh-token.dto';
-import { ChangePasswordDTO } from './dto/change-password.dto';
-import { RegistrationDTO } from './dto/registration.dto';
 import { SignInResponseDTO } from './dto/sign-in-response.dto';
+import { OAuthService } from './oauth.service';
 
 @ApiTags('oauth')
 @Controller('oauth')
 export class OAuthController {
-  constructor(private readonly oauthService: OAuthService) {}
+  constructor(private readonly oauth_service: OAuthService) {}
 
   @ApiOperation({
     summary: 'User registration',
@@ -26,12 +25,12 @@ export class OAuthController {
     required: true,
   })
   @ApiOkResponse({
-    isArray: true,
-    type: String,
+    isArray: false,
+    type: RegistrationResponseDTO,
   })
   @Post('registration')
   public async registration(@Body() body: RegistrationDTO) {
-    return await this.oauthService.registration(body.login, body.password);
+    return this.oauth_service.registration(body.username, body.password);
   }
 
   @ApiOperation({
@@ -45,12 +44,12 @@ export class OAuthController {
   })
   @ApiQuery({
     name: 'username',
-    description: 'User login. If grand_type = password',
+    description: 'Username. If grand_type = password',
     required: false,
   })
   @ApiQuery({
     name: 'password',
-    description: 'User password. If grand_type = password',
+    description: 'Password. If grand_type = password',
     required: false,
   })
   @ApiQuery({
@@ -68,13 +67,13 @@ export class OAuthController {
       switch (req.query.grand_type) {
         case 'password':
           const sign_in_by_password_dto = {
-            login: req.query.username as string,
+            username: req.query.username as string,
             password: req.query.password as string,
           };
 
           validateDTO(SignInByPasswordDTO, sign_in_by_password_dto);
 
-          return await this.oauthService.signInByPassword(sign_in_by_password_dto.login, sign_in_by_password_dto.password);
+          return this.oauth_service.signInByPassword(sign_in_by_password_dto.username, sign_in_by_password_dto.password);
         case 'refresh_token':
           const sign_in_by_refresh_token_dto = {
             refresh_token: req.query.refresh_token as string,
@@ -82,11 +81,11 @@ export class OAuthController {
 
           validateDTO(SignInByRefreshTokenDTO, sign_in_by_refresh_token_dto);
 
-          return await this.oauthService.signInByRefreshToken(sign_in_by_refresh_token_dto.refresh_token);
+          return this.oauth_service.signInByRefreshToken(sign_in_by_refresh_token_dto.refresh_token);
       }
     }
 
-    authorization_failed({ raise: true });
+    throw authorization_failed();
   }
 
   @ApiOperation({
@@ -98,6 +97,6 @@ export class OAuthController {
   })
   @Post('change_password')
   public async changePassword(@Body() body: ChangePasswordDTO) {
-    return await this.oauthService.changePassword(body.recovery_key, body.new_password);
+    return this.oauth_service.changePassword(body.recovery_key, body.new_password);
   }
 }

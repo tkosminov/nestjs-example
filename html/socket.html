@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Socket Test</title>
+
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+
+<body>
+  <div class="app">
+    <div class="app__main">
+      <button id="wsButton" type="button" title="Open WebSocket connection">
+        Open WebSocket connection
+      </button>
+
+      <pre id="messages" style="height: 400px; overflow: scroll"></pre>
+    </div>
+  </div>
+
+  <script>
+    $(function () {
+      const wsButton = document.querySelector('#wsButton');
+
+      const messages = []
+
+      wsButton.onclick = function () {
+        let socket = io('ws://localhost:8081', {
+          path: '/socket.io',
+          query: {
+            room_id: 1,
+            user_id: Math.random(),
+          },
+          auth: {
+            token: ''
+          },
+          transports: ['websocket'],
+        });
+
+        socket.on('connect', () => {
+          console.log('connect')
+        })
+
+        socket.on('disconnect', () => {
+          console.log('disconnect')
+        })
+
+        socket.on('event', (data) => {
+          messages.push(data);
+
+          $('#messages').html(JSON.stringify(messages))
+        })
+      };
+    })
+  </script>
+</body>
+
+</html>

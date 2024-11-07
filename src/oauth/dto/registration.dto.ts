@@ -4,15 +4,15 @@ import { IsString, Length } from 'class-validator';
 export class RegistrationDTO {
   @ApiProperty({
     required: true,
-    description: 'Логин',
+    description: 'Username',
   })
   @IsString()
   @Length(4, 32)
-  public readonly login: string;
+  public readonly username: string;
 
   @ApiProperty({
     required: true,
-    description: 'Пароль',
+    description: 'Password',
   })
   @Length(4, 32)
   public readonly password: string;

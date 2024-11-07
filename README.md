@@ -1,59 +1,130 @@
 # NestJS-Example
 
-* NestJS 9
-* TypeORM 0.3
+NestJS example with using GraphQL (schema stitching, schema reload, dataloader, upload files, subscriptions, response cache), RabbitMQ, Redis, Websocket, JWT authentication, ESLint 9
 
 ## Dependencies
 
-* [NodeJS 16](https://nodejs.org/download/release/latest-v16.x/)
+* [NodeJS 22](https://nodejs.org/download/release/latest-v22.x/)
 * [Redis 7](https://redis.io/download/)
-* [PostgreSQL 13](https://www.postgresql.org/download/)
+* [PostgreSQL 13+](https://www.postgresql.org/download/)
 * [RabbitMQ](https://www.rabbitmq.com/download.html)
 
-## Installation
+## Run locally
+
+### Installation
 
 ```bash
 npm ci
 ```
 
-## Running the app
+### Run
 
 ```bash
 npm run start:dev
 ```
 
-## Repl
+### REPL
 
 ```bash
-NODE_ENV=development npm run start:repl
+npm run repl:dev
 ```
 
-*https://docs.nestjs.com/recipes/repl*
+## Run with Docker on host
 
-## Databse
-
-### Create db
+### Build
 
 ```bash
-psql -U postgres
-
-create database development_nestjs_example;
+sudo docker build -t nestjs-example . --build-arg env=development
 ```
 
-### Create migration
+### Run
 
 ```bash
-NODE_ENV=development npm run db:migration:create
+sudo docker run -d --network host nestjs-example:latest
 ```
 
-### Run migration
+### Get CONTAINER_ID
 
 ```bash
-NODE_ENV=development npm run db:migration:run
+sudo docker ps -a | grep nestjs-example
 ```
 
-### Sync schema
+### Open container
 
 ```bash
-NODE_ENV=development npm run db:schema:sync
+sudo docker exec -it $CONTAINER_ID sh
+```
+
+### Show logs
+
+```bash
+sudo docker logs $CONTAINER_ID
+```
+
+### Stop container
+
+```bash
+sudo docker stop $CONTAINER_ID
+```
+
+### Remove container
+
+```bash
+sudo docker rm $CONTAINER_ID
+```
+
+## Run with Docker Compose
+
+### Create network
+
+```bash
+sudo docker network create nestjs-example-network
+```
+
+### Run
+
+```bash
+sudo docker compose up --build
+```
+
+## Dependencies graph
+
+### Full
+
+```bash
+npm run madge:full
+```
+
+### Circular
+
+```bash
+npm run madge:circular
+```
+
+## Typeorm
+
+### Creating a migration file from modified entities
+
+```bash
+npm run typeorm:generate
+```
+
+### Create an empty migration file
+
+```bash
+npm run typeorm:create
+```
+
+### Run migrations
+
+#### Development
+
+```bash
+npm run typeorm:run:dev
+```
+
+#### Build
+
+```bash
+npm run typeorm:run:build
 ```

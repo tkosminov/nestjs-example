@@ -7,6 +7,20 @@ export class RecoveryKey {
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
+  @CreateDateColumn({
+    type: 'timestamp without time zone',
+    precision: 3,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  public created_at: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp without time zone',
+    precision: 3,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  public updated_at: Date;
+
   @Index()
   @Column('uuid', { nullable: false })
   public user_id: string;
@@ -14,16 +28,4 @@ export class RecoveryKey {
   @ManyToOne(() => User, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   public user: User;
-
-  @CreateDateColumn({
-    type: 'timestamp without time zone',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  public created_at: Date;
-
-  @UpdateDateColumn({
-    type: 'timestamp without time zone',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  public updated_at: Date;
 }

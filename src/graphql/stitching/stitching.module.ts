@@ -1,17 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { LoggerService } from '../../logger/logger.service';
-
+import { LoggerModule } from '../../logger/logger.module';
 import { GraphQLStitchingService } from './stitching.service';
 
 @Module({
-  providers: [
-    GraphQLStitchingService,
-    {
-      provide: LoggerService,
-      useValue: new LoggerService('GraphQLStitchingModule'),
-    },
-  ],
+  imports: [LoggerModule],
+  providers: [GraphQLStitchingService],
   exports: [GraphQLStitchingService],
 })
 export class GraphQLStitchingModule {}

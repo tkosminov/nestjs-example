@@ -1,58 +1,48 @@
-FROM mhart/alpine-node:14
-# FROM node:16-alpine
+FROM node:22-alpine AS base
 
-# Env
+ENV DOCKER_DEPLOY=true
+ENV ALLOW_CONFIG_MUTATIONS=true
 
-ARG env
+RUN apk add --update --no-cache tzdata \
+                                nano \
+                                bash \
+                                htop \
+                                nginx \
+                                nginx-mod-http-lua \
+    && cp /usr/share/zoneinfo/UTC /etc/localtime \
+    && echo "UTC" > /etc/timezone \
+    && mkdir -p /run/nginx
 
-ARG commit_short_sha
-ARG pipeline_created_at
+COPY ./nginx.conf /etc/nginx/http.d/default.conf
 
-# RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+RUN nginx -t
 
-# Timezone
+FROM base AS build
 
-RUN apk update
-RUN apk add --update tzdata && \
-                     cp /usr/share/zoneinfo/UTC /etc/localtime && \
-                     echo "UTC" > /etc/timezone
-
-# Nginx
-
-RUN apk add --update --no-cache nginx && \
-                                mkdir -p /run/nginx
-
-# Apk
-
-RUN apk add --update --no-cache --virtual runtime-deps \
-                                          nano \
-                                          postgresql-client \
-                                          readline \
-                                          bash \
-                                          htop
-
-WORKDIR /server
+WORKDIR /build
 
 COPY package.json package-lock.json ./
 
-RUN HUSKY_SKIP_INSTALL=true npm ci
+RUN npm ci
 
-COPY . .
-
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-ENV NODE_ENV ${env}
+COPY tsconfig.json tsconfig.build.json ./
+COPY config ./config
+COPY src ./src
 
 RUN npm run build
 
-ENV COMMIT_SHORT_SHA ${commit_short_sha}
-ENV PIPELINE_CREATED_AT ${pipeline_created_at}
+FROM base
 
-RUN touch build_info.txt
-RUN echo "env: ${env}" >> build_info.txt
-RUN echo "commit_short_sha: ${commit_short_sha}" >> build_info.txt
-RUN echo "pipeline_created_at: ${pipeline_created_at}" >> build_info.txt
+WORKDIR /server
 
-EXPOSE 80
+ARG env
+ENV NODE_ENV=${env}
 
-CMD nginx; node -r ts-node/register -r tsconfig-paths/register ./dist/main.js
+COPY --from=build /build/package.json /build/package-lock.json ./
+
+RUN npm ci --omit=dev
+
+COPY --from=build /build/config ./config
+COPY --from=build /build/dist ./dist
+
+CMD nginx; npm run start:build

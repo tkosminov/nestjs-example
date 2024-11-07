@@ -1,43 +1,34 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 
-import config from 'config';
-import { verify } from 'jsonwebtoken';
-
-import { account_blocked, access_token_expired_signature, unauthorized, authorization_failed } from '../errors';
-
-import { IJwtPayload } from './user/user.entity';
+import { JwtService } from '../jwt/jwt.service';
+import { access_token_expired_signature, authorization_failed, unauthorized } from '../utils/errors';
 import { IAccessToken } from './oauth.service';
-
-const jwt_settings = config.get<IJwtSettings>('JWT_SETTINGS');
+import { IJwtPayload } from './user/user.entity';
 
 @Injectable()
 export class OAuthMiddleware implements NestMiddleware {
-  public async use(req: Request & { user?: IJwtPayload }, _res: Response, next: NextFunction) {
-    const jwt_token: string = req.headers.authorization || (req.cookies as { JWT: string }).JWT;
+  constructor(private readonly jwt: JwtService) {}
 
-    if (jwt_token) {
+  public async use(req: Request & { current_user?: IJwtPayload }, _res: Response, next: NextFunction) {
+    const access_token: string = req.headers.authorization ?? (req.cookies as { access_token: string }).access_token;
+
+    if (access_token) {
       try {
-        const { current_user, token_type } = verify(jwt_token, jwt_settings.secret_key) as IAccessToken;
+        const { current_user, token_type } = this.jwt.verify<IAccessToken>(access_token);
 
         if (token_type !== 'access') {
-          return next(authorization_failed({ raise: false }));
+          return next(authorization_failed());
         }
 
-        if (current_user) {
-          if (current_user.is_blocked) {
-            return next(account_blocked({ raise: false }));
-          }
+        req.current_user = current_user;
 
-          req.user = current_user;
-
-          return next();
-        }
+        return next();
       } catch (error) {
-        return next(access_token_expired_signature({ raise: false }));
+        return next(access_token_expired_signature());
       }
     }
 
-    return next(unauthorized({ raise: false }));
+    return next(unauthorized());
   }
 }

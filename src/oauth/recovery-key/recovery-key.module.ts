@@ -5,7 +5,5 @@ import { RecoveryKey } from './recovery-key.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([RecoveryKey])],
-  providers: [],
-  exports: [],
 })
 export class RecoveryKeyModule {}

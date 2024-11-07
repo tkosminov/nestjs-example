@@ -1,11 +1,16 @@
 # compiled output
-/dist
-/node_modules
+dist
+node_modules
+.env.*.local
+
+.yarn/cache
+.yarn/install-state.gz
 
 # Logs
 logs
 *.log
 npm-debug.log*
+pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
@@ -33,7 +38,9 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
+schema.graphql
+graph.png
+
 uploads/*
 !uploads/.gitkeep
-
-src/graphql/schema.graphql
+pgdata
