@@ -50,7 +50,7 @@ export class RabbitMQModule implements OnModuleInit {
     return {
       imports: [
         DiscoveryModule,
-        NestJSRabbitMQ.forRootAsync(NestJSRabbitMQ, {
+        NestJSRabbitMQ.forRootAsync({
           useFactory: (config: ConfigService) => {
             const RABBITMQ_PREFIX = config.get<string>('RABBITMQ_PREFIX');
             const RABBITMQ_EXCHANGE = config.getOrThrow<string>('RABBITMQ_EXCHANGE');

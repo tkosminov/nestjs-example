@@ -61,6 +61,6 @@ export class BookResolver {
 
   @Subscription(() => Book)
   protected async bookCreateEvent() {
-    return this.subscription.asyncIterator('bookCreateEvent');
+    return this.subscription.asyncIterableIterator('bookCreateEvent');
   }
 }

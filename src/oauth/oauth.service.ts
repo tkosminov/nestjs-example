@@ -105,8 +105,8 @@ export class OAuthService {
   private async generateJwt(entity_manager: EntityManager, user: User) {
     const refresh = await entity_manager.getRepository(RefreshToken).save({ user_id: user.id });
 
-    const access_token = this.jwt.generate({ current_user: user.getJwtPayload(), token_type: 'access' });
-    const refresh_token = this.jwt.generate({ current_user: user.getJwtPayload(), token_type: 'refresh' }, refresh.id);
+    const access_token = this.jwt.generateAccess({ current_user: user.getJwtPayload() });
+    const refresh_token = this.jwt.generateRefresh({ current_user: user.getJwtPayload() }, refresh.id);
 
     return {
       access_token,

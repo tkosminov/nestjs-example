@@ -61,6 +61,6 @@ export class SectionResolver {
     filter: (payload, variables) => payload.channel_ids.includes(variables.channel_id),
   })
   protected async sectionCreateEvent(@Args({ name: 'channel_id', type: () => ID, nullable: false }) _channel_id: string) {
-    return this.subscription.asyncIterator('sectionCreateEvent');
+    return this.subscription.asyncIterableIterator('sectionCreateEvent');
   }
 }
